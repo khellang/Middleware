@@ -1,2 +1,49 @@
 # Middleware
-Various ASP.NET Core middleware
+
+Various ASP.NET Core middleware. Mostly for use in APIs.
+
+## SpaFallback [![NuGet](https://img.shields.io/nuget/v/Hellang.Middleware.SpaFallback.svg)](https://www.nuget.org/packages/Hellang.Middleware.SpaFallback)
+
+> Install-Package Hellang.Middleware.SpaFallback
+
+The `SpaFallback` middleware is designed to make your client-side SPA routing work seamlessly with your server-side routing.
+
+When a request for a client-side route hits the server, chances are there's no middleware that will handle it. This means it will reach the end of the pipeline, the response status code will be set to 404 and the response will bubble back up the pipeline and be returned to the client. This is probably not what you want to happen.
+
+Whenever a request can't be handled on the server, you usually want to fall back to your SPA and delegate the routing to the client. This is what the `SpaFallback` middleware enables.
+
+The middleware works by passing all requests through the pipeline and let other middleware try to handle it. When the response comes back, it will perform a series of checks (outlined below) and optionally re-execute the pipeline, using the configured fallback path. This defaults to `/index.html`. This should bootstrap your SPA and let the client-side routing take over.
+
+The following rules are verified before a fallback occurs:
+
+ 1. The method is **GET**.
+ 1. The status code is **404**.
+ 1. The response hasn't started yet.
+ 1. The requested path does not have a file extension.
+ 1. The request actually reached the end of the pipeline.
+
+The middleware tries to be as smart as possible when determining whether a fallback should happen or not:
+
+If the request path has a file extension, i.e. `/public/image.png`, the client probably wanted an actual file (typically served by [StaticFiles](https://github.com/aspnet/StaticFiles)), but it was missing from disk, so we let the 404 response through to the client.
+
+In addition, we check that the response wasn't handled by other middleware (but still ended up with a 404 status code. This is useful if you want to prevent disclosing the existance of a resource that the client don't have access to. In order to achieve this, `AddSpaFallback` will automatically inject a "marker middleware" at the end of the pipeline. If the request reaches this middleware, it will set the response status code to 404 and add a tag to the `HttpContext.Items` dictionary.
+
+### Usage
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSpaFallback();
+        services.AddMvc();
+    }
+
+    public void Configure(IApplicationBuilder app)
+    {
+        app.UseSpaFallback();
+        app.UseStaticFiles();
+        app.UseMvc();
+    }
+}
+```
