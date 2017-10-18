@@ -5,7 +5,9 @@ namespace Hellang.Middleware.SpaFallback
 {
     public class SpaFallbackOptions
     {
-        public Func<HttpContext, PathString> FallbackPathFactory { get; set; } = _ => "/index.html";
+        private static readonly Func<HttpContext, PathString> DefaultFallbackPathFactory = _ => "/index.html";
+
+        public Func<HttpContext, PathString> FallbackPathFactory { get; set; } = DefaultFallbackPathFactory;
 
         public bool AllowFileExtensions { get; set; } = false;
 
