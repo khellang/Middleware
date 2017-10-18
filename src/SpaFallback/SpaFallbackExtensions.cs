@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -112,9 +113,26 @@ namespace Hellang.Middleware.SpaFallback
 
                     if (app.Properties.ContainsKey(MarkerKey))
                     {
-                        app.UseMiddleware<SpaFallbackMiddleware.Marker>();
+                        app.UseMiddleware<MarkerMiddleware>();
                     }
                 };
+            }
+
+            private class MarkerMiddleware
+            {
+                public MarkerMiddleware(RequestDelegate next)
+                {
+                    Next = next;
+                }
+
+                private RequestDelegate Next { get; }
+
+                public Task Invoke(HttpContext context)
+                {
+                    context.Items[MarkerKey] = true; // Where the magic happens...
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    return Task.CompletedTask;
+                }
             }
         }
     }

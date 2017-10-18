@@ -6,8 +6,6 @@ namespace Hellang.Middleware.SpaFallback
 {
     public class SpaFallbackMiddleware
     {
-        private const string MarkerKey = "SpaFallback";
-
         public SpaFallbackMiddleware(RequestDelegate next, IOptions<SpaFallbackOptions> options)
         {
             Next = next;
@@ -56,23 +54,6 @@ namespace Hellang.Middleware.SpaFallback
             {
                 // Let's be nice and restore the original path...
                 context.Request.Path = originalPath;
-            }
-        }
-
-        public class Marker
-        {
-            public Marker(RequestDelegate next)
-            {
-                Next = next;
-            }
-
-            private RequestDelegate Next { get; }
-
-            public Task Invoke(HttpContext context)
-            {
-                context.Items[MarkerKey] = true; // Where the magic happens...
-                context.Response.StatusCode = StatusCodes.Status404NotFound;
-                return Task.CompletedTask;
             }
         }
     }
