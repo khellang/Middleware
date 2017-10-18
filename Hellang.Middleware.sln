@@ -8,7 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{060C1A9F-504
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{17F15D82-AC56-4579-BF5F-E53539AC0DB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaFallback.Tests", "SpaFallback.Tests\SpaFallback.Tests.csproj", "{9EAA652B-873A-4F0F-B751-5381CDB774FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaFallback.Tests", "test\SpaFallback.Tests\SpaFallback.Tests.csproj", "{9EAA652B-873A-4F0F-B751-5381CDB774FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
