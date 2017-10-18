@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -58,6 +59,47 @@ namespace Hellang.Middleware.SpaFallback
             app.Properties[MarkerKey] = true;
 
             return app.UseMiddleware<SpaFallbackMiddleware>();
+        }
+
+        internal static bool ShouldFallback(this HttpContext context, SpaFallbackOptions options)
+        {
+            if (context.Response.HasStarted)
+            {
+                return false;
+            }
+
+            if (context.Response.StatusCode != StatusCodes.Status404NotFound)
+            {
+                return false;
+            }
+
+            // Fallback only on "hard" 404s, i.e. when the request reached the marker MW.
+            if (!context.Items.ContainsKey(MarkerKey))
+            {
+                return false;
+            }
+
+            if (!HttpMethods.IsGet(context.Request.Method))
+            {
+                return false;
+            }
+
+            if (HasFileExtension(context.Request.Path))
+            {
+                return options.AllowFileExtensions;
+            }
+
+            return true;
+        }
+
+        internal static bool ShouldThrow(this HttpContext context, SpaFallbackOptions options)
+        {
+            return context.Response.StatusCode == StatusCodes.Status404NotFound && options.ThrowIfFallbackFails;
+        }
+
+        internal static bool HasFileExtension(this PathString path)
+        {
+            return path.HasValue && Path.HasExtension(path.Value);
         }
 
         private class StartupFilter : IStartupFilter

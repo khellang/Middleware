@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -23,7 +22,7 @@ namespace Hellang.Middleware.SpaFallback
         {
             await Next(context);
 
-            if (ShouldFallback(context))
+            if (context.ShouldFallback(Options))
             {
                 await Fallback(context);
             }
@@ -47,7 +46,7 @@ namespace Hellang.Middleware.SpaFallback
 
                 await Next(context);
 
-                if (ShouldThrow(context))
+                if (context.ShouldThrow(Options))
                 {
                     // The fallback failed. Throw to let the developer know :)
                     throw new SpaFallbackException(fallbackPath.Value);
@@ -58,47 +57,6 @@ namespace Hellang.Middleware.SpaFallback
                 // Let's be nice and restore the original path...
                 context.Request.Path = originalPath;
             }
-        }
-
-        private bool ShouldFallback(HttpContext context)
-        {
-            if (context.Response.HasStarted)
-            {
-                return false;
-            }
-
-            if (context.Response.StatusCode != StatusCodes.Status404NotFound)
-            {
-                return false;
-            }
-
-            // Fallback only on "hard" 404s, i.e. when the request reached the marker MW.
-            if (!context.Items.ContainsKey(MarkerKey))
-            {
-                return false;
-            }
-
-            if (!HttpMethods.IsGet(context.Request.Method))
-            {
-                return false;
-            }
-
-            if (HasFileExtension(context.Request.Path))
-            {
-                return Options.AllowFileExtensions;
-            }
-
-            return true;
-        }
-
-        private bool ShouldThrow(HttpContext context)
-        {
-            return context.Response.StatusCode == StatusCodes.Status404NotFound && Options.ThrowIfFallbackFails;
-        }
-
-        private static bool HasFileExtension(PathString path)
-        {
-            return path.HasValue && Path.HasExtension(path.Value);
         }
 
         public class Marker
