@@ -23,35 +23,37 @@ namespace Hellang.Middleware.SpaFallback
         {
             await Next(context);
 
-            if (ShouldFallback(context))
+            if (!ShouldFallback(context))
             {
-                var originalPath = context.Request.Path;
+                return;
+            }
 
-                try
+            var originalPath = context.Request.Path;
+
+            try
+            {
+                var fallbackPath = Options.FallbackPathFactory?.Invoke(context);
+
+                if (!fallbackPath.HasValue)
                 {
-                    var fallbackPath = Options.FallbackPathFactory?.Invoke(context);
-
-                    if (!fallbackPath.HasValue)
-                    {
-                        throw new SpaFallbackException(
-                            $"{nameof(Options.FallbackPathFactory)} must be specified and return a non-empty fallback path.");
-                    }
-
-                    context.Request.Path = fallbackPath.Value;
-
-                    await Next(context);
-
-                    if (ShouldThrow(context))
-                    {
-                        // The fallback failed. Throw to let the developer know :)
-                        throw new SpaFallbackException(fallbackPath.Value);
-                    }
+                    throw new SpaFallbackException(
+                        $"{nameof(Options.FallbackPathFactory)} must be specified and return a non-empty fallback path.");
                 }
-                finally
+
+                context.Request.Path = fallbackPath.Value;
+
+                await Next(context);
+
+                if (ShouldThrow(context))
                 {
-                    // Let's be nice and restore the original path...
-                    context.Request.Path = originalPath;
+                    // The fallback failed. Throw to let the developer know :)
+                    throw new SpaFallbackException(fallbackPath.Value);
                 }
+            }
+            finally
+            {
+                // Let's be nice and restore the original path...
+                context.Request.Path = originalPath;
             }
         }
 
