@@ -43,11 +43,13 @@ namespace Hellang.Middleware.SpaFallback
 
                     if (ShouldThrow(context))
                     {
+                        // The fallback failed. Throw to let the developer know :)
                         throw new SpaFallbackException(fallbackPath.Value);
                     }
                 }
                 finally
                 {
+                    // Let's be nice and restore the original path...
                     context.Request.Path = originalPath;
                 }
             }
