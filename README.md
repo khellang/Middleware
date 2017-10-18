@@ -26,7 +26,7 @@ The middleware tries to be as smart as possible when determining whether a fallb
 
 If the request path has a file extension, i.e. `/public/image.png`, the client probably wanted an actual file (typically served by [StaticFiles](https://github.com/aspnet/StaticFiles)), but it was missing from disk, so we let the 404 response through to the client.
 
-In addition, we check that the response wasn't handled by other middleware (but still ended up with a 404 status code. This is useful if you want to prevent disclosing the existance of a resource that the client don't have access to. In order to achieve this, `AddSpaFallback` will automatically inject a "marker middleware" at the end of the pipeline. If the request reaches this middleware, it will set the response status code to 404 and add a tag to the `HttpContext.Items` dictionary.
+In addition, we check that the response wasn't handled by other middleware (but still ended up with a 404 status code). This is useful if you want to prevent disclosing the existence of a resource that the client don't have access to. In order to achieve this, `AddSpaFallback` will automatically inject a "marker middleware" at the end of the pipeline. If the request reaches this middleware, it will set the response status code to 404 and add a tag to the `HttpContext.Items` dictionary. This tag is then checked in the fallback middleware to verify a "hard" 404.
 
 ### Usage
 
