@@ -23,11 +23,14 @@ namespace Hellang.Middleware.SpaFallback
         {
             await Next(context);
 
-            if (!ShouldFallback(context))
+            if (ShouldFallback(context))
             {
-                return;
+                await Fallback(context);
             }
+        }
 
+        private async Task Fallback(HttpContext context)
+        {
             var originalPath = context.Request.Path;
 
             try
