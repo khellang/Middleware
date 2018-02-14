@@ -41,6 +41,7 @@ namespace Hellang.Middleware.SpaFallback
                 services.Configure(configure);
             }
 
+            // The StartupFilter is responsible for adding a marker middleware at the end of the pipeline.
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IStartupFilter, StartupFilter>());
 
             return services;
@@ -53,6 +54,7 @@ namespace Hellang.Middleware.SpaFallback
                 throw new ArgumentNullException(nameof(app));
             }
 
+            // Set the key to signal that the marker middleware should be added.
             app.Properties[MarkerKey] = true;
 
             return app.UseMiddleware<SpaFallbackMiddleware>();
@@ -75,7 +77,7 @@ namespace Hellang.Middleware.SpaFallback
                 return false;
             }
 
-            // Fallback only on "hard" 404s, i.e. when the request reached the marker MW.
+            // Fallback only on "hard" 404s, i.e. when the request reached the marker middleware.
             if (!context.Items.ContainsKey(MarkerKey))
             {
                 return false;
@@ -107,6 +109,8 @@ namespace Hellang.Middleware.SpaFallback
                 {
                     next(app);
 
+                    // We only want to add the end middleware if
+                    // UseSpaFallback has been called on the builder.
                     if (app.Properties.ContainsKey(MarkerKey))
                     {
                         app.UseMiddleware<MarkerMiddleware>();
@@ -125,9 +129,10 @@ namespace Hellang.Middleware.SpaFallback
 
                 public Task Invoke(HttpContext context)
                 {
-                    context.Items[MarkerKey] = true; // Where the magic happens...
-                    context.Response.StatusCode = StatusCodes.Status404NotFound;
-                    return Task.CompletedTask;
+                    // This marker is used to signal that the request wasn't
+                    // handled and reached the end of the application pipeline.
+                    context.Items[MarkerKey] = true;
+                    return Next(context);
                 }
             }
         }
