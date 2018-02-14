@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using static Microsoft.AspNetCore.Http.HttpMethods;
 
 namespace Hellang.Middleware.SpaFallback
 {
@@ -69,13 +70,13 @@ namespace Hellang.Middleware.SpaFallback
                 return false;
             }
 
-            // Fallback only on "hard" 404s, i.e. when the request reached the marker MW.
-            if (!context.Items.ContainsKey(MarkerKey))
+            if (!IsGet(context.Request.Method))
             {
                 return false;
             }
 
-            if (!HttpMethods.IsGet(context.Request.Method))
+            // Fallback only on "hard" 404s, i.e. when the request reached the marker MW.
+            if (!context.Items.ContainsKey(MarkerKey))
             {
                 return false;
             }
@@ -93,7 +94,7 @@ namespace Hellang.Middleware.SpaFallback
             return context.Response.StatusCode == StatusCodes.Status404NotFound && options.ThrowIfFallbackFails;
         }
 
-        internal static bool HasFileExtension(this PathString path)
+        private static bool HasFileExtension(this PathString path)
         {
             return path.HasValue && Path.HasExtension(path.Value);
         }
