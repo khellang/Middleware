@@ -12,11 +12,7 @@ namespace Hellang.Middleware.SpaFallback
 
         private const string Mvc = "UseMvc";
 
-        public SpaFallbackException(PathString path) : this(GetMessage(path))
-        {
-        }
-
-        public SpaFallbackException(string message) : base(message)
+        public SpaFallbackException(PathString path) : base(GetMessage(path))
         {
         }
 
