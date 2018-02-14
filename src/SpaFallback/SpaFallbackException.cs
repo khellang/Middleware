@@ -14,7 +14,10 @@ namespace Hellang.Middleware.SpaFallback
 
         public SpaFallbackException(PathString path) : base(GetMessage(path))
         {
+            Path = path;
         }
+
+        public PathString Path { get; }
 
         private static string GetMessage(PathString path) => new StringBuilder()
             .AppendLine($"The {Fallback} middleware failed to provide a fallback response for path '{path}' because no middleware could handle it.")
