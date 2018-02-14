@@ -25,12 +25,7 @@ namespace Hellang.Middleware.SpaFallback
                 throw new ArgumentException("Fallback path must have a value.", nameof(fallbackPath));
             }
 
-            PathString Factory(HttpContext context)
-            {
-                return fallbackPath;
-            }
-
-            return services.AddSpaFallback(options => options.FallbackPathFactory = Factory);
+            return services.AddSpaFallback(options => options.GetFallbackPath = ctx => fallbackPath);
         }
 
         public static IServiceCollection AddSpaFallback(this IServiceCollection services, Action<SpaFallbackOptions> configure)

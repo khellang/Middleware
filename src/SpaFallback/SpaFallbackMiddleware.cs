@@ -6,6 +6,8 @@ namespace Hellang.Middleware.SpaFallback
 {
     public class SpaFallbackMiddleware
     {
+        private static readonly PathString DefaultFallbackPath = new PathString("/index.html");
+
         public SpaFallbackMiddleware(RequestDelegate next, IOptions<SpaFallbackOptions> options)
         {
             Next = next;
@@ -32,22 +34,16 @@ namespace Hellang.Middleware.SpaFallback
 
             try
             {
-                var fallbackPath = Options.FallbackPathFactory?.Invoke(context);
+                var fallbackPath = GetFallbackPath(context);
 
-                if (!fallbackPath.HasValue)
-                {
-                    throw new SpaFallbackException(
-                        $"{nameof(Options.FallbackPathFactory)} must be specified and return a non-empty fallback path.");
-                }
-
-                context.Request.Path = fallbackPath.Value;
+                context.Request.Path = fallbackPath;
 
                 await Next(context);
 
                 if (context.ShouldThrow(Options))
                 {
                     // The fallback failed. Throw to let the developer know :)
-                    throw new SpaFallbackException(fallbackPath.Value);
+                    throw new SpaFallbackException(fallbackPath);
                 }
             }
             finally
@@ -55,6 +51,11 @@ namespace Hellang.Middleware.SpaFallback
                 // Let's be nice and restore the original path...
                 context.Request.Path = originalPath;
             }
+        }
+
+        private PathString GetFallbackPath(HttpContext context)
+        {
+            return Options.GetFallbackPath?.Invoke(context) ?? DefaultFallbackPath;
         }
     }
 }
