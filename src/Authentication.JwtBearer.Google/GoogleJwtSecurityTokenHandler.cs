@@ -41,10 +41,20 @@ namespace Hellang.Authentication.JwtBearer.Google
                     throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidDomainException(LogMessages.IDX10251) { InvalidDomain = hostedDomain });
                 }
 
-                LogHelper.LogInformation(LogMessages.IDX10252, hostedDomain);
+                LogInformation(hostedDomain);
             }
 
             return principal;
+        }
+
+        // Just copied over the code from LogHelper.LogInformation
+        // instead of pulling in Microsoft.IdentityModel.Logging > 5.2.1
+        private static void LogInformation(string hostedDomain)
+        {
+            if (IdentityModelEventSource.Logger.IsEnabled())
+            {
+                IdentityModelEventSource.Logger.WriteInformation(LogMessages.IDX10252, hostedDomain);
+            }
         }
     }
 }
