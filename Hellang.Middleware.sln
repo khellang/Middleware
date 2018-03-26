@@ -5,6 +5,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaFallback", "src\SpaFallback\SpaFallback.csproj", "{8ED0E9AD-B936-4D01-9793-9470B964B97E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{060C1A9F-5042-4B16-A97A-B249B219F666}"
+ProjectSection(SolutionItems) = preProject
+	src\Directory.Build.props = src\Directory.Build.props
+EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{17F15D82-AC56-4579-BF5F-E53539AC0DB4}"
 EndProject

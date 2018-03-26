@@ -1,19 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <Version>1.0.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Hellang.Authentication.JwtBearer.Google</AssemblyName>
     <RootNamespace>Hellang.Authentication.JwtBearer.Google</RootNamespace>
-    <Authors>khellang</Authors>
-    <Company>khellang</Company>
     <Description>JWT Bearer authentication for Google tokens</Description>
     <PackageTags>aspnetcore;authentication;security;jwt;google</PackageTags>
-    <Version>1.0.0</Version>
-    <RepositoryUrl>https://github.com/khellang/Middleware</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/khellang/Middleware</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/khellang/Middleware/master/LICENSE</PackageLicenseUrl>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.1" />

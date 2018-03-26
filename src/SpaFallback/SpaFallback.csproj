@@ -1,19 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <Version>1.1.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Hellang.Middleware.SpaFallback</AssemblyName>
     <RootNamespace>Hellang.Middleware.SpaFallback</RootNamespace>
-    <Authors>khellang</Authors>
-    <Company>khellang</Company>
     <Description>SPA fallback middleware for client-side routing</Description>
-    <PackageTags>middleware spa routing</PackageTags>
     <PackageReleaseNotes>Added automatic host injection</PackageReleaseNotes>
-    <Version>1.1.0</Version>
-    <RepositoryUrl>https://github.com/khellang/Middleware</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/khellang/Middleware</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/khellang/Middleware/master/LICENSE</PackageLicenseUrl>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageTags>middleware;spa;routing</PackageTags>
   </PropertyGroup>
   
   <ItemGroup>
