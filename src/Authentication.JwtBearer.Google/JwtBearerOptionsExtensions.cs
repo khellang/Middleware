@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class JwtBearerOptionsExtensions
-    {
+    {        
         public static JwtBearerOptions UseGoogle(this JwtBearerOptions options, string clientId)
         {
             return options.UseGoogle(clientId, null);
@@ -26,8 +26,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             options.Audience = clientId;
             options.Authority = "https://accounts.google.com";
+            
             options.SecurityTokenValidators.Clear();
             options.SecurityTokenValidators.Add(new GoogleJwtSecurityTokenHandler());
+            
             options.TokenValidationParameters = new GoogleTokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -36,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 ValidateIssuerSigningKey = true,
 
                 NameClaimType = GoogleClaimTypes.Name,
-                AuthenticationType = JwtBearerDefaults.AuthenticationScheme,
+                AuthenticationType = "Google." + JwtBearerDefaults.AuthenticationScheme,
 
                 HostedDomain = hostedDomain,
                 ValidIssuers = new[] { options.Authority, "accounts.google.com" },
