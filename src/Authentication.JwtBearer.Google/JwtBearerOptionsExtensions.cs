@@ -26,12 +26,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             options.Audience = clientId;
             options.Authority = "https://accounts.google.com";
-
-            var handler = new GoogleJwtSecurityTokenHandler();
-
             options.SecurityTokenValidators.Clear();
-            options.SecurityTokenValidators.Add(handler);
-
+            options.SecurityTokenValidators.Add(new GoogleJwtSecurityTokenHandler());
             options.TokenValidationParameters = new GoogleTokenValidationParameters
             {
                 ValidateIssuer = true,
