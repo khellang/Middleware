@@ -7,11 +7,28 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class JwtBearerOptionsExtensions
     {        
+        /// <summary>
+        /// Configures the JWT Bearer authentication handler to validate Google OpenID Connect tokens
+        /// for a specified <paramref name="clientId"/>.
+        /// </summary>
+        /// <param name="options">The options to configure.</param>
+        /// <param name="clientId">The client ID string that you obtain from the API Console.</param>
+        /// <exception cref="ArgumentNullException">If the <paramref name="clientId"/> argument is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If the <paramref name="clientId"/> argument is empty.</exception>
         public static JwtBearerOptions UseGoogle(this JwtBearerOptions options, string clientId)
         {
             return options.UseGoogle(clientId, null);
         }
 
+        /// <summary>
+        /// Configures the JWT Bearer authentication handler to validate Google OpenID Connect tokens
+        /// for a specified <paramref name="clientId"/> and <paramref name="hostedDomain"/>.
+        /// </summary>
+        /// <param name="options">The options to configure.</param>
+        /// <param name="clientId">The client ID string that you obtain from the API Console.</param>
+        /// <param name="hostedDomain">The hd (hosted domain) parameter streamlines the login process for G Suite hosted accounts.</param>
+        /// <exception cref="ArgumentNullException">If the <paramref name="clientId"/> argument is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If the <paramref name="clientId"/> argument is empty.</exception>
         public static JwtBearerOptions UseGoogle(this JwtBearerOptions options, string clientId, string hostedDomain)
         {
             if (clientId == null)
