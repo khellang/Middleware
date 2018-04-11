@@ -47,3 +47,18 @@ public class Startup
     }
 }
 ```
+
+## Authentication.JwtBearer.Google [![NuGet](https://img.shields.io/nuget/v/Hellang.Authentication.JwtBearer.Google.svg)](https://www.nuget.org/packages/Hellang.Authentication.JwtBearer.Google)
+                                  
+> Install-Package Hellang.Authentication.JwtBearer.Google
+
+Makes it straight-forward to hook up authentication with Google identity tokens, using Microsoft's existing `Microsoft.AspNetCore.Authentication.JwtBearer` for parsing and validating the tokens.
+
+### Usage
+
+````csharp
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(x => x.UseGoogle(
+        clientId: "<google-client-id>",
+        hostedDomain: "<optional-g-suite-domain>"));
+````
