@@ -133,6 +133,12 @@ namespace Hellang.Middleware.SpaFallback.Tests
             }
         }
 
+        [Fact]
+        public void CallingUseSpaFallbackWithoutCallingAddSpaFallback_Throws()
+        {
+            Assert.Throws<InvalidOperationException>(() => new TestServer(new WebHostBuilder().Configure(x => x.UseSpaFallback())));
+        }
+
         private static TestServer CreateServer(string requestPath = null, bool allowFileExtensions = false)
         {
             var config = new List<KeyValuePair<string, string>>

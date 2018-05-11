@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,10 @@ namespace Hellang.Middleware.SpaFallback
 {
     public static class SpaFallbackExtensions
     {
+        private const string UseMiddleware = nameof(IApplicationBuilder) + "." + nameof(UseSpaFallback);
+
+        private const string AddServices = nameof(IServiceCollection) + "." + nameof(AddSpaFallback);
+
         private const string MarkerKey = "middleware.SpaFallback";
 
         public static IServiceCollection AddSpaFallback(this IServiceCollection services)
@@ -41,6 +46,9 @@ namespace Hellang.Middleware.SpaFallback
                 services.Configure(configure);
             }
 
+            // Make sure we signal that we've called AddSpaFallback.
+            services.TryAddSingleton<SpaFallbackMarkerService>();
+
             // The StartupFilter is responsible for adding a marker middleware at the end of the pipeline.
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IStartupFilter, StartupFilter>());
 
@@ -52,6 +60,19 @@ namespace Hellang.Middleware.SpaFallback
             if (app == null)
             {
                 throw new ArgumentNullException(nameof(app));
+            }
+
+            var marker = app.ApplicationServices.GetService<SpaFallbackMarkerService>();
+
+            if (marker == null)
+            {
+                var message = new StringBuilder()
+                    .AppendLine($"Unable to find the required services for the {nameof(UseSpaFallback)} middleware to function correctly.")
+                    .AppendLine($"Make sure you call {AddServices} before calling {UseMiddleware}.")
+                    .AppendLine("This is typically done inside the ConfigureServices method in your Startup class.")
+                    .ToString();
+
+                throw new InvalidOperationException(message);
             }
 
             // Set the key to signal that the marker middleware should be added.
@@ -135,6 +156,14 @@ namespace Hellang.Middleware.SpaFallback
                     return Next(context);
                 }
             }
+        }
+
+        /// <summary>
+        /// A marker class used to determine if <see cref="AddSpaFallback(IServiceCollection)"/>
+        /// has been called before calling <see cref="UseSpaFallback"/>.
+        /// </summary>
+        private class SpaFallbackMarkerService
+        {
         }
     }
 }
