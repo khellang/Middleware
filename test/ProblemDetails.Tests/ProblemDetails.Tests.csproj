@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>Hellang.Middleware.ProblemDetails.Tests</AssemblyName>
+    <RootNamespace>Hellang.Middleware.ProblemDetails.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.0-rc1-final" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ProblemDetails\ProblemDetails.csproj" />
+  </ItemGroup>
+</Project>

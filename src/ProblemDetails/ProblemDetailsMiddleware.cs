@@ -1,0 +1,125 @@
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
+
+namespace Hellang.Middleware.ProblemDetails
+{
+    public class ProblemDetailsMiddleware
+    {
+        private static readonly ActionDescriptor EmptyActionDescriptor = new ActionDescriptor();
+
+        private static readonly RouteData EmptyRouteData = new RouteData();
+
+        public ProblemDetailsMiddleware(RequestDelegate next, ILogger<ProblemDetailsMiddleware> logger, IActionResultExecutor<ObjectResult> executor)
+        {
+            Next = next;
+            Logger = logger;
+            Executor = executor;
+        }
+
+        private RequestDelegate Next { get; }
+
+        private ILogger<ProblemDetailsMiddleware> Logger { get; }
+
+        private IActionResultExecutor<ObjectResult> Executor { get; }
+
+        public async Task Invoke(HttpContext context)
+        {
+            try
+            {
+                await Next(context);
+
+                if (context.Response.HasStarted)
+                {
+                    Logger.LogDebug("Response has already started.");
+                    return;
+                }
+
+                if (IsProblem(context))
+                {
+                    await WriteProblemDetails(context, new StatusCodeProblemDetails(context.Response.StatusCode));
+                }
+            }
+            catch (Exception error)
+            {
+                if (context.Response.HasStarted)
+                {
+                    Logger.LogDebug("Response has already started.");
+                    throw;
+                }
+
+                try
+                {
+                    context.Response.Clear();
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    
+                    // TODO: Make sure these responses won't be cached.
+
+                    if (error is ProblemDetailsException problem)
+                    {
+                        await WriteProblemDetails(context, problem.Details);
+                        return;
+                    }
+
+                    await WriteProblemDetails(context, new ExceptionProblemDetails(error));
+                    return;
+                }
+                catch (Exception inner)
+                {
+                    Logger.LogWarning(inner, "Exception occurred while writing problem details response.");
+                }
+
+                throw;
+            }
+        }
+
+        private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
+        {
+            var routeData = context.GetRouteData() ?? EmptyRouteData;
+
+            var actionContext = new ActionContext(context, routeData, EmptyActionDescriptor);
+
+            var result = new ObjectResult(details)
+            {
+                StatusCode = details.Status ?? context.Response.StatusCode,
+                DeclaredType = details.GetType(),
+            };
+
+            result.ContentTypes.Add("application/problem+json");
+            result.ContentTypes.Add("application/problem+xml");
+
+            return Executor.ExecuteAsync(actionContext, result);
+        }
+
+        private static bool IsProblem(HttpContext context)
+        {
+            if (context.Response.StatusCode < 400)
+            {
+                return false;
+            }
+
+            if (context.Response.StatusCode >= 600)
+            {
+                return false;
+            }
+
+            if (context.Response.ContentLength.HasValue)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(context.Response.ContentType))
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
+}
