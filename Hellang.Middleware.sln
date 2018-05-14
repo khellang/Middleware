@@ -1,15 +1,19 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaFallback", "src\SpaFallback\SpaFallback.csproj", "{8ED0E9AD-B936-4D01-9793-9470B964B97E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{060C1A9F-5042-4B16-A97A-B249B219F666}"
-ProjectSection(SolutionItems) = preProject
-	src\Directory.Build.props = src\Directory.Build.props
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{17F15D82-AC56-4579-BF5F-E53539AC0DB4}"
+	ProjectSection(SolutionItems) = preProject
+		test\Directory.Build.props = test\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaFallback.Tests", "test\SpaFallback.Tests\SpaFallback.Tests.csproj", "{9EAA652B-873A-4F0F-B751-5381CDB774FD}"
 EndProject
@@ -20,9 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication.JwtBearer.Google", "src\Authentication.JwtBearer.Google\Authentication.JwtBearer.Google.csproj", "{E5BCFA2D-ACE6-4BC6-A327-009563366065}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProblemDetails", "src\ProblemDetails\ProblemDetails.csproj", "{88FA068F-E20F-44B1-AFD3-4C1F102EB976}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails", "src\ProblemDetails\ProblemDetails.csproj", "{88FA068F-E20F-44B1-AFD3-4C1F102EB976}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProblemDetails.Tests", "test\ProblemDetails.Tests\ProblemDetails.Tests.csproj", "{4F560993-778B-4C15-B5BB-619DAFB1D6A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails.Tests", "test\ProblemDetails.Tests\ProblemDetails.Tests.csproj", "{4F560993-778B-4C15-B5BB-619DAFB1D6A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

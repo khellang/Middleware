@@ -1,11 +1,12 @@
 <Project>
-    <PropertyGroup>
-        <Authors>Kristian Hellang</Authors>
-        <RepositoryUrl>https://github.com/khellang/Middleware</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <PackageProjectUrl>https://github.com/khellang/Middleware</PackageProjectUrl>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/khellang/Middleware/master/LICENSE</PackageLicenseUrl>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NoWarn>$(NoWarn);CS1591</NoWarn>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Kristian Hellang</Authors>
+    <RepositoryUrl>https://github.com/khellang/Middleware</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/khellang/Middleware</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/khellang/Middleware/master/LICENSE</PackageLicenseUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <LangVersion>Latest</LangVersion>
+  </PropertyGroup>
 </Project>
