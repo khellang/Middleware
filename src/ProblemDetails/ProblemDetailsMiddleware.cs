@@ -55,11 +55,9 @@ namespace Hellang.Middleware.ProblemDetails
 
                 if (IsProblem(context))
                 {
-                    var statusCode = context.Response.StatusCode;
+                    ClearResponse(context, context.Response.StatusCode);
 
-                    ClearResponse(context);
-
-                    await WriteProblemDetails(context, new StatusCodeProblemDetails(statusCode));
+                    await WriteProblemDetails(context, new StatusCodeProblemDetails(context.Response.StatusCode));
                 }
             }
             catch (Exception error)
@@ -72,10 +70,8 @@ namespace Hellang.Middleware.ProblemDetails
 
                 try
                 {
-                    ClearResponse(context);
+                    ClearResponse(context, StatusCodes.Status500InternalServerError);
 
-                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    
                     if (error is ProblemDetailsException problem)
                     {
                         await WriteProblemDetails(context, problem.Details);
@@ -137,7 +133,7 @@ namespace Hellang.Middleware.ProblemDetails
             return false;
         }
 
-        private static void ClearResponse(HttpContext context)
+        private static void ClearResponse(HttpContext context, int statusCode)
         {
             var headers = new HeaderDictionary();
 
@@ -157,6 +153,7 @@ namespace Hellang.Middleware.ProblemDetails
             }
 
             context.Response.Clear();
+            context.Response.StatusCode = statusCode;
 
             foreach (var header in headers)
             {
