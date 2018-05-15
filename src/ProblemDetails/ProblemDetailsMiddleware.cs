@@ -111,7 +111,10 @@ namespace Hellang.Middleware.ProblemDetails
                 return problem.Details;
             }
 
-            // TODO: Allow user to map exception to problem details.
+            if (Options.TryMapProblemDetails(error, out var details))
+            {
+                return details;
+            }
 
             if (Options.IncludeExceptionDetails(context))
             {
