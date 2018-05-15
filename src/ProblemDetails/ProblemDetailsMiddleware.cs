@@ -43,7 +43,11 @@ namespace Hellang.Middleware.ProblemDetails
 
                 if (IsProblem(context))
                 {
-                    await WriteProblemDetails(context, new StatusCodeProblemDetails(context.Response.StatusCode));
+                    var statusCode = context.Response.StatusCode;
+
+                    ClearResponse(context);
+
+                    await WriteProblemDetails(context, new StatusCodeProblemDetails(statusCode));
                 }
             }
             catch (Exception error)
@@ -56,7 +60,8 @@ namespace Hellang.Middleware.ProblemDetails
 
                 try
                 {
-                    context.Response.Clear();
+                    ClearResponse(context);
+
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     
                     // TODO: Make sure these responses won't be cached.
@@ -120,6 +125,28 @@ namespace Hellang.Middleware.ProblemDetails
             }
 
             return false;
+        }
+
+        private static void ClearResponse(HttpContext context)
+        {
+            var headers = new HeaderDictionary();
+
+            foreach (var header in context.Response.Headers)
+            {
+                // Because the CORS middleware adds all the headers early in the pipeline,
+                // we want to copy over the existing Access-Control-* headers after resetting the response.
+                if (header.Key.StartsWith("Access-Control-", StringComparison.OrdinalIgnoreCase))
+                {
+                    headers.Add(header);
+                }
+            }
+
+            context.Response.Clear();
+
+            foreach (var header in headers)
+            {
+                context.Response.Headers.Add(header);
+            }
         }
     }
 }

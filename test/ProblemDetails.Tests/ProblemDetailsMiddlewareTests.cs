@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -45,6 +47,22 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                 Assert.Equal(expected, response.StatusCode);
                 Assert.Equal("application/problem+json", response.Content.Headers.ContentType.MediaType);
                 Assert.NotEmpty(await response.Content.ReadAsStringAsync());
+            }
+        }
+
+        [Fact]
+        public async Task CORSHeaders_AreMaintained()
+        {
+            using (var server = CreateServer())
+            using (var client = server.CreateClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, "/exception");
+
+                request.Headers.Add(HeaderNames.Origin, "localhost");
+
+                var response = await client.SendAsync(request);
+
+                Assert.Contains(response.Headers, x => x.Key.StartsWith("Access-Control-Allow-"));
             }
         }
 
@@ -107,8 +125,14 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         private static TestServer CreateServer()
         {
             var builder = new WebHostBuilder()
-                .ConfigureServices(x => x.AddMvcCore().AddJsonFormatters(ConfigureJson))
-                .Configure(x => x.UseProblemDetails().Use(HandleRoutes));
+                .ConfigureServices(x => x
+                    .AddCors()
+                    .AddMvcCore()
+                    .AddJsonFormatters(ConfigureJson))
+                .Configure(x => x
+                    .UseCors(y => y.AllowAnyOrigin())
+                    .UseProblemDetails()
+                    .Use(HandleRoutes));
 
             return new TestServer(builder);
         }
