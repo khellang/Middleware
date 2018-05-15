@@ -2,7 +2,7 @@
 
 namespace Hellang.Middleware.ProblemDetails
 {
-    internal class StatusCodeProblemDetails : Microsoft.AspNetCore.Mvc.ProblemDetails
+    public class StatusCodeProblemDetails : Microsoft.AspNetCore.Mvc.ProblemDetails
     {
         public StatusCodeProblemDetails(int statusCode)
         {
