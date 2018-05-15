@@ -7,6 +7,7 @@ namespace Hellang.Middleware.ProblemDetails
     {
         public ExceptionProblemDetails(Exception error) : base(StatusCodes.Status500InternalServerError)
         {
+            Detail = error.Message;
             Instance = GetHelpLink(error);
             StackTrace = error.StackTrace;
             Title = error.GetType().FullName;
