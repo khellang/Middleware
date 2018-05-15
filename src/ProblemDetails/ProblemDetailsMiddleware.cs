@@ -49,7 +49,7 @@ namespace Hellang.Middleware.ProblemDetails
 
                 if (context.Response.HasStarted)
                 {
-                    Logger.LogDebug("Response has already started.");
+                    Logger.ResponseStarted();
                     return;
                 }
 
@@ -62,10 +62,12 @@ namespace Hellang.Middleware.ProblemDetails
             }
             catch (Exception error)
             {
+                Logger.UnhandledException(error);
+
                 if (context.Response.HasStarted)
                 {
-                    Logger.LogDebug("Response has already started.");
-                    throw;
+                    Logger.ResponseStarted();
+                    throw; // Re-throw the original exception if we can't handle it properly.
                 }
 
                 try
@@ -78,15 +80,17 @@ namespace Hellang.Middleware.ProblemDetails
                         return;
                     }
 
+                    // TODO: Make sure we don't accidentally leak exception details.
                     await WriteProblemDetails(context, new ExceptionProblemDetails(error));
                     return;
                 }
                 catch (Exception inner)
                 {
-                    Logger.LogWarning(inner, "Exception occurred while writing problem details response.");
+                    // If we fail to write a problem response, we log the exception and throw the original below.
+                    Logger.ProblemDetailsMiddlewareException(inner);
                 }
 
-                throw;
+                throw; // Re-throw the original exception if we can't handle it properly.
             }
         }
 
