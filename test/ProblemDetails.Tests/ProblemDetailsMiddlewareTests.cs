@@ -66,6 +66,22 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             }
         }
 
+        [Fact]
+        public async Task ProblemResponses_ShouldNotBeCached()
+        {
+            using (var server = CreateServer())
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/exception");
+
+                var cacheControl = response.Headers.CacheControl;
+
+                Assert.True(cacheControl.NoCache, nameof(cacheControl.NoCache));
+                Assert.True(cacheControl.NoStore, nameof(cacheControl.NoStore));
+                Assert.True(cacheControl.MustRevalidate, nameof(cacheControl.MustRevalidate));
+            }
+        }
+
         [Theory]
         [InlineData(HttpStatusCode.OK)]
         [InlineData(HttpStatusCode.Created)]

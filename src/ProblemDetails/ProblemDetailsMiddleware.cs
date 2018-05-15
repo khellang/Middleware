@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace Hellang.Middleware.ProblemDetails
@@ -64,8 +65,6 @@ namespace Hellang.Middleware.ProblemDetails
 
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     
-                    // TODO: Make sure these responses won't be cached.
-
                     if (error is ProblemDetailsException problem)
                     {
                         await WriteProblemDetails(context, problem.Details);
@@ -130,6 +129,11 @@ namespace Hellang.Middleware.ProblemDetails
         private static void ClearResponse(HttpContext context)
         {
             var headers = new HeaderDictionary();
+
+            // Make sure problem responses are never cached.
+            headers.Append(HeaderNames.CacheControl, "no-cache, no-store, must-revalidate");
+            headers.Append(HeaderNames.Pragma, "no-cache");
+            headers.Append(HeaderNames.Expires, "0");
 
             foreach (var header in context.Response.Headers)
             {
