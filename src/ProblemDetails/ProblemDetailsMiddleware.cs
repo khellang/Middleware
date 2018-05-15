@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
@@ -28,18 +29,25 @@ namespace Hellang.Middleware.ProblemDetails
             HeaderNames.AccessControlMaxAge,
         };
 
-        public ProblemDetailsMiddleware(RequestDelegate next, ILogger<ProblemDetailsMiddleware> logger, IActionResultExecutor<ObjectResult> executor)
+        public ProblemDetailsMiddleware(
+            RequestDelegate next,
+            IOptions<ProblemDetailsOptions> options,
+            IActionResultExecutor<ObjectResult> executor,
+            ILogger<ProblemDetailsMiddleware> logger)
         {
             Next = next;
-            Logger = logger;
+            Options = options.Value;
             Executor = executor;
+            Logger = logger;
         }
 
         private RequestDelegate Next { get; }
 
-        private ILogger<ProblemDetailsMiddleware> Logger { get; }
+        private ProblemDetailsOptions Options { get; }
 
         private IActionResultExecutor<ObjectResult> Executor { get; }
+
+        private ILogger<ProblemDetailsMiddleware> Logger { get; }
 
         public async Task Invoke(HttpContext context)
         {
@@ -57,7 +65,9 @@ namespace Hellang.Middleware.ProblemDetails
                 {
                     ClearResponse(context, context.Response.StatusCode);
 
-                    await WriteProblemDetails(context, new StatusCodeProblemDetails(context.Response.StatusCode));
+                    var details = GetDetails(context, error: null);
+
+                    await WriteProblemDetails(context, details);
                 }
             }
             catch (Exception error)
@@ -74,14 +84,9 @@ namespace Hellang.Middleware.ProblemDetails
                 {
                     ClearResponse(context, StatusCodes.Status500InternalServerError);
 
-                    if (error is ProblemDetailsException problem)
-                    {
-                        await WriteProblemDetails(context, problem.Details);
-                        return;
-                    }
+                    var details = GetDetails(context, error);
 
-                    // TODO: Make sure we don't accidentally leak exception details.
-                    await WriteProblemDetails(context, new ExceptionProblemDetails(error));
+                    await WriteProblemDetails(context, details);
                     return;
                 }
                 catch (Exception inner)
@@ -92,6 +97,28 @@ namespace Hellang.Middleware.ProblemDetails
 
                 throw; // Re-throw the original exception if we can't handle it properly.
             }
+        }
+
+        private MvcProblemDetails GetDetails(HttpContext context, Exception error)
+        {
+            if (error == null)
+            {
+                return new StatusCodeProblemDetails(context.Response.StatusCode);
+            }
+
+            if (error is ProblemDetailsException problem)
+            {
+                return problem.Details;
+            }
+
+            // TODO: Allow user to map exception to problem details.
+
+            if (Options.IncludeExceptionDetails(context))
+            {
+                return new ExceptionProblemDetails(error);
+            }
+
+            return new StatusCodeProblemDetails(context.Response.StatusCode);
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)

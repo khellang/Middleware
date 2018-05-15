@@ -50,6 +50,23 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             }
         }
 
+        [Theory]
+        [InlineData("Staging", 84)]
+        [InlineData("Production", 84)]
+        [InlineData("Development", 646)]
+        public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedLength)
+        {
+            using (var server = CreateServer(environment))
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/exception");
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                Assert.Equal(expectedLength, content.Length);
+            }
+        }
+
         [Fact]
         public async Task CORSHeaders_AreMaintained()
         {
@@ -138,9 +155,10 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             }
         }
 
-        private static TestServer CreateServer()
+        private static TestServer CreateServer(string environment = null)
         {
             var builder = new WebHostBuilder()
+                .UseEnvironment(environment ?? EnvironmentName.Development)
                 .ConfigureServices(x => x
                     .AddCors()
                     .AddMvcCore()
