@@ -68,6 +68,18 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         }
 
         [Fact]
+        public async Task StatusCode_IsMaintainedWhenStrippingExceptionDetails()
+        {
+            using (var server = CreateServer("Production"))
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/exception");
+
+                Assert.Equal(HttpStatusCode.NotImplemented, response.StatusCode);
+            }
+        }
+
+        [Fact]
         public async Task CORSHeaders_AreMaintained()
         {
             using (var server = CreateServer())
