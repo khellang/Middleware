@@ -7,7 +7,11 @@ namespace Hellang.Middleware.ProblemDetails
     {
         private static readonly string[] LineSeparators = { Environment.NewLine };
 
-        public ExceptionProblemDetails(Exception error) : base(StatusCodes.Status500InternalServerError)
+        public ExceptionProblemDetails(Exception error) : this(error, StatusCodes.Status500InternalServerError)
+        {
+        }
+
+        public ExceptionProblemDetails(Exception error, int statusCode) : base(statusCode)
         {
             Detail = error.Message;
             Instance = GetHelpLink(error);

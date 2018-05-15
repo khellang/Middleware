@@ -35,7 +35,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         }
 
         [Theory]
-        [InlineData("/exception", HttpStatusCode.InternalServerError)]
+        [InlineData("/exception", HttpStatusCode.NotImplemented)]
         [InlineData("/exception-details", (HttpStatusCode) StatusCodes.Status429TooManyRequests)]
         public async Task Exception_IsHandled(string path, HttpStatusCode expected)
         {
@@ -53,7 +53,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [Theory]
         [InlineData("Staging", 84)]
         [InlineData("Production", 84)]
-        [InlineData("Development", 646)]
+        [InlineData("Development", 689)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedLength)
         {
             using (var server = CreateServer(environment))
@@ -194,7 +194,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
 
             if (context.Request.Path.StartsWithSegments("/exception"))
             {
-                throw new Exception("Request Failed");
+                throw new NotImplementedException();
             }
 
             if (context.Request.Path.StartsWithSegments("/exception-details"))

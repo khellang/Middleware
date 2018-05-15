@@ -111,14 +111,14 @@ namespace Hellang.Middleware.ProblemDetails
                 return problem.Details;
             }
 
-            if (Options.TryMapProblemDetails(error, out var details))
+            if (!Options.TryMapProblemDetails(error, out var details))
             {
-                return details;
+                details = new ExceptionProblemDetails(error);
             }
 
             if (Options.IncludeExceptionDetails(context))
             {
-                return new ExceptionProblemDetails(error);
+                return details;
             }
 
             return new StatusCodeProblemDetails(context.Response.StatusCode);
