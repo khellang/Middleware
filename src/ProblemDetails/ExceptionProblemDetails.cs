@@ -5,15 +5,17 @@ namespace Hellang.Middleware.ProblemDetails
 {
     internal class ExceptionProblemDetails : StatusCodeProblemDetails
     {
+        private static readonly string[] LineSeparators = { Environment.NewLine };
+
         public ExceptionProblemDetails(Exception error) : base(StatusCodes.Status500InternalServerError)
         {
             Detail = error.Message;
             Instance = GetHelpLink(error);
-            StackTrace = error.StackTrace;
+            StackTrace = GetStackTraceLines(error.StackTrace);
             Title = error.GetType().FullName;
         }
 
-        public string StackTrace { get; set; }
+        public string[] StackTrace { get; set; }
 
         private static string GetHelpLink(Exception error)
         {
@@ -30,6 +32,16 @@ namespace Hellang.Middleware.ProblemDetails
             }
 
             return null;
+        }
+
+        private static string[] GetStackTraceLines(string stackTrace)
+        {
+            if (string.IsNullOrEmpty(stackTrace))
+            {
+                return null;
+            }
+
+            return stackTrace.Split(LineSeparators, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }
