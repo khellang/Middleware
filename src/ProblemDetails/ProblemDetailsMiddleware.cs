@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,16 @@ namespace Hellang.Middleware.ProblemDetails
         private static readonly ActionDescriptor EmptyActionDescriptor = new ActionDescriptor();
 
         private static readonly RouteData EmptyRouteData = new RouteData();
+
+        private static readonly HashSet<string> CorsHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            HeaderNames.AccessControlAllowCredentials,
+            HeaderNames.AccessControlAllowHeaders,
+            HeaderNames.AccessControlAllowMethods,
+            HeaderNames.AccessControlAllowOrigin,
+            HeaderNames.AccessControlExposeHeaders,
+            HeaderNames.AccessControlMaxAge,
+        };
 
         public ProblemDetailsMiddleware(RequestDelegate next, ILogger<ProblemDetailsMiddleware> logger, IActionResultExecutor<ObjectResult> executor)
         {
@@ -139,7 +150,7 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 // Because the CORS middleware adds all the headers early in the pipeline,
                 // we want to copy over the existing Access-Control-* headers after resetting the response.
-                if (header.Key.StartsWith("Access-Control-", StringComparison.OrdinalIgnoreCase))
+                if (CorsHeaderNames.Contains(header.Key))
                 {
                     headers.Add(header);
                 }
