@@ -124,7 +124,7 @@ namespace Hellang.Middleware.ProblemDetails
                 return details;
             }
 
-            return new StatusCodeProblemDetails(context.Response.StatusCode);
+            return new StatusCodeProblemDetails(details.Status ?? context.Response.StatusCode);
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
