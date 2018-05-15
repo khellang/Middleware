@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Hellang.Middleware.ProblemDetails
 {
-    internal class ExceptionProblemDetails : StatusCodeProblemDetails
+    public class ExceptionProblemDetails : StatusCodeProblemDetails
     {
         private static readonly string[] LineSeparators = { Environment.NewLine };
 
