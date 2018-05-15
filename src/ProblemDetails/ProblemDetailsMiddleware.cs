@@ -113,10 +113,13 @@ namespace Hellang.Middleware.ProblemDetails
 
             if (!Options.TryMapProblemDetails(error, out var details))
             {
+                // Fall back to the generic exception problem details.
                 details = new ExceptionProblemDetails(error);
             }
 
-            if (Options.IncludeExceptionDetails(context))
+            // We don't want to leak exception details unless it's configured,
+            // even if the user mapped the exception into ExceptionProblemDetails.
+            if (details is ExceptionProblemDetails && Options.IncludeExceptionDetails(context))
             {
                 return details;
             }
