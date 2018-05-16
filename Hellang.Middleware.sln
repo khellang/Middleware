@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B3E133B-3849-4E32-8CA6-7F2023EC0B85}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication.JwtBearer.Google", "src\Authentication.JwtBearer.Google\Authentication.JwtBearer.Google.csproj", "{E5BCFA2D-ACE6-4BC6-A327-009563366065}"
