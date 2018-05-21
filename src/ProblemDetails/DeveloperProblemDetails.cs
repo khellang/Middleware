@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Internal;
@@ -55,6 +56,7 @@ namespace Hellang.Middleware.ProblemDetails
         {
             public ErrorDetails(ExceptionDetails detail)
             {
+                Raw = detail.Error.ToString();
                 Message = detail.ErrorMessage ?? detail.Error.Message;
                 Type = TypeNameHelper.GetTypeDisplayName(detail.Error.GetType());
                 StackFrames = GetStackFrames(detail.StackFrames).ToList();
@@ -64,6 +66,8 @@ namespace Hellang.Middleware.ProblemDetails
 
             public string Type { get; }
             
+            public string Raw { get; }
+            
             public IReadOnlyCollection<StackFrame> StackFrames { get; }
             
             private static IEnumerable<StackFrame> GetStackFrames(IEnumerable<StackFrameSourceCodeInfo> stackFrames)
@@ -72,7 +76,8 @@ namespace Hellang.Middleware.ProblemDetails
                 {
                     yield return new StackFrame
                     {
-                        File = stackFrame.File,
+                        FilePath = stackFrame.File,
+                        FileName = string.IsNullOrEmpty(stackFrame.File) ? null : Path.GetFileName(stackFrame.File),
                         Function = stackFrame.Function,
                         Line = GetLineNumber(stackFrame.Line),
                         PreContextLine = GetLineNumber(stackFrame.PreContextLine),
@@ -101,7 +106,9 @@ namespace Hellang.Middleware.ProblemDetails
 
             public class StackFrame
             {
-                public string File { get; set; }
+                public string FilePath { get; set; }
+
+                public string FileName { get; set; }
                 
                 public string Function { get; set; }
                 
