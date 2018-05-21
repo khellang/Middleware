@@ -74,13 +74,29 @@ namespace Hellang.Middleware.ProblemDetails
                     {
                         File = stackFrame.File,
                         Function = stackFrame.Function,
-                        Line = stackFrame.Line,
-                        PreContextLine = stackFrame.PreContextLine,
-                        PreContextCode = stackFrame.PreContextCode,
-                        ContextCode = stackFrame.ContextCode,
-                        PostContextCode = stackFrame.PostContextCode,
+                        Line = GetLineNumber(stackFrame.Line),
+                        PreContextLine = GetLineNumber(stackFrame.PreContextLine),
+                        PreContextCode = GetCode(stackFrame.PreContextCode),
+                        ContextCode = GetCode(stackFrame.ContextCode),
+                        PostContextCode = GetCode(stackFrame.PostContextCode),
                     };
                 }
+            }
+
+            private static int? GetLineNumber(int lineNumber)
+            {
+                if (lineNumber == 0)
+                {
+                    return null;
+                }
+
+                return lineNumber;
+            }
+
+            private static IReadOnlyCollection<string> GetCode(IEnumerable<string> code)
+            {
+                var list = code.ToList();
+                return list.Count > 0 ? list : null;
             }
 
             public class StackFrame
@@ -89,15 +105,15 @@ namespace Hellang.Middleware.ProblemDetails
                 
                 public string Function { get; set; }
                 
-                public int Line { get; set; }
+                public int? Line { get; set; }
                 
-                public int PreContextLine { get; set; }
+                public int? PreContextLine { get; set; }
                 
-                public IEnumerable<string> PreContextCode { get; set; }
+                public IReadOnlyCollection<string> PreContextCode { get; set; }
                 
-                public IEnumerable<string> ContextCode { get; set; }
+                public IReadOnlyCollection<string> ContextCode { get; set; }
                 
-                public IEnumerable<string> PostContextCode { get; set; }
+                public IReadOnlyCollection<string> PostContextCode { get; set; }
             }
         }
     }
