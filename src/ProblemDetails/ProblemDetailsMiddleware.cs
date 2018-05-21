@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -8,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.StackTrace.Sources;
 using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
@@ -33,12 +36,15 @@ namespace Hellang.Middleware.ProblemDetails
             RequestDelegate next,
             IOptions<ProblemDetailsOptions> options,
             IActionResultExecutor<ObjectResult> executor,
+            IHostingEnvironment environment,
             ILogger<ProblemDetailsMiddleware> logger)
         {
             Next = next;
             Options = options.Value;
             Executor = executor;
             Logger = logger;
+            var fileProvider = Options.FileProvider ?? environment.ContentRootFileProvider;
+            DetailsProvider = new ExceptionDetailsProvider(fileProvider, Options.SourceCodeLineCount);
         }
 
         private RequestDelegate Next { get; }
@@ -48,6 +54,8 @@ namespace Hellang.Middleware.ProblemDetails
         private IActionResultExecutor<ObjectResult> Executor { get; }
 
         private ILogger<ProblemDetailsMiddleware> Logger { get; }
+
+        private ExceptionDetailsProvider DetailsProvider { get; }
 
         public async Task Invoke(HttpContext context)
         {
@@ -106,25 +114,44 @@ namespace Hellang.Middleware.ProblemDetails
                 return new StatusCodeProblemDetails(context.Response.StatusCode);
             }
 
-            if (error is ProblemDetailsException problem)
-            {
-                return problem.Details;
-            }
-
-            if (!Options.TryMapProblemDetails(error, out var details))
-            {
-                // Fall back to the generic exception problem details.
-                details = new ExceptionProblemDetails(error);
-            }
+            var result = GetProblemDetails(error);
 
             // We don't want to leak exception details unless it's configured,
             // even if the user mapped the exception into ExceptionProblemDetails.
-            if (details is ExceptionProblemDetails && Options.IncludeExceptionDetails(context))
+            if (result is ExceptionProblemDetails ex && Options.IncludeExceptionDetails(context))
             {
-                return details;
+                try
+                {
+                    var details = DetailsProvider.GetDetails(ex.Error);
+                    return new DeveloperProblemDetails(ex, details);
+                }
+                catch (Exception e)
+                {
+                    // Failed to get exception details for the specific exception.
+                    // Fall back to generic status code problem details below.
+                    Logger.ProblemDetailsMiddlewareException(e);
+                }
             }
 
-            return new StatusCodeProblemDetails(details.Status ?? context.Response.StatusCode);
+            return new StatusCodeProblemDetails(result.Status ?? context.Response.StatusCode);
+        }
+
+        private MvcProblemDetails GetProblemDetails(Exception error)
+        {
+            if (error is ProblemDetailsException problem)
+            {
+                // The user has already provided a valid problem details object.
+                return problem.Details;
+            }
+
+            if (Options.TryMapProblemDetails(error, out var result))
+            {
+                // The user has set up a mapping for the specific exception type.
+                return result;
+            }
+
+            // Fall back to the generic exception problem details.
+            return new ExceptionProblemDetails(error);
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)

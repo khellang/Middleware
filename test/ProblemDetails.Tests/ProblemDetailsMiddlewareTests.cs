@@ -51,9 +51,9 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         }
 
         [Theory]
-        [InlineData("Staging", 84)]
-        [InlineData("Production", 84)]
-        [InlineData("Development", 679)]
+        [InlineData("Staging", 78)]
+        [InlineData("Production", 78)]
+        [InlineData("Development", 1880)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedLength)
         {
             using (var server = CreateServer(environment))
@@ -191,22 +191,17 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                 return Task.CompletedTask;
             }
 
-            if (TryGetStatusCode(context, "/error", out statusCode))
-            {
-                context.Response.StatusCode = statusCode;
-                return Task.CompletedTask;
-            }
-
             if (context.Request.Path.StartsWithSegments("/error-started"))
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.Body.WriteByte(byte.MinValue);
                 return Task.CompletedTask;
             }
-
-            if (context.Request.Path.StartsWithSegments("/exception"))
+            
+            if (TryGetStatusCode(context, "/error", out statusCode))
             {
-                throw new NotImplementedException();
+                context.Response.StatusCode = statusCode;
+                return Task.CompletedTask;
             }
 
             if (context.Request.Path.StartsWithSegments("/exception-details"))
@@ -227,6 +222,11 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             {
                 context.Response.Body.WriteByte(byte.MinValue);
                 throw new Exception("Request Failed");
+            }
+            
+            if (context.Request.Path.StartsWithSegments("/exception"))
+            {
+                throw new NotImplementedException();
             }
 
             return next();

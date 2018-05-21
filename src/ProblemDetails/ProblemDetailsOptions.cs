@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace Hellang.Middleware.ProblemDetails
@@ -9,8 +10,13 @@ namespace Hellang.Middleware.ProblemDetails
     {
         public ProblemDetailsOptions()
         {
+            SourceCodeLineCount = 6;
             Mappings = new Dictionary<Type, Func<Exception, MvcProblemDetails>>();
         }
+
+        public int SourceCodeLineCount { get; set; }
+
+        public IFileProvider FileProvider { get; set; }
 
         public Func<HttpContext, bool> IncludeExceptionDetails { get; set; }
 
