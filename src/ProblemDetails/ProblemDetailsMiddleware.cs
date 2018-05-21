@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -118,22 +117,27 @@ namespace Hellang.Middleware.ProblemDetails
 
             // We don't want to leak exception details unless it's configured,
             // even if the user mapped the exception into ExceptionProblemDetails.
-            if (result is ExceptionProblemDetails ex && Options.IncludeExceptionDetails(context))
+            if (result is ExceptionProblemDetails ex)
             {
-                try
+                if (Options.IncludeExceptionDetails(context))
                 {
-                    var details = DetailsProvider.GetDetails(ex.Error);
-                    return new DeveloperProblemDetails(ex, details);
+                    try
+                    {
+                        var details = DetailsProvider.GetDetails(ex.Error);
+                        return new DeveloperProblemDetails(ex, details);
+                    }
+                    catch (Exception e)
+                    {
+                        // Failed to get exception details for the specific exception.
+                        // Fall back to generic status code problem details below.
+                        Logger.ProblemDetailsMiddlewareException(e);
+                    }
                 }
-                catch (Exception e)
-                {
-                    // Failed to get exception details for the specific exception.
-                    // Fall back to generic status code problem details below.
-                    Logger.ProblemDetailsMiddlewareException(e);
-                }
+                
+                return new StatusCodeProblemDetails(ex.Status ?? context.Response.StatusCode);
             }
 
-            return new StatusCodeProblemDetails(result.Status ?? context.Response.StatusCode);
+            return result;
         }
 
         private MvcProblemDetails GetProblemDetails(Exception error)
