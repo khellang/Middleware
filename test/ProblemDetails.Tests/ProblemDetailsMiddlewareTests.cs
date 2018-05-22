@@ -53,7 +53,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [Theory]
         [InlineData("Staging", 78)]
         [InlineData("Production", 78)]
-        [InlineData("Development", 2486)]
+        [InlineData("Development", 2510)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedLength)
         {
             using (var server = CreateServer(environment))
