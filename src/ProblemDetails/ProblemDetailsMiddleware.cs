@@ -62,14 +62,14 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 await Next(context);
 
-                if (context.Response.HasStarted)
-                {
-                    Logger.ResponseStarted();
-                    return;
-                }
-
                 if (IsProblem(context))
                 {
+                    if (context.Response.HasStarted)
+                    {
+                        Logger.ResponseStarted();
+                        return;
+                    }
+                    
                     ClearResponse(context, context.Response.StatusCode);
 
                     var details = GetDetails(context, error: null);
