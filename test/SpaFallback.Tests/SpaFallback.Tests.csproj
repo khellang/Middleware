@@ -1,16 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <IsPackable>false</IsPackable>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Hellang.Middleware.SpaFallback.Tests</AssemblyName>
-    <RootNamespace>Hellang.Middleware.SpaFallback.Tests</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.0.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SpaFallback\SpaFallback.csproj" />
