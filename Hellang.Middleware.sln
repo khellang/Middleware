@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A978
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProblemDetails.Sample", "samples\ProblemDetails.Sample\ProblemDetails.Sample.csproj", "{D60F3C5B-4758-4D45-AB4B-A793595FD926}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiting", "src\RateLimiting\RateLimiting.csproj", "{E34F2445-1518-4B63-BAFF-15187F3EEEF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{D60F3C5B-4758-4D45-AB4B-A793595FD926}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D60F3C5B-4758-4D45-AB4B-A793595FD926}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D60F3C5B-4758-4D45-AB4B-A793595FD926}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E34F2445-1518-4B63-BAFF-15187F3EEEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E34F2445-1518-4B63-BAFF-15187F3EEEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E34F2445-1518-4B63-BAFF-15187F3EEEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E34F2445-1518-4B63-BAFF-15187F3EEEF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{88FA068F-E20F-44B1-AFD3-4C1F102EB976} = {060C1A9F-5042-4B16-A97A-B249B219F666}
 		{4F560993-778B-4C15-B5BB-619DAFB1D6A0} = {17F15D82-AC56-4579-BF5F-E53539AC0DB4}
 		{D60F3C5B-4758-4D45-AB4B-A793595FD926} = {A978F7AD-DFCC-41C4-9AEE-9E60D58A50FD}
+		{E34F2445-1518-4B63-BAFF-15187F3EEEF2} = {060C1A9F-5042-4B16-A97A-B249B219F666}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EB34854-E4E8-4AFD-91EB-C33FAD8F1725}
