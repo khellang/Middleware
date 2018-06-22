@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
@@ -20,49 +22,49 @@ namespace Hellang.Middleware.RateLimiting
         
         private RateLimitingOptions Options { get; }
 
-        public Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
-            if (IsSafelisted(context))
+            if (await Options.IsAllowed(context))
             {
-                return Next(context);
+                await Next(context);
+                return;
             }
 
-            if (IsBlocklisted(context))
+            if (await Options.IsBlocked(context))
             {
-                return Block(context);
+                await WriteBody(context, StatusCodes.Status403Forbidden, "Forbidden\n");
+                return;
             }
 
-            if (IsThrottled(context))
+            var limit = await Options.GetLimit(context);
+
+            if (limit.HasValue)
             {
-                return Throttle(context);
+                var result = limit.Value;
+
+                context.Response.Headers["X-RateLimit-Limit"] = result.Limit.ToString();
+                context.Response.Headers["X-RateLimit-Reset"] = ((int)result.ExpirationTime.TotalSeconds).ToString();
+                context.Response.Headers["X-RateLimit-Remaining"] = Math.Max(0, result.Limit - result.Count).ToString();
+
+                if (result.Count > result.Limit)
+                {
+                    await WriteBody(context, StatusCodes.Status429TooManyRequests, "Retry Later\n");
+                    return;
+                }
             }
 
-            return Next(context);
+            await Next(context);
         }
 
-        private bool IsSafelisted(HttpContext context)
+        private static Task WriteBody(HttpContext context, int statusCode, string message)
         {
-            throw new System.NotImplementedException();
-        }
+            var bytes = Encoding.UTF8.GetBytes(message);
 
-        private bool IsBlocklisted(HttpContext context)
-        {
-            throw new System.NotImplementedException();
-        }
+            context.Response.StatusCode = statusCode;
+            context.Response.ContentType = "text/plain";
 
-        private Task Block(HttpContext context)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private bool IsThrottled(HttpContext context)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private Task Throttle(HttpContext context)
-        {
-            throw new System.NotImplementedException();
+            context.Response.ContentLength = bytes.Length;
+            return context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
         }
     }
 }

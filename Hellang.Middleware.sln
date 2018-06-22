@@ -1,10 +1,7 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaFallback", "src\SpaFallback\SpaFallback.csproj", "{8ED0E9AD-B936-4D01-9793-9470B964B97E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{060C1A9F-5042-4B16-A97A-B249B219F666}"
 	ProjectSection(SolutionItems) = preProject
 		src\Directory.Build.props = src\Directory.Build.props
@@ -15,13 +12,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{17F15D82-A
 		test\Directory.Build.props = test\Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaFallback.Tests", "test\SpaFallback.Tests\SpaFallback.Tests.csproj", "{9EAA652B-873A-4F0F-B751-5381CDB774FD}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B3E133B-3849-4E32-8CA6-7F2023EC0B85}"
 	ProjectSection(SolutionItems) = preProject
 		NuGet.config = NuGet.config
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A978F7AD-DFCC-41C4-9AEE-9E60D58A50FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaFallback", "src\SpaFallback\SpaFallback.csproj", "{8ED0E9AD-B936-4D01-9793-9470B964B97E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaFallback.Tests", "test\SpaFallback.Tests\SpaFallback.Tests.csproj", "{9EAA652B-873A-4F0F-B751-5381CDB774FD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication.JwtBearer.Google", "src\Authentication.JwtBearer.Google\Authentication.JwtBearer.Google.csproj", "{E5BCFA2D-ACE6-4BC6-A327-009563366065}"
 EndProject
@@ -29,11 +30,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails", "src\Probl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails.Tests", "test\ProblemDetails.Tests\ProblemDetails.Tests.csproj", "{4F560993-778B-4C15-B5BB-619DAFB1D6A0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A978F7AD-DFCC-41C4-9AEE-9E60D58A50FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails.Sample", "samples\ProblemDetails.Sample\ProblemDetails.Sample.csproj", "{D60F3C5B-4758-4D45-AB4B-A793595FD926}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProblemDetails.Sample", "samples\ProblemDetails.Sample\ProblemDetails.Sample.csproj", "{D60F3C5B-4758-4D45-AB4B-A793595FD926}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateLimiting", "src\RateLimiting\RateLimiting.csproj", "{E34F2445-1518-4B63-BAFF-15187F3EEEF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiting", "src\RateLimiting\RateLimiting.csproj", "{E34F2445-1518-4B63-BAFF-15187F3EEEF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateLimiting.Tests", "test\RateLimiting.Tests\RateLimiting.Tests.csproj", "{1B9094D8-74F4-43BC-A119-E40573DE40FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +70,10 @@ Global
 		{E34F2445-1518-4B63-BAFF-15187F3EEEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E34F2445-1518-4B63-BAFF-15187F3EEEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E34F2445-1518-4B63-BAFF-15187F3EEEF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B9094D8-74F4-43BC-A119-E40573DE40FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B9094D8-74F4-43BC-A119-E40573DE40FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B9094D8-74F4-43BC-A119-E40573DE40FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B9094D8-74F4-43BC-A119-E40573DE40FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +86,7 @@ Global
 		{4F560993-778B-4C15-B5BB-619DAFB1D6A0} = {17F15D82-AC56-4579-BF5F-E53539AC0DB4}
 		{D60F3C5B-4758-4D45-AB4B-A793595FD926} = {A978F7AD-DFCC-41C4-9AEE-9E60D58A50FD}
 		{E34F2445-1518-4B63-BAFF-15187F3EEEF2} = {060C1A9F-5042-4B16-A97A-B249B219F666}
+		{1B9094D8-74F4-43BC-A119-E40573DE40FC} = {17F15D82-AC56-4579-BF5F-E53539AC0DB4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EB34854-E4E8-4AFD-91EB-C33FAD8F1725}

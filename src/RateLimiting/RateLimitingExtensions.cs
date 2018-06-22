@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -7,10 +8,12 @@ namespace Hellang.Middleware.RateLimiting
 {
     public static class RateLimitingExtensions
     {
-        public static IServiceCollection AddRateLimiting(this IServiceCollection services)
+        public static IServiceCollection AddRateLimiting(this IServiceCollection services, Action<RateLimitingOptions> configure)
         {
+            services.Configure(configure);
+
             services.TryAddEnumerable(
-                ServiceDescriptor.Transient<IPostConfigureOptions<RateLimitingOptions>, RateLimitingOptionsSetup>());
+                ServiceDescriptor.Transient<IConfigureOptions<RateLimitingOptions>, RateLimitingOptionsSetup>());
 
             return services;
         }
