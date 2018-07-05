@@ -35,20 +35,22 @@ namespace Hellang.Middleware.RateLimiting
             var period = await Period.Invoke(context);
             var limit = await Limit.Invoke(context);
 
+            var now = options.Clock.UtcNow;
             var periodSeconds = (int)period.TotalSeconds;
-            var nowSeconds = options.Clock.UtcNow.ToUnixTimeSeconds();
+            var nowUnixSeconds = now.ToUnixTimeSeconds();
 
-            var key = $"{options.CachePrefix}:{Name}:{discriminator}:{nowSeconds / periodSeconds}";
-            var expirationTime = TimeSpan.FromSeconds(periodSeconds - (nowSeconds % periodSeconds));
+            var key = $"{options.CachePrefix}:{Name}:{discriminator}:{nowUnixSeconds / periodSeconds}";
+            var expirationPeriod = TimeSpan.FromSeconds(periodSeconds - (nowUnixSeconds % periodSeconds));
+            var expirationTime = now.Add(expirationPeriod);
 
             var cacheOptions = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = expirationTime
+                AbsoluteExpiration = expirationTime
             };
 
             var count = await options.Cache.IncrementAsync(key, cacheOptions, context.RequestAborted);
 
-            return new RateLimitResult(limit, count, expirationTime);
+            return new RateLimitResult(discriminator, limit, count, expirationPeriod, expirationTime);
         }
     }
 }

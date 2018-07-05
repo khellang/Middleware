@@ -43,8 +43,8 @@ namespace Hellang.Middleware.RateLimiting
                 var result = limit.Value;
 
                 context.Response.Headers["X-RateLimit-Limit"] = result.Limit.ToString();
-                context.Response.Headers["X-RateLimit-Reset"] = ((int)result.ExpirationTime.TotalSeconds).ToString();
-                context.Response.Headers["X-RateLimit-Remaining"] = Math.Max(0, result.Limit - result.Count).ToString();
+                context.Response.Headers["X-RateLimit-Remaining"] = result.Remaining.ToString();
+                context.Response.Headers["X-RateLimit-Reset"] = result.ExpirationTime.ToUnixTimeSeconds().ToString();
 
                 if (result.Count > result.Limit)
                 {
