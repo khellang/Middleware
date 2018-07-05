@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace Hellang.Middleware.RateLimiting
 {
@@ -42,9 +43,11 @@ namespace Hellang.Middleware.RateLimiting
             {
                 var result = limit.Value;
 
-                context.Response.Headers["X-RateLimit-Limit"] = result.Limit.ToString();
-                context.Response.Headers["X-RateLimit-Remaining"] = result.Remaining.ToString();
-                context.Response.Headers["X-RateLimit-Reset"] = result.ExpirationTime.ToUnixTimeSeconds().ToString();
+                context.Response.Headers[RateLimitHeaderNames.XRateLimitLimit] = result.Limit.ToString();
+                context.Response.Headers[RateLimitHeaderNames.XRateLimitRemaining] = result.Remaining.ToString();
+                context.Response.Headers[RateLimitHeaderNames.XRateLimitReset] = result.ExpirationTime.ToUnixTimeSeconds().ToString();
+
+                context.Response.Headers[HeaderNames.RetryAfter] = ((int)result.ExpirationPeriod.TotalSeconds).ToString();
 
                 if (result.Count > result.Limit)
                 {
