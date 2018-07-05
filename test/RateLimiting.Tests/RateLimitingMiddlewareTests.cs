@@ -15,9 +15,14 @@ namespace RateLimiting.Tests
         [Fact]
         public async Task Test()
         {
-            RateLimitingOptions Configure(RateLimitingOptions options)
+            void Configure(RateLimitingOptions options)
             {
-                return options.Limit("requests/ip", limit: 100, period: TimeSpan.FromSeconds(60.0), ctx => ctx.Connection.RemoteIpAddress.ToString());
+                options.Allow("allow administrators", ctx => ctx.User.IsInRole("Admin"));
+                options.Allow("allow loopback", ctx => IPAddress.IsLoopback(ctx.Connection.RemoteIpAddress));
+
+                options.Block("block access to admin endpoint", ctx => ctx.Request.Path.StartsWithSegments("/admin"));
+
+                options.Limit("requests by ip", ctx => ctx.User.Identity.IsAuthenticated ? 5000 : 60, TimeSpan.FromHours(1), ctx => ctx.Connection.RemoteIpAddress.ToString());
             }
 
             var clock = new TestSystemClock
@@ -28,14 +33,14 @@ namespace RateLimiting.Tests
             using (var server = CreateServer(Configure, clock))
             using (var client = server.CreateClient())
             {
-                for (var i = 0; i < 100; i++)
+                for (var i = 0; i < 60; i++)
                 {
                     using (var response = await client.GetAsync("/"))
                     {
                         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
                     }
 
-                    clock.Advance(TimeSpan.FromSeconds(59.0 / 100));
+                    clock.Advance(TimeSpan.FromSeconds(1));
                 }
 
                 using (var response = await client.GetAsync("/"))
@@ -45,15 +50,19 @@ namespace RateLimiting.Tests
             }
         }
 
-        private static TestServer CreateServer(Func<RateLimitingOptions, RateLimitingOptions> configure, ISystemClock clock)
+        private static TestServer CreateServer(Action<RateLimitingOptions> configure, ISystemClock clock)
         {
             var builder = new WebHostBuilder()
                 .UseEnvironment(EnvironmentName.Development)
                 .ConfigureServices(x => x
                     .AddDistributedMemoryCache(y => y.Clock = clock)
-                    .AddRateLimiting(y => configure(y).Clock = clock))
+                    .AddRateLimiting(y =>
+                    {
+                        y.Clock = clock;
+                        configure(y);
+                    }))
                 .Configure(x => x
-                    .UseRemoteAddress(IPAddress.Loopback)
+                    .UseRemoteAddress(IPAddress.Parse("2.2.2.2"))
                     .UseRateLimiting());
 
             return new TestServer(builder);
