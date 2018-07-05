@@ -51,15 +51,15 @@ namespace Hellang.Middleware.RateLimiting
             return HasMatch(Blocked, context);
         }
 
-        internal async ValueTask<RateLimitResult?> GetLimit(HttpContext context)
+        internal async ValueTask<RateLimitResult?> GetLimits(HttpContext context)
         {
             foreach (var throttle in Limited)
             {
-                var limit = await throttle.GetLimit(context, this);
+                var limits = await throttle.GetLimits(context, this);
 
-                if (limit.HasValue)
+                if (limits.HasValue)
                 {
-                    return limit.Value;
+                    return limits.Value;
                 }
             }
 

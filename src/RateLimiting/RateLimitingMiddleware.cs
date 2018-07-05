@@ -32,11 +32,11 @@ namespace Hellang.Middleware.RateLimiting
                 return;
             }
 
-            var limit = await Options.GetLimit(context);
+            var limits = await Options.GetLimits(context);
 
-            if (limit.HasValue)
+            if (limits.HasValue)
             {
-                var result = limit.Value;
+                var result = limits.Value;
 
                 context.Response.Headers[RateLimitHeaderNames.XRateLimitLimit] = result.Limit.ToString();
                 context.Response.Headers[RateLimitHeaderNames.XRateLimitRemaining] = result.Remaining.ToString();

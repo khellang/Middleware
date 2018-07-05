@@ -23,7 +23,7 @@ namespace Hellang.Middleware.RateLimiting
 
         private AsyncSelector<string> Discriminator { get; }
 
-        public async Task<RateLimitResult?> GetLimit(HttpContext context, RateLimitingOptions options)
+        public async Task<RateLimitResult?> GetLimits(HttpContext context, RateLimitingOptions options)
         {
             var discriminator = await Discriminator.Invoke(context);
 
