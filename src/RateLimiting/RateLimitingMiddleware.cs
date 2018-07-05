@@ -22,12 +22,15 @@ namespace Hellang.Middleware.RateLimiting
         {
             if (await Options.IsAllowed(context))
             {
+                // TODO: Log as debug.
                 await Next(context);
                 return;
             }
 
             if (await Options.IsBlocked(context))
             {
+                // TODO: Log as info.
+                // TODO: Create extensibility point for customizing the response.
                 await WriteBody(context, StatusCodes.Status403Forbidden, "Forbidden\n");
                 return;
             }
@@ -38,6 +41,7 @@ namespace Hellang.Middleware.RateLimiting
             {
                 var result = limits.Value;
 
+                // TODO: Create extensiblity point for customizing the headers.
                 context.Response.Headers[RateLimitHeaderNames.XRateLimitLimit] = result.Limit.ToString();
                 context.Response.Headers[RateLimitHeaderNames.XRateLimitRemaining] = result.Remaining.ToString();
                 context.Response.Headers[RateLimitHeaderNames.XRateLimitReset] = result.ExpirationTime.ToUnixTimeSeconds().ToString();
@@ -46,6 +50,8 @@ namespace Hellang.Middleware.RateLimiting
 
                 if (result.Count > result.Limit)
                 {
+                    // TODO: Log as info.
+                    // TODO: Create extensibility point for customizing the response.
                     await WriteBody(context, StatusCodes.Status429TooManyRequests, "Retry Later\n");
                     return;
                 }

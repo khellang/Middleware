@@ -29,6 +29,7 @@ namespace Hellang.Middleware.RateLimiting
 
             if (string.IsNullOrEmpty(discriminator))
             {
+                // TODO: Log missing discriminator as warning.
                 return default;
             }
 
@@ -48,6 +49,7 @@ namespace Hellang.Middleware.RateLimiting
                 AbsoluteExpiration = expirationTime
             };
 
+            // TODO: Replace with atomic operation - https://github.com/aspnet/Caching/issues/411
             var count = await options.Cache.IncrementAsync(key, cacheOptions, context.RequestAborted);
 
             return new RateLimitResult(discriminator, limit, count, expirationPeriod, expirationTime);

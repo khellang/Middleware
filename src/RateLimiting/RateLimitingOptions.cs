@@ -9,7 +9,7 @@ namespace Hellang.Middleware.RateLimiting
 {
     public class RateLimitingOptions
     {
-        public static readonly string DefaultCachePrefix = "rate-limit";
+        public const string DefaultCachePrefix = "rate-limit";
 
         public ISystemClock Clock { get; set; }
 
