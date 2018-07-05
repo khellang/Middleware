@@ -1,8 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
@@ -10,16 +8,13 @@ namespace Hellang.Middleware.RateLimiting
 {
     public class RateLimitingMiddleware
     {
-        public RateLimitingMiddleware(RequestDelegate next, IDistributedCache cache, IOptions<RateLimitingOptions> options)
+        public RateLimitingMiddleware(RequestDelegate next, IOptions<RateLimitingOptions> options)
         {
             Next = next;
-            Cache = cache;
             Options = options.Value;
         }
 
         private RequestDelegate Next { get; }
-        
-        private IDistributedCache Cache { get; }
         
         private RateLimitingOptions Options { get; }
 
