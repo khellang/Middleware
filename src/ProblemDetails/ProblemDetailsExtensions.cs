@@ -32,6 +32,11 @@ namespace Hellang.Middleware.ProblemDetails
                 options.IncludeExceptionDetails = IncludeExceptionDetails;
             }
 
+            if (options.IsProblem == null)
+            {
+                options.IsProblem = IsProblem;
+            }
+
             options.TryMap<NotImplementedException>(ex =>
                 new ExceptionProblemDetails(ex, StatusCodes.Status501NotImplemented));
         }
@@ -39,6 +44,31 @@ namespace Hellang.Middleware.ProblemDetails
         private static bool IncludeExceptionDetails(HttpContext context)
         {
             return context.RequestServices.GetRequiredService<IHostingEnvironment>().IsDevelopment();
+        }
+
+        private static bool IsProblem(HttpContext context)
+        {
+            if (context.Response.StatusCode < 400)
+            {
+                return false;
+            }
+
+            if (context.Response.StatusCode >= 600)
+            {
+                return false;
+            }
+
+            if (context.Response.ContentLength.HasValue)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(context.Response.ContentType))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

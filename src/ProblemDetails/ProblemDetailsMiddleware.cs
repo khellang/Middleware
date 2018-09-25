@@ -62,7 +62,7 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 await Next(context);
 
-                if (IsProblem(context))
+                if (Options.IsProblem(context))
                 {
                     if (context.Response.HasStarted)
                     {
@@ -174,31 +174,6 @@ namespace Hellang.Middleware.ProblemDetails
             result.ContentTypes.Add("application/problem+xml");
 
             return Executor.ExecuteAsync(actionContext, result);
-        }
-
-        private static bool IsProblem(HttpContext context)
-        {
-            if (context.Response.StatusCode < 400)
-            {
-                return false;
-            }
-
-            if (context.Response.StatusCode >= 600)
-            {
-                return false;
-            }
-
-            if (context.Response.ContentLength.HasValue)
-            {
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(context.Response.ContentType))
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private static void ClearResponse(HttpContext context, int statusCode)

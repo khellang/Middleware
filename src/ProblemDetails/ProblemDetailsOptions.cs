@@ -20,6 +20,8 @@ namespace Hellang.Middleware.ProblemDetails
 
         public Func<HttpContext, bool> IncludeExceptionDetails { get; set; }
 
+        public Func<HttpContext, bool> IsProblem { get; set; }
+
         private Dictionary<Type, Func<Exception, MvcProblemDetails>> Mappings { get; }
 
         public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
