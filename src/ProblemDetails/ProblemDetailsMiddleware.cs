@@ -21,7 +21,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         private static readonly RouteData EmptyRouteData = new RouteData();
 
-        private static readonly HashSet<string> CorsHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             HeaderNames.AccessControlAllowCredentials,
             HeaderNames.AccessControlAllowHeaders,
@@ -29,6 +29,7 @@ namespace Hellang.Middleware.ProblemDetails
             HeaderNames.AccessControlAllowOrigin,
             HeaderNames.AccessControlExposeHeaders,
             HeaderNames.AccessControlMaxAge,
+            HeaderNames.WWWAuthenticate,
         };
 
         public ProblemDetailsMiddleware(
@@ -189,7 +190,7 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 // Because the CORS middleware adds all the headers early in the pipeline,
                 // we want to copy over the existing Access-Control-* headers after resetting the response.
-                if (CorsHeaderNames.Contains(header.Key))
+                if (AllowedHeaderNames.Contains(header.Key))
                 {
                     headers.Add(header);
                 }
