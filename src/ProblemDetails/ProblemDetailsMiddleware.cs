@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -98,9 +97,11 @@ namespace Hellang.Middleware.ProblemDetails
 
         private MvcProblemDetails GetDetails(HttpContext context, Exception error)
         {
+            var statusCode = context.Response.StatusCode;
+
             if (error == null)
             {
-                return new StatusCodeProblemDetails(context.Response.StatusCode);
+                return Options.MapStatusCode(statusCode);
             }
 
             var result = GetProblemDetails(error);
@@ -123,8 +124,8 @@ namespace Hellang.Middleware.ProblemDetails
                         Logger.ProblemDetailsMiddlewareException(e);
                     }
                 }
-                
-                return new StatusCodeProblemDetails(ex.Status ?? context.Response.StatusCode);
+
+                return Options.MapStatusCode(ex.Status ?? statusCode);
             }
 
             return result;

@@ -32,6 +32,11 @@ namespace Hellang.Middleware.ProblemDetails
                 options.IncludeExceptionDetails = IncludeExceptionDetails;
             }
 
+            if (options.MapStatusCode == null)
+            {
+                options.MapStatusCode = statusCode => new StatusCodeProblemDetails(statusCode);
+            }
+
             if (options.IsProblem == null)
             {
                 options.IsProblem = IsProblem;
