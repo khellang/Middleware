@@ -41,9 +41,6 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 options.IsProblem = IsProblem;
             }
-
-            options.TryMap<NotImplementedException>(ex =>
-                new ExceptionProblemDetails(ex, StatusCodes.Status501NotImplemented));
         }
 
         private static bool IncludeExceptionDetails(HttpContext context)

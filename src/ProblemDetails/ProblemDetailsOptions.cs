@@ -12,7 +12,7 @@ namespace Hellang.Middleware.ProblemDetails
         public ProblemDetailsOptions()
         {
             SourceCodeLineCount = 6;
-            Mappings = new Dictionary<Type, Func<Exception, MvcProblemDetails>>();
+            Mappers = new List<ExceptionMapper>();
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 HeaderNames.AccessControlAllowCredentials,
@@ -40,44 +40,63 @@ namespace Hellang.Middleware.ProblemDetails
 
         public HashSet<string> AllowedHeaderNames { get; }
 
-        private Dictionary<Type, Func<Exception, MvcProblemDetails>> Mappings { get; }
+        private List<ExceptionMapper> Mappers { get; }
 
         public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
         {
-            Mappings[typeof(TException)] = ex => mapping((TException) ex);
-        }
-
-        internal bool TryMap<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
-        {
-            if (Mappings.ContainsKey(typeof(TException)))
-            {
-                return false;
-            }
-
-            Map(mapping);
-            return true;
+            Mappers.Add(new ExceptionMapper(typeof(TException), ex => mapping((TException) ex)));
         }
 
         internal bool TryMapProblemDetails(Exception exception, out MvcProblemDetails problem)
         {
-            var type = exception.GetType();
-
-            if (Mappings.TryGetValue(type, out var mapping))
+            foreach (var mapper in Mappers)
             {
-                try
+                if (mapper.TryMap(exception, out problem))
                 {
-                    problem = mapping(exception);
                     return true;
-                }
-                catch
-                {
-                    problem = default;
-                    return false;
                 }
             }
 
             problem = default;
             return false;
+        }
+
+        private sealed class ExceptionMapper
+        {
+            public ExceptionMapper(Type type, Func<Exception, MvcProblemDetails> mapping)
+            {
+                Type = type;
+                Mapping = mapping;
+            }
+
+            private Type Type { get; }
+
+            private Func<Exception, MvcProblemDetails> Mapping { get; }
+
+            public bool CanMap(Type type)
+            {
+                return Type.IsAssignableFrom(type);
+            }
+
+            public bool TryMap(Exception exception, out MvcProblemDetails problem)
+            {
+                if (CanMap(exception.GetType()))
+                {
+                    try
+                    {
+                        problem = Mapping(exception);
+                        return true;
+                    }
+                    catch
+                    {
+                        problem = default;
+                        return false;
+                    }
+                }
+
+                problem = default;
+                return false;
+            }
         }
     }
 }
