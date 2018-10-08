@@ -6,6 +6,7 @@
     <RootNamespace>Hellang.Middleware.ProblemDetails</RootNamespace>
     <Description>Error handling middleware, using RFC7807</Description>
     <PackageTags>middleware;error;exception;RFC7807</PackageTags>
+    <PackageIconUrl>https://raw.githubusercontent.com/khellang/Middleware/master/etc/problem-logo.png</PackageIconUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
