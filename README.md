@@ -2,6 +2,16 @@
 
 Various ASP.NET Core middleware. Mostly for use in APIs.
 
+## ProblemDetails [![NuGet](https://img.shields.io/nuget/v/Hellang.Middleware.ProblemDetails.svg)](https://www.nuget.org/packages/Hellang.Middleware.ProblemDetails)
+
+> Install-Package Hellang.Middleware.ProblemDetails
+
+Documentation is coming... In the meantime, see [the sample](samples/ProblemDetails.Sample/Program.cs).
+
+#### Logo
+
+corrupted file by Rflor from the Noun Project
+
 ## SpaFallback [![NuGet](https://img.shields.io/nuget/v/Hellang.Middleware.SpaFallback.svg)](https://www.nuget.org/packages/Hellang.Middleware.SpaFallback)
 
 > Install-Package Hellang.Middleware.SpaFallback
