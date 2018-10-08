@@ -2,11 +2,18 @@
   <PropertyGroup>
     <Authors>Kristian Hellang</Authors>
     <RepositoryUrl>https://github.com/khellang/Middleware</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/khellang/Middleware</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/khellang/Middleware/master/LICENSE</PackageLicenseUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="all" />
+  </ItemGroup>
 </Project>
