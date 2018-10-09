@@ -99,7 +99,10 @@ namespace Hellang.Middleware.ProblemDetails.Sample
         {
             ModelState.AddModelError("someProperty", "This property failed validation.");
 
-            var validation = new ValidationProblemDetails(ModelState);
+            var validation = new ValidationProblemDetails(ModelState)
+            {
+                Status = StatusCodes.Status422UnprocessableEntity
+            };
 
             throw new ProblemDetailsException(validation);
         }
