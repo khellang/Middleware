@@ -36,30 +36,32 @@ namespace Hellang.Middleware.ProblemDetails.Sample
 
         public override void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvcCore().AddJsonFormatters(x => x.NullValueHandling = NullValueHandling.Ignore);
+            services.AddProblemDetails(ConfigureProblemDetails).AddMvcCore().AddJsonFormatters(x => x.NullValueHandling = NullValueHandling.Ignore);
         }
 
         public override void Configure(IApplicationBuilder app)
         {
-            app.UseProblemDetails(x =>
-            {
-                // This is the default behavior; only include exception details in a development environment.
-                x.IncludeExceptionDetails = ctx => Environment.IsDevelopment();
-
-                // This will map NotImplementedException to the 501 Not Implemented status code.
-                x.Map<NotImplementedException>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status501NotImplemented));
-
-                // This will map HttpRequestException to the 503 Service Unavailable status code.
-                x.Map<HttpRequestException>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status503ServiceUnavailable));
-
-                // Because exceptions are handled polymorphically, this will act as a "catch all" mapping, which is why it's added last.
-                // If an exception other than NotImplementedException and HttpRequestException is thrown, this will handle it.
-                x.Map<Exception>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status500InternalServerError));
-            });
+            app.UseProblemDetails();
 
             app.Use(CustomMiddleware);
 
             app.UseMvc();
+        }
+
+        private void ConfigureProblemDetails(ProblemDetailsOptions options)
+        {
+            // This is the default behavior; only include exception details in a development environment.
+            options.IncludeExceptionDetails = ctx => Environment.IsDevelopment();
+
+            // This will map NotImplementedException to the 501 Not Implemented status code.
+            options.Map<NotImplementedException>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status501NotImplemented));
+
+            // This will map HttpRequestException to the 503 Service Unavailable status code.
+            options.Map<HttpRequestException>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status503ServiceUnavailable));
+
+            // Because exceptions are handled polymorphically, this will act as a "catch all" mapping, which is why it's added last.
+            // If an exception other than NotImplementedException and HttpRequestException is thrown, this will handle it.
+            options.Map<Exception>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status500InternalServerError));
         }
 
         private Task CustomMiddleware(HttpContext context, Func<Task> next)
