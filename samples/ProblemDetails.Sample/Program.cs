@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -47,6 +48,13 @@ namespace Hellang.Middleware.ProblemDetails.Sample
 
                 // This will map NotImplementedException to the 501 Not Implemented status code.
                 x.Map<NotImplementedException>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status501NotImplemented));
+
+                // This will map HttpRequestException to the 503 Service Unavailable status code.
+                x.Map<HttpRequestException>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status503ServiceUnavailable));
+
+                // Because exceptions are handled polymorphically, this will act as a "catch all" mapping, which is why it's added last.
+                // If an exception other than NotImplementedException and HttpRequestException is thrown, this will handle it.
+                x.Map<Exception>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status500InternalServerError));
             });
 
             app.Use(CustomMiddleware);
