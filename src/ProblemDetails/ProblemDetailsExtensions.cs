@@ -37,9 +37,12 @@ namespace Hellang.Middleware.ProblemDetails
 
             configure?.Invoke(options);
 
-            var setup = app.ApplicationServices.GetService<IConfigureOptions<ProblemDetailsOptions>>();
+            // Try to pull the IConfigureOptions<ProblemDetailsOptions> service from the container
+            // in case the user has called AddProblemDetails and still use this overload.
+            // If the setup hasn't been configured. Create an instance explicitly and use that.
+            var setup = app.ApplicationServices.GetService<IConfigureOptions<ProblemDetailsOptions>>() ?? new ProblemDetailsOptionsSetup();
 
-            setup?.Configure(options);
+            setup.Configure(options);
 
             return app.UseMiddleware<ProblemDetailsMiddleware>(Options.Create(options));
         }
