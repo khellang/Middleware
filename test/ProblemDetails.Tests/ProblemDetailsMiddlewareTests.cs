@@ -35,7 +35,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         }
 
         [Theory]
-        [InlineData("/exception", HttpStatusCode.NotImplemented)]
+        [InlineData("/exception", HttpStatusCode.InternalServerError)]
         [InlineData("/exception-details", (HttpStatusCode) StatusCodes.Status429TooManyRequests)]
         public async Task Exception_IsHandled(string path, HttpStatusCode expected)
         {
@@ -51,9 +51,9 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         }
 
         [Theory]
-        [InlineData("Staging", 78)]
-        [InlineData("Production", 78)]
-        [InlineData("Development", 2510)]
+        [InlineData("Staging", 84)]
+        [InlineData("Production", 84)]
+        [InlineData("Development", 2550)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedLength)
         {
             using (var server = CreateServer(environment))
@@ -75,7 +75,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             {
                 var response = await client.GetAsync("/exception");
 
-                Assert.Equal(HttpStatusCode.NotImplemented, response.StatusCode);
+                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             }
         }
 
@@ -173,6 +173,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                 .UseEnvironment(environment ?? EnvironmentName.Development)
                 .ConfigureServices(x => x
                     .AddCors()
+                    .AddProblemDetails()
                     .AddMvcCore()
                     .AddJsonFormatters(ConfigureJson))
                 .Configure(x => x
