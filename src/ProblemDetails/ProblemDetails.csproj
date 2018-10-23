@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.3" />
     <PackageReference Include="Microsoft.Extensions.StackTrace.Sources" Version="2.2.0-*" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.TypeNameHelper.Sources" Version="2.2.0-*" PrivateAssets="All" />
   </ItemGroup>
