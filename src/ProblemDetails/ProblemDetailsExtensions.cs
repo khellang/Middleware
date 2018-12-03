@@ -20,6 +20,7 @@ namespace Hellang.Middleware.ProblemDetails
                 services.Configure(configure);
             }
 
+            services.TryAddSingleton<ProblemDetailsMarkerService, ProblemDetailsMarkerService>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<ProblemDetailsOptions>, ProblemDetailsOptionsSetup>());
 
             return services;
@@ -27,6 +28,14 @@ namespace Hellang.Middleware.ProblemDetails
 
         public static IApplicationBuilder UseProblemDetails(this IApplicationBuilder app)
         {
+            var markerService = app.ApplicationServices.GetService<ProblemDetailsMarkerService>();
+
+            if (markerService is null)
+            {
+                throw new InvalidOperationException(
+                    $"Please call {nameof(IServiceCollection)}.{nameof(AddProblemDetails)} in ConfigureServices before adding the middleware.");
+            }
+
             return app.UseMiddleware<ProblemDetailsMiddleware>();
         }
 
@@ -45,6 +54,14 @@ namespace Hellang.Middleware.ProblemDetails
             setup.Configure(options);
 
             return app.UseMiddleware<ProblemDetailsMiddleware>(Options.Create(options));
+        }
+
+        /// <summary>
+        /// A marker class used to determine if the required services were added
+        /// to the <see cref="IServiceCollection"/> before the middleware is configured.
+        /// </summary>
+        private class ProblemDetailsMarkerService
+        {
         }
     }
 }
