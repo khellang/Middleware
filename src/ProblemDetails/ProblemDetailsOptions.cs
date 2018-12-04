@@ -37,6 +37,7 @@ namespace Hellang.Middleware.ProblemDetails
         public Func<HttpContext, bool> IsProblem { get; set; }
 
         public Func<int, MvcProblemDetails> MapStatusCode { get; set; }
+        
         public Action<MvcProblemDetails> OnBeforeWriteDetails { get; set; }
 
         public HashSet<string> AllowedHeaderNames { get; }
