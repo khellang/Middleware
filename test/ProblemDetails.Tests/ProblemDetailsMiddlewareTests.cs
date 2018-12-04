@@ -167,13 +167,44 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             }
         }
 
-        private static TestServer CreateServer(string environment = null)
+        [Fact]
+        public async Task Options_OnBeforeWriteDetails()
+        {
+            using (var server = CreateServer())
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/error/500");
+                var content = await response.Content.ReadAsStringAsync();
+
+                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+                Assert.Contains("\"type\":\"https://httpstatuses.com/500\"", content);
+            }
+
+            void ConfigureOptions(ProblemDetailsOptions options)
+            {
+                options.OnBeforeWriteDetails = details => {
+                    details.Type = "https://example.com";
+                };
+            }
+
+            using (var server = CreateServer(configureOptions: ConfigureOptions))
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/error/500");
+                var content = await response.Content.ReadAsStringAsync();
+                
+                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+                Assert.Contains("\"type\":\"https://example.com\"", content);
+            }
+        }
+
+        private static TestServer CreateServer(string environment = null, Action<ProblemDetailsOptions> configureOptions = null)
         {
             var builder = new WebHostBuilder()
                 .UseEnvironment(environment ?? EnvironmentName.Development)
                 .ConfigureServices(x => x
                     .AddCors()
-                    .AddProblemDetails()
+                    .AddProblemDetails(configureOptions)
                     .AddMvcCore()
                     .AddJsonFormatters(ConfigureJson))
                 .Configure(x => x
