@@ -151,6 +151,11 @@ namespace Hellang.Middleware.ProblemDetails
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
         {
+            if (Options.OnBeforeWriteDetails != null)
+            {
+                Options.OnBeforeWriteDetails(details);
+            }
+
             var routeData = context.GetRouteData() ?? EmptyRouteData;
 
             var actionContext = new ActionContext(context, routeData, EmptyActionDescriptor);
