@@ -68,8 +68,6 @@ namespace Hellang.Middleware.ProblemDetails
             }
             catch (Exception error)
             {
-                Logger.UnhandledException(error);
-
                 if (context.Response.HasStarted)
                 {
                     Logger.ResponseStarted();
@@ -81,6 +79,11 @@ namespace Hellang.Middleware.ProblemDetails
                     ClearResponse(context, StatusCodes.Status500InternalServerError);
 
                     var details = GetDetails(context, error);
+
+                    if (IsServerError(details.Status))
+                    {
+                        Logger.UnhandledException(error);
+                    }
 
                     await WriteProblemDetails(context, details);
                     return;
@@ -147,6 +150,14 @@ namespace Hellang.Middleware.ProblemDetails
 
             // Fall back to the generic exception problem details.
             return new ExceptionProblemDetails(error);
+        }
+
+        private bool IsServerError(int? statusCode)
+        {
+            // err on the side of caution and treat as server error
+            if (statusCode == null) return true;
+
+            return statusCode >= 500;
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)

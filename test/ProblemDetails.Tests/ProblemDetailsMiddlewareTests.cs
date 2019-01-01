@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Xunit;
@@ -47,6 +49,70 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                 Assert.Equal(expected, response.StatusCode);
                 Assert.Equal("application/problem+json", response.Content.Headers.ContentType.MediaType);
                 Assert.NotEmpty(await response.Content.ReadAsStringAsync());
+            }
+        }
+
+        [Fact]
+        public async Task Catchall_Server_Exception_Is_Logged_As_Unhandled_Error()
+        {
+            using (var server = CreateServer())
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/exception");
+
+                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+                AssertUnhandledExceptionLogged();
+            }
+        }
+
+        [Fact]
+        public async Task Mapped_Server_Exception_Is_Logged_As_Unhandled_Error()
+        {
+            void MapNotImplementException(ProblemDetailsOptions options)
+            {
+                options.Map<NotImplementedException>(
+                    ex => new ExceptionProblemDetails(ex) {Status = StatusCodes.Status501NotImplemented});
+            }
+
+            using (var server = CreateServer(configureOptions: MapNotImplementException))
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/exception");
+
+                Assert.Equal((HttpStatusCode)StatusCodes.Status501NotImplemented, response.StatusCode);
+                AssertUnhandledExceptionLogged();
+            }
+        }
+
+        [Fact]
+        public async Task Explicit_Client_Exception_Is_Not_Logged_As_Unhandled_Error()
+        {
+            using (var server = CreateServer())
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/exception-details");
+
+                Assert.Equal((HttpStatusCode)StatusCodes.Status429TooManyRequests, response.StatusCode);
+                AssertUnhandledExceptionNotLogged();
+            }
+        }
+
+        [Fact]
+        public async Task Mapped_Client_Exception_Is_Not_Logged_As_Unhandled_Error()
+        {
+            void MapNotImplementException(ProblemDetailsOptions options)
+            {
+                options.Map<NotImplementedException>(
+                    ex => new ExceptionProblemDetails(ex) { Status = StatusCodes.Status403Forbidden });
+            }
+
+            using (var server = CreateServer(configureOptions: MapNotImplementException))
+            using (var client = server.CreateClient())
+            {
+                var response = await client.GetAsync("/exception");
+
+                Assert.Equal((HttpStatusCode)StatusCodes.Status403Forbidden, response.StatusCode);
+                AssertUnhandledExceptionNotLogged();
             }
         }
 
@@ -198,11 +264,25 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             }
         }
 
-        private static TestServer CreateServer(string environment = null, Action<ProblemDetailsOptions> configureOptions = null)
+        private void AssertUnhandledExceptionLogged()
         {
+            var logMessage = Logger.Messages.FirstOrDefault(m => m.Type == LogLevel.Error);
+            Assert.NotNull(logMessage);
+        }
+
+        private void AssertUnhandledExceptionNotLogged()
+        {
+            var logMessage = Logger.Messages.FirstOrDefault(m => m.Type == LogLevel.Error);
+            Assert.Null(logMessage);
+        }
+
+        private TestServer CreateServer(string environment = null, Action<ProblemDetailsOptions> configureOptions = null)
+        {
+            Logger = new InMemoryLogger<ProblemDetailsMiddleware>();
             var builder = new WebHostBuilder()
                 .UseEnvironment(environment ?? EnvironmentName.Development)
                 .ConfigureServices(x => x
+                    .AddTransient<ILogger<ProblemDetailsMiddleware>>(_ => Logger)
                     .AddCors()
                     .AddProblemDetails(configureOptions)
                     .AddMvcCore()
@@ -214,6 +294,8 @@ namespace Hellang.Middleware.ProblemDetails.Tests
 
             return new TestServer(builder);
         }
+
+        private InMemoryLogger<ProblemDetailsMiddleware> Logger { get; set; }
 
         private static Task HandleRoutes(HttpContext context, Func<Task> next)
         {
