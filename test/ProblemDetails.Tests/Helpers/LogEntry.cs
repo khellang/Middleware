@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace Hellang.Middleware.ProblemDetails.Tests
+namespace Hellang.Middleware.ProblemDetails.Tests.Helpers
 {
     public sealed class LogEntry
     {
