@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Hellang.Middleware.ProblemDetails.Tests.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +18,13 @@ namespace Hellang.Middleware.ProblemDetails.Tests
 {
     public class ProblemDetailsMiddlewareTests
     {
+        public ProblemDetailsMiddlewareTests()
+        {
+            Logger = new InMemoryLogger<ProblemDetailsMiddleware>();
+        }
+
+        private InMemoryLogger<ProblemDetailsMiddleware> Logger { get; }
+
         [Theory]
         [InlineData(HttpStatusCode.BadRequest)]
         [InlineData(HttpStatusCode.Unauthorized)]
@@ -61,7 +69,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                 var response = await client.GetAsync("/exception");
 
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                AssertUnhandledExceptionLogged();
+                AssertUnhandledExceptionLogged(Logger);
             }
         }
 
@@ -70,17 +78,17 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         {
             void MapNotImplementException(ProblemDetailsOptions options)
             {
-                options.Map<NotImplementedException>(
-                    ex => new ExceptionProblemDetails(ex) {Status = StatusCodes.Status501NotImplemented});
+                options.Map<NotImplementedException>(ex =>
+                    new ExceptionProblemDetails(ex) {Status = StatusCodes.Status501NotImplemented});
             }
 
-            using (var server = CreateServer(configureOptions: MapNotImplementException))
+            using (var server = CreateServer(MapNotImplementException))
             using (var client = server.CreateClient())
             {
                 var response = await client.GetAsync("/exception");
 
                 Assert.Equal((HttpStatusCode)StatusCodes.Status501NotImplemented, response.StatusCode);
-                AssertUnhandledExceptionLogged();
+                AssertUnhandledExceptionLogged(Logger);
             }
         }
 
@@ -93,7 +101,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                 var response = await client.GetAsync("/exception-details");
 
                 Assert.Equal((HttpStatusCode)StatusCodes.Status429TooManyRequests, response.StatusCode);
-                AssertUnhandledExceptionNotLogged();
+                AssertUnhandledExceptionNotLogged(Logger);
             }
         }
 
@@ -102,17 +110,17 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         {
             void MapNotImplementException(ProblemDetailsOptions options)
             {
-                options.Map<NotImplementedException>(
-                    ex => new ExceptionProblemDetails(ex) { Status = StatusCodes.Status403Forbidden });
+                options.Map<NotImplementedException>(ex =>
+                    new ExceptionProblemDetails(ex) { Status = StatusCodes.Status403Forbidden });
             }
 
-            using (var server = CreateServer(configureOptions: MapNotImplementException))
+            using (var server = CreateServer(MapNotImplementException))
             using (var client = server.CreateClient())
             {
                 var response = await client.GetAsync("/exception");
 
                 Assert.Equal((HttpStatusCode)StatusCodes.Status403Forbidden, response.StatusCode);
-                AssertUnhandledExceptionNotLogged();
+                AssertUnhandledExceptionNotLogged(Logger);
             }
         }
 
@@ -122,7 +130,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [InlineData("Development", 2550)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedLength)
         {
-            using (var server = CreateServer(environment))
+            using (var server = CreateServer(environment: environment))
             using (var client = server.CreateClient())
             {
                 var response = await client.GetAsync("/exception");
@@ -136,7 +144,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [Fact]
         public async Task StatusCode_IsMaintainedWhenStrippingExceptionDetails()
         {
-            using (var server = CreateServer("Production"))
+            using (var server = CreateServer(environment: "Production"))
             using (var client = server.CreateClient())
             {
                 var response = await client.GetAsync("/exception");
@@ -192,7 +200,6 @@ namespace Hellang.Middleware.ProblemDetails.Tests
 
                 Assert.Equal(expected, response.StatusCode);
                 Assert.Equal(0, response.Content.Headers.ContentLength);
-
             }
         }
 
@@ -248,12 +255,13 @@ namespace Hellang.Middleware.ProblemDetails.Tests
 
             void ConfigureOptions(ProblemDetailsOptions options)
             {
-                options.OnBeforeWriteDetails = details => {
+                options.OnBeforeWriteDetails = details =>
+                {
                     details.Type = "https://example.com";
                 };
             }
 
-            using (var server = CreateServer(configureOptions: ConfigureOptions))
+            using (var server = CreateServer(ConfigureOptions))
             using (var client = server.CreateClient())
             {
                 var response = await client.GetAsync("/error/500");
@@ -264,25 +272,22 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             }
         }
 
-        private void AssertUnhandledExceptionLogged()
+        private static void AssertUnhandledExceptionLogged(InMemoryLogger<ProblemDetailsMiddleware> logger)
         {
-            var logMessage = Logger.Messages.FirstOrDefault(m => m.Type == LogLevel.Error);
-            Assert.NotNull(logMessage);
+            Assert.Single(logger.Messages.Where(m => m.Type == LogLevel.Error));
         }
 
-        private void AssertUnhandledExceptionNotLogged()
+        private static void AssertUnhandledExceptionNotLogged(InMemoryLogger<ProblemDetailsMiddleware> logger)
         {
-            var logMessage = Logger.Messages.FirstOrDefault(m => m.Type == LogLevel.Error);
-            Assert.Null(logMessage);
+            Assert.Empty(logger.Messages.Where(m => m.Type == LogLevel.Error));
         }
 
-        private TestServer CreateServer(string environment = null, Action<ProblemDetailsOptions> configureOptions = null)
+        private TestServer CreateServer(Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
         {
-            Logger = new InMemoryLogger<ProblemDetailsMiddleware>();
             var builder = new WebHostBuilder()
                 .UseEnvironment(environment ?? EnvironmentName.Development)
                 .ConfigureServices(x => x
-                    .AddTransient<ILogger<ProblemDetailsMiddleware>>(_ => Logger)
+                    .AddSingleton<ILogger<ProblemDetailsMiddleware>>(Logger)
                     .AddCors()
                     .AddProblemDetails(configureOptions)
                     .AddMvcCore()
@@ -294,8 +299,6 @@ namespace Hellang.Middleware.ProblemDetails.Tests
 
             return new TestServer(builder);
         }
-
-        private InMemoryLogger<ProblemDetailsMiddleware> Logger { get; set; }
 
         private static Task HandleRoutes(HttpContext context, Func<Task> next)
         {

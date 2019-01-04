@@ -152,20 +152,15 @@ namespace Hellang.Middleware.ProblemDetails
             return new ExceptionProblemDetails(error);
         }
 
-        private bool IsServerError(int? statusCode)
+        private static bool IsServerError(int? statusCode)
         {
-            // err on the side of caution and treat as server error
-            if (statusCode == null) return true;
-
-            return statusCode >= 500;
+            // Err on the side of caution and treat missing status code as server error.
+            return !statusCode.HasValue || statusCode.Value >= 500;
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
         {
-            if (Options.OnBeforeWriteDetails != null)
-            {
-                Options.OnBeforeWriteDetails(details);
-            }
+            Options.OnBeforeWriteDetails?.Invoke(details);
 
             var routeData = context.GetRouteData() ?? EmptyRouteData;
 
