@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Hellang.Middleware.SpaFallback;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Xunit;
 
-namespace Hellang.Middleware.SpaFallback.Tests
+namespace SpaFallback.Tests
 {
     public class SpaFallbackMiddlewareTests
     {

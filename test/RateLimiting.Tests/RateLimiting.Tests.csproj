@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <AssemblyName>Hellang.Middleware.RateLimiting.Tests</AssemblyName>
+    <RootNamespace>Hellang.Middleware.RateLimiting.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
