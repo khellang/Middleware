@@ -23,38 +23,37 @@ namespace Hellang.Authentication.JwtBearer.Google
 
             if (validationParameters is GoogleTokenValidationParameters googleParameters)
             {
+                var expected = googleParameters.HostedDomain;
+
                 // No domain specified. Skip validation.
-                if (string.IsNullOrEmpty(googleParameters.HostedDomain))
+                if (string.IsNullOrEmpty(expected))
                 {
                     return principal;
                 }
-                
-                var hostedDomain = principal.FindFirst(GoogleClaimTypes.Domain)?.Value;
 
-                if (string.IsNullOrEmpty(hostedDomain))
-                {
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidDomainException(LogMessages.IDX10250) { InvalidDomain = null });
-                }
+                var actual = principal.FindFirst(GoogleClaimTypes.Domain)?.Value;
 
-                if (!hostedDomain.Equals(googleParameters.HostedDomain, StringComparison.OrdinalIgnoreCase))
-                {
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidDomainException(LogMessages.IDX10251) { InvalidDomain = hostedDomain });
-                }
-
-                LogInformation(hostedDomain);
+                ValidateHostedDomain(actual, expected);
             }
 
             return principal;
         }
 
-        // Just copied over the code from LogHelper.LogInformation
-        // instead of pulling in Microsoft.IdentityModel.Logging > 5.2.1
-        private static void LogInformation(string hostedDomain)
+        private static void ValidateHostedDomain(string actual, string expected)
         {
-            if (IdentityModelEventSource.Logger.IsEnabled())
+            if (string.IsNullOrEmpty(actual))
             {
-                IdentityModelEventSource.Logger.WriteInformation(LogMessages.IDX10252, hostedDomain);
+                throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidDomainException(LogMessages.IDX10250) { InvalidDomain = null });
             }
+
+            if (!actual.Equals(expected, StringComparison.OrdinalIgnoreCase))
+            {
+                var message = string.Format(LogMessages.IDX10251, actual, expected);
+
+                throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidDomainException(message) { InvalidDomain = actual });
+            }
+
+            LogHelper.LogInformation(LogMessages.IDX10252, actual);
         }
     }
 }
