@@ -49,16 +49,32 @@ namespace Microsoft.Extensions.DependencyInjection
             
             options.TokenValidationParameters = new GoogleTokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
+                // Verify the integrity of the ID token according to
+                // https://developers.google.com/identity/sign-in/web/backend-auth#verify-the-integrity-of-the-id-token.
+                //
+                // After you receive the ID token, you must verify its integrity.
+                // To verify that the token is valid, ensure that the following criteria are satisfied:
+
+                // - The ID token is properly signed by Google. Use Google's public keys to verify the token's signature.
                 ValidateIssuerSigningKey = true,
+
+                // - The value of aud in the ID token is equal to one of your app's client IDs.
+                ValidateAudience = true,
+                ValidAudience = clientId,
+
+                // - The value of iss in the ID token is equal to accounts.google.com or https://accounts.google.com.
+                ValidateIssuer = true,
+                ValidIssuers = new[] { "https://accounts.google.com", "accounts.google.com" },
+
+                // - The expiry time (exp) of the ID token has not passed.
+                ValidateLifetime = true,
+
+                // - If you want to restrict access to only members of your G Suite domain, verify that the ID token has an hd claim that matches your G Suite domain name.
+                ValidateHostedDomain = !string.IsNullOrEmpty(hostedDomain),
+                HostedDomain = hostedDomain,
 
                 NameClaimType = GoogleClaimTypes.Name,
                 AuthenticationType = "Google." + JwtBearerDefaults.AuthenticationScheme,
-
-                HostedDomain = hostedDomain,
-                ValidIssuers = new[] { options.Authority, "accounts.google.com" },
             };
 
             return options;

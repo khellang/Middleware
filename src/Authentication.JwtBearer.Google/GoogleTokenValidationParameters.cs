@@ -15,6 +15,8 @@ namespace Hellang.Authentication.JwtBearer.Google
         
         public string HostedDomain { get; set; }
 
+        public bool ValidateHostedDomain { get; set; }
+
         public override TokenValidationParameters Clone()
         {
             return new GoogleTokenValidationParameters(this);
