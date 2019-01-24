@@ -42,7 +42,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             options.Audience = clientId;
-            options.Authority = "https://accounts.google.com";
+            options.Authority = GoogleJwtBearerDefaults.Authority;
             
             options.SecurityTokenValidators.Clear();
             options.SecurityTokenValidators.Add(new GoogleJwtSecurityTokenHandler());
@@ -64,7 +64,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 // - The value of iss in the ID token is equal to accounts.google.com or https://accounts.google.com.
                 ValidateIssuer = true,
-                ValidIssuers = new[] { "https://accounts.google.com", "accounts.google.com" },
+                ValidIssuers = new[] { GoogleJwtBearerDefaults.Authority, "accounts.google.com" },
 
                 // - The expiry time (exp) of the ID token has not passed.
                 ValidateLifetime = true,
@@ -74,7 +74,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 HostedDomain = hostedDomain,
 
                 NameClaimType = GoogleClaimTypes.Name,
-                AuthenticationType = "Google." + JwtBearerDefaults.AuthenticationScheme,
+                AuthenticationType = GoogleJwtBearerDefaults.AuthenticationScheme,
             };
 
             return options;

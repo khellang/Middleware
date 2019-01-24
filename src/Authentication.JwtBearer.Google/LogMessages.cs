@@ -1,5 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-namespace Hellang.Authentication.JwtBearer.Google
+﻿namespace Hellang.Authentication.JwtBearer.Google
 {
     internal static class LogMessages
     {
