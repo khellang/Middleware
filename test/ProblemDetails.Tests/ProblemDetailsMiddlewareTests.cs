@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Xunit;
+using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace Hellang.Middleware.ProblemDetails.Tests
 {
@@ -36,7 +37,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseWithStatusCode(expected)))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 Assert.Equal(expected, response.StatusCode);
                 await AssertIsProblemDetailsResponse(response);
@@ -49,7 +50,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseThrows()))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
                 await AssertIsProblemDetailsResponse(response);
@@ -60,11 +61,15 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         public async Task ProblemDetailsException_IsHandled()
         {
             var problemStatus = HttpStatusCode.TooManyRequests;
-            var ex = new ProblemDetailsException(new Microsoft.AspNetCore.Mvc.ProblemDetails
+
+            var details = new MvcProblemDetails
             {
                 Title = "Too Many Requests",
                 Status = (int) problemStatus,
-            });
+            };
+
+            var ex = new ProblemDetailsException(details);
+
             using (var server = CreateServer(handler: ResponseThrows(ex)))
             using (var client = server.CreateClient())
             {
@@ -81,7 +86,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseThrows()))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
                 AssertUnhandledExceptionLogged(Logger);
@@ -97,10 +102,9 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                     new ExceptionProblemDetails(ex) {Status = StatusCodes.Status501NotImplemented});
             }
 
-            using (var server = CreateServer(
-                handler: ResponseThrows(new NotImplementedException()), 
-                configureOptions: MapNotImplementException)
-            )
+            var handler = ResponseThrows(new NotImplementedException());
+
+            using (var server = CreateServer(handler, MapNotImplementException))
             using (var client = server.CreateClient())
             {
                 var response = await client.GetAsync("/");
@@ -113,15 +117,18 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [Fact]
         public async Task Explicit_Client_Exception_Is_Not_Logged_As_Unhandled_Error()
         {
-            var ex = new ProblemDetailsException(new Microsoft.AspNetCore.Mvc.ProblemDetails
+            var details = new MvcProblemDetails
             {
                 Title = "Too Many Requests",
                 Status = StatusCodes.Status429TooManyRequests,
-            });
+            };
+
+            var ex = new ProblemDetailsException(details);
+
             using (var server = CreateServer(handler: ResponseThrows(ex)))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 Assert.Equal((HttpStatusCode)StatusCodes.Status429TooManyRequests, response.StatusCode);
                 AssertUnhandledExceptionNotLogged(Logger);
@@ -137,13 +144,12 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                     new ExceptionProblemDetails(ex) { Status = StatusCodes.Status403Forbidden });
             }
 
-            using (var server = CreateServer(
-                handler: ResponseThrows(new NotImplementedException()), 
-                configureOptions: MapNotImplementException)
-            )
+            var handler = ResponseThrows(new NotImplementedException());
+
+            using (var server = CreateServer(handler, MapNotImplementException))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 Assert.Equal((HttpStatusCode)StatusCodes.Status403Forbidden, response.StatusCode);
                 AssertUnhandledExceptionNotLogged(Logger);
@@ -153,17 +159,17 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [Theory]
         [InlineData("Staging", 84)]
         [InlineData("Production", 84)]
-        [InlineData("Development", 2271)]
-        public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedLength)
+        [InlineData("Development", 2000)]
+        public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedMinimumLength)
         {
             using (var server = CreateServer(handler: ResponseThrows(), environment: environment))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 var content = await response.Content.ReadAsStringAsync();
 
-                Assert.Equal(expectedLength, content.Length);
+                Assert.InRange(content.Length, expectedMinimumLength, int.MaxValue);
             }
         }
 
@@ -173,7 +179,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseThrows(), environment: "Production"))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             }
@@ -201,7 +207,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseThrows()))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 var cacheControl = response.Headers.CacheControl;
 
@@ -222,7 +228,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseWithStatusCode(expected)))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 Assert.Equal(expected, response.StatusCode);
                 Assert.Equal(0, response.Content.Headers.ContentLength);
@@ -232,15 +238,17 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [Fact]
         public async Task StartedResponse_IsNotHandled()
         {
-            using (var server = CreateServer(handler: context =>
+            Task WriteResponse(HttpContext context)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.Body.WriteByte(byte.MinValue);
                 return Task.CompletedTask;
-            }))
+            }
+
+            using (var server = CreateServer(handler: WriteResponse))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
 
                 Assert.Equal(1, response.Content.Headers.ContentLength);
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -248,18 +256,20 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         }
 
         [Fact]
-        public async Task Exceptions_After_Reponse_Started_IsNotHandled()
+        public async Task Exceptions_After_Response_Started_IsNotHandled()
         {
-            using (var server = CreateServer(handler: context =>
+            Task WriteResponse(HttpContext context)
             {
                 context.Response.Body.WriteByte(byte.MinValue);
                 throw new Exception("Request Failed");
-            }))
+            }
+
+            using (var server = CreateServer(handler: WriteResponse))
             using (var client = server.CreateClient())
             {
                 await Assert.ThrowsAnyAsync<Exception>(async () =>
                 {
-                    var response = await client.GetAsync("");
+                    var response = await client.GetAsync(string.Empty);
 
                     Assert.Equal(1, response.Content.Headers.ContentLength);
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -271,12 +281,13 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         public async Task ProblemDetailsExceptionHandler_RethrowsException()
         {
             var ex = new ProblemDetailsException(new EvilProblemDetails());
+
             using (var server = CreateServer(handler: ResponseThrows(ex)))
             using (var client = server.CreateClient())
             {
                 await Assert.ThrowsAnyAsync<Exception>(async () =>
                 {
-                    var response = await client.GetAsync("");
+                    var response = await client.GetAsync(string.Empty);
 
                     Assert.Equal(1, response.Content.Headers.ContentLength);
                     Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -290,7 +301,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseThrows()))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
                 var content = await response.Content.ReadAsStringAsync();
 
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -308,7 +319,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseThrows(), configureOptions: ConfigureOptions))
             using (var client = server.CreateClient())
             {
-                var response = await client.GetAsync("");
+                var response = await client.GetAsync(string.Empty);
                 var content = await response.Content.ReadAsStringAsync();
 
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -362,7 +373,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
 
         private static RequestDelegate ResponseThrows(Exception exception = null)
         {
-            return context => throw exception ?? new Exception();
+            return context => throw exception ?? new Exception("Request failed.");
         }
 
         private static void ConfigureJson(JsonSerializerSettings json)
