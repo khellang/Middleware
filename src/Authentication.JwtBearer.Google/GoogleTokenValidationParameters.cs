@@ -11,6 +11,7 @@ namespace Hellang.Authentication.JwtBearer.Google
         protected GoogleTokenValidationParameters(GoogleTokenValidationParameters other) : base(other)
         {
             HostedDomain = other.HostedDomain;
+            ValidateHostedDomain = other.ValidateHostedDomain;
         }
         
         public string HostedDomain { get; set; }
