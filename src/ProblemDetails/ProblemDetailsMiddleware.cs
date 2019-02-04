@@ -80,7 +80,7 @@ namespace Hellang.Middleware.ProblemDetails
 
                     var details = GetDetails(context, error);
 
-                    if (IsServerError(details.Status))
+                    if (Options.ShouldLogUnhandledException(error, details))
                     {
                         Logger.UnhandledException(error);
                     }
@@ -150,12 +150,6 @@ namespace Hellang.Middleware.ProblemDetails
 
             // Fall back to the generic exception problem details.
             return new ExceptionProblemDetails(error);
-        }
-
-        private static bool IsServerError(int? statusCode)
-        {
-            // Err on the side of caution and treat missing status code as server error.
-            return !statusCode.HasValue || statusCode.Value >= 500;
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)

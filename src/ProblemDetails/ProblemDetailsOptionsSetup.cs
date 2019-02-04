@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -12,6 +13,11 @@ namespace Hellang.Middleware.ProblemDetails
             if (options.IncludeExceptionDetails == null)
             {
                 options.IncludeExceptionDetails = IncludeExceptionDetails;
+            }
+
+            if (options.ShouldLogUnhandledException == null)
+            {
+                options.ShouldLogUnhandledException = (e, d) => IsServerError(d.Status);
             }
 
             if (options.MapStatusCode == null)
@@ -28,6 +34,12 @@ namespace Hellang.Middleware.ProblemDetails
         private static bool IncludeExceptionDetails(HttpContext context)
         {
             return context.RequestServices.GetRequiredService<IHostingEnvironment>().IsDevelopment();
+        }
+
+        private static bool IsServerError(int? statusCode)
+        {
+            // Err on the side of caution and treat missing status code as server error.
+            return !statusCode.HasValue || statusCode.Value >= 500;
         }
 
         private static bool IsProblem(HttpContext context)

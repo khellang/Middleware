@@ -40,6 +40,8 @@ namespace Hellang.Middleware.ProblemDetails
         
         public Action<MvcProblemDetails> OnBeforeWriteDetails { get; set; }
 
+        public Func<Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }
+
         public HashSet<string> AllowedHeaderNames { get; }
 
         private List<ExceptionMapper> Mappers { get; }
