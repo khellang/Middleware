@@ -39,23 +39,6 @@ namespace Hellang.Middleware.ProblemDetails
             return app.UseMiddleware<ProblemDetailsMiddleware>();
         }
 
-        [Obsolete("This overload is deprecated. Please call " + nameof(IServiceCollection) + "." + nameof(AddProblemDetails) + " and use the parameterless overload instead.")]
-        public static IApplicationBuilder UseProblemDetails(this IApplicationBuilder app, Action<ProblemDetailsOptions> configure)
-        {
-            var options = new ProblemDetailsOptions();
-
-            configure?.Invoke(options);
-
-            // Try to pull the IConfigureOptions<ProblemDetailsOptions> service from the container
-            // in case the user has called AddProblemDetails and still use this overload.
-            // If the setup hasn't been configured. Create an instance explicitly and use that.
-            var setup = app.ApplicationServices.GetService<IConfigureOptions<ProblemDetailsOptions>>() ?? new ProblemDetailsOptionsSetup();
-
-            setup.Configure(options);
-
-            return app.UseMiddleware<ProblemDetailsMiddleware>(Options.Create(options));
-        }
-
         /// <summary>
         /// A marker class used to determine if the required services were added
         /// to the <see cref="IServiceCollection"/> before the middleware is configured.
