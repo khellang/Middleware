@@ -80,7 +80,7 @@ namespace Hellang.Middleware.ProblemDetails
 
                     var details = GetDetails(context, error);
 
-                    if (Options.ShouldLogUnhandledException(error, details))
+                    if (Options.ShouldLogUnhandledException(context, error, details))
                     {
                         Logger.UnhandledException(error);
                     }
@@ -104,10 +104,10 @@ namespace Hellang.Middleware.ProblemDetails
 
             if (error == null)
             {
-                return Options.MapStatusCode(statusCode);
+                return Options.MapStatusCode(context, statusCode);
             }
 
-            var result = GetProblemDetails(error);
+            var result = GetProblemDetails(context, error);
 
             // We don't want to leak exception details unless it's configured,
             // even if the user mapped the exception into ExceptionProblemDetails.
@@ -128,13 +128,13 @@ namespace Hellang.Middleware.ProblemDetails
                     }
                 }
 
-                return Options.MapStatusCode(ex.Status ?? statusCode);
+                return Options.MapStatusCode(context, ex.Status ?? statusCode);
             }
 
             return result;
         }
 
-        private MvcProblemDetails GetProblemDetails(Exception error)
+        private MvcProblemDetails GetProblemDetails(HttpContext context, Exception error)
         {
             if (error is ProblemDetailsException problem)
             {
@@ -142,7 +142,7 @@ namespace Hellang.Middleware.ProblemDetails
                 return problem.Details;
             }
 
-            if (Options.TryMapProblemDetails(error, out var result))
+            if (Options.TryMapProblemDetails(context, error, out var result))
             {
                 // The user has set up a mapping for the specific exception type.
                 return result;
@@ -154,7 +154,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
         {
-            Options.OnBeforeWriteDetails?.Invoke(details);
+            Options.OnBeforeWriteDetails?.Invoke(context, details);
 
             var routeData = context.GetRouteData() ?? EmptyRouteData;
 

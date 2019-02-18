@@ -310,7 +310,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
 
             void ConfigureOptions(ProblemDetailsOptions options)
             {
-                options.OnBeforeWriteDetails = details =>
+                options.OnBeforeWriteDetails = (ctx, details) =>
                 {
                     details.Type = "https://example.com";
                 };

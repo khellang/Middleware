@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -17,12 +16,12 @@ namespace Hellang.Middleware.ProblemDetails
 
             if (options.ShouldLogUnhandledException == null)
             {
-                options.ShouldLogUnhandledException = (e, d) => IsServerError(d.Status);
+                options.ShouldLogUnhandledException = (ctx, e, d) => IsServerError(d.Status);
             }
 
             if (options.MapStatusCode == null)
             {
-                options.MapStatusCode = statusCode => new StatusCodeProblemDetails(statusCode);
+                options.MapStatusCode = (ctx, statusCode) => new StatusCodeProblemDetails(statusCode);
             }
 
             if (options.IsProblem == null)

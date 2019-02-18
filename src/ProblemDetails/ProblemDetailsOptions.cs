@@ -36,11 +36,11 @@ namespace Hellang.Middleware.ProblemDetails
 
         public Func<HttpContext, bool> IsProblem { get; set; }
 
-        public Func<int, MvcProblemDetails> MapStatusCode { get; set; }
+        public Func<HttpContext, int, MvcProblemDetails> MapStatusCode { get; set; }
         
-        public Action<MvcProblemDetails> OnBeforeWriteDetails { get; set; }
+        public Action<HttpContext, MvcProblemDetails> OnBeforeWriteDetails { get; set; }
 
-        public Func<Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }
+        public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }
 
         public HashSet<string> AllowedHeaderNames { get; }
 
@@ -48,14 +48,19 @@ namespace Hellang.Middleware.ProblemDetails
 
         public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
         {
-            Mappers.Add(new ExceptionMapper(typeof(TException), ex => mapping((TException) ex)));
+            Map<TException>((ctx, ex) => mapping(ex));
         }
 
-        internal bool TryMapProblemDetails(Exception exception, out MvcProblemDetails problem)
+        public void Map<TException>(Func<HttpContext, TException, MvcProblemDetails> mapping) where TException : Exception
+        {
+            Mappers.Add(new ExceptionMapper(typeof(TException), (ctx, ex) => mapping(ctx, (TException)ex)));
+        }
+
+        internal bool TryMapProblemDetails(HttpContext context, Exception exception, out MvcProblemDetails problem)
         {
             foreach (var mapper in Mappers)
             {
-                if (mapper.TryMap(exception, out problem))
+                if (mapper.TryMap(context, exception, out problem))
                 {
                     return true;
                 }
@@ -67,7 +72,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         private sealed class ExceptionMapper
         {
-            public ExceptionMapper(Type type, Func<Exception, MvcProblemDetails> mapping)
+            public ExceptionMapper(Type type, Func<HttpContext, Exception, MvcProblemDetails> mapping)
             {
                 Type = type;
                 Mapping = mapping;
@@ -75,20 +80,20 @@ namespace Hellang.Middleware.ProblemDetails
 
             private Type Type { get; }
 
-            private Func<Exception, MvcProblemDetails> Mapping { get; }
+            private Func<HttpContext, Exception, MvcProblemDetails> Mapping { get; }
 
             public bool CanMap(Type type)
             {
                 return Type.IsAssignableFrom(type);
             }
 
-            public bool TryMap(Exception exception, out MvcProblemDetails problem)
+            public bool TryMap(HttpContext context, Exception exception, out MvcProblemDetails problem)
             {
                 if (CanMap(exception.GetType()))
                 {
                     try
                     {
-                        problem = Mapping(exception);
+                        problem = Mapping(context, exception);
                         return true;
                     }
                     catch
