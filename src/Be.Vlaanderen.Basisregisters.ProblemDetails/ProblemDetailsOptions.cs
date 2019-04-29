@@ -63,15 +63,17 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
         private sealed class ExceptionMapper
         {
-            public ExceptionMapper(Type type, Func<HttpContext, Exception, ProblemDetails> mapping)
+            private Type Type { get; }
+
+            private Func<HttpContext, Exception, ProblemDetails> Mapping { get; }
+
+            public ExceptionMapper(
+                Type type,
+                Func<HttpContext, Exception, ProblemDetails> mapping)
             {
                 Type = type;
                 Mapping = mapping;
             }
-
-            private Type Type { get; }
-
-            private Func<HttpContext, Exception, ProblemDetails> Mapping { get; }
 
             public bool CanMap(Type type) => Type.IsAssignableFrom(type);
 
