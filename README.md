@@ -1,76 +1,37 @@
-# Middleware
+# Be.Vlaanderen.Basisregisters.ProblemDetails
 
-Various ASP.NET Core middleware. Mostly for use in APIs.
+[![NuGet](https://img.shields.io/nuget/v/Be.Vlaanderen.Basisregisters.ProblemDetails.svg)](https://www.nuget.org/packages/Be.Vlaanderen.Basisregisters.ProblemDetails)
 
-## ProblemDetails [![NuGet](https://img.shields.io/nuget/v/Hellang.Middleware.ProblemDetails.svg)](https://www.nuget.org/packages/Hellang.Middleware.ProblemDetails)
+> Install-Package Be.Vlaanderen.Basisregisters.ProblemDetails
 
-> Install-Package Hellang.Middleware.ProblemDetails
+## Credits
 
-Documentation is coming... In the meantime, see:
-* [the sample](samples/ProblemDetails.Sample/Program.cs)
-* [asp.net core 2.2 sample app](https://github.com/christianacca/ProblemDetailsDemo)
+### Languages & Frameworks
 
-#### Logo
+* [.NET Core](https://github.com/Microsoft/dotnet/blob/master/LICENSE) - [MIT](https://choosealicense.com/licenses/mit/)
+* [.NET Core Runtime](https://github.com/dotnet/coreclr/blob/master/LICENSE.TXT) - _CoreCLR is the runtime for .NET Core. It includes the garbage collector, JIT compiler, primitive data types and low-level classes._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [.NET Core SDK](https://github.com/dotnet/sdk/blob/master/LICENSE.TXT) - _Core functionality needed to create .NET Core projects, that is shared between Visual Studio and CLI._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [.NET Standard definition](https://github.com/dotnet/standard/blob/master/LICENSE.TXT) - _The principles and definition of the .NET Standard._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [F#](https://github.com/fsharp/fsharp/blob/master/LICENSE) - _The F# Compiler, Core Library & Tools_ - [MIT](https://choosealicense.com/licenses/mit/)
+* [F# and .NET Core](https://github.com/dotnet/netcorecli-fsc/blob/master/LICENSE) - _F# and .NET Core SDK working together._ - [MIT](https://choosealicense.com/licenses/mit/)
 
-corrupted file by Rflor from the Noun Project
+### Libraries
 
-## SpaFallback [![NuGet](https://img.shields.io/nuget/v/Hellang.Middleware.SpaFallback.svg)](https://www.nuget.org/packages/Hellang.Middleware.SpaFallback)
+* [Paket](https://fsprojects.github.io/Paket/license.html) - _A dependency manager for .NET with support for NuGet packages and Git repositories._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [FAKE](https://github.com/fsharp/FAKE/blob/release/next/License.txt) - _"FAKE - F# Make" is a cross platform build automation system._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [Middleware - ProblemDetails](https://github.com/khellang/Middleware/blob/master/LICENSE) - _Various ASP.NET Core middleware._ - [MIT](https://choosealicense.com/licenses/mit/)
 
-> Install-Package Hellang.Middleware.SpaFallback
+### Tooling
 
-The `SpaFallback` middleware is designed to make your client-side SPA routing work seamlessly with your server-side routing.
-
-When a request for a client-side route hits the server, chances are there's no middleware that will handle it. This means it will reach the end of the pipeline, the response status code will be set to 404 and the response will bubble back up the pipeline and be returned to the client. This is probably not what you want to happen.
-
-Whenever a request can't be handled on the server, you usually want to fall back to your SPA and delegate the routing to the client. This is what the `SpaFallback` middleware enables.
-
-The middleware works by passing all requests through the pipeline and let other middleware try to handle it. When the response comes back, it will perform a series of checks (outlined below) and optionally re-execute the pipeline, using the configured fallback path. This defaults to `/index.html`. This should bootstrap your SPA and let the client-side routing take over.
-
-The following rules are verified before a fallback occurs:
-
- 1. The method is **GET**.
- 1. The status code is **404**.
- 1. The response hasn't started yet.
- 1. The requested path does not have a file extension.
- 1. The request actually reached the end of the pipeline.
-
-The middleware tries to be as smart as possible when determining whether a fallback should happen or not:
-
-If the request path has a file extension, i.e. `/public/image.png`, the client probably wanted an actual file (typically served by [StaticFiles](https://github.com/aspnet/StaticFiles)), but it was missing from disk, so we let the 404 response through to the client.
-
-In addition, we check that the response wasn't handled by other middleware (but still ended up with a 404 status code). This is useful if you want to prevent disclosing the existence of a resource that the client don't have access to. In order to achieve this, `AddSpaFallback` will automatically inject a "marker middleware" at the end of the pipeline. If the request reaches this middleware, it will set the response status code to 404 and add a tag to the `HttpContext.Items` dictionary. This tag is then checked in the fallback middleware to verify a "hard" 404.
-
-### Usage
-
-```csharp
-public class Startup
-{
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddSpaFallback();
-        services.AddMvc();
-    }
-
-    public void Configure(IApplicationBuilder app)
-    {
-        app.UseSpaFallback();
-        app.UseStaticFiles();
-        app.UseMvc();
-    }
-}
-```
-
-## Authentication.JwtBearer.Google [![NuGet](https://img.shields.io/nuget/v/Hellang.Authentication.JwtBearer.Google.svg)](https://www.nuget.org/packages/Hellang.Authentication.JwtBearer.Google)
-                                  
-> Install-Package Hellang.Authentication.JwtBearer.Google
-
-Makes it straight-forward to hook up authentication with Google identity tokens, using Microsoft's existing `Microsoft.AspNetCore.Authentication.JwtBearer` for parsing and validating the tokens.
-
-### Usage
-
-````csharp
-services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(x => x.UseGoogle(
-        clientId: "<google-client-id>",
-        hostedDomain: "<optional-g-suite-domain>"));
-````
+* [npm](https://github.com/npm/cli/blob/latest/LICENSE) - _A package manager for JavaScript._ - [Artistic License 2.0](https://choosealicense.com/licenses/artistic-2.0/)
+* [semantic-release](https://github.com/semantic-release/semantic-release/blob/master/LICENSE) - _Fully automated version management and package publishing._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [semantic-release/changelog](https://github.com/semantic-release/changelog/blob/master/LICENSE) - _Semantic-release plugin to create or update a changelog file._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer/blob/master/LICENSE) - _Semantic-release plugin to analyze commits with conventional-changelog._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [semantic-release/exec](https://github.com/semantic-release/exec/blob/master/LICENSE) - _Semantic-release plugin to execute custom shell commands._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [semantic-release/git](https://github.com/semantic-release/git/blob/master/LICENSE) - _Semantic-release plugin to commit release assets to the project's git repository._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [semantic-release/npm](https://github.com/semantic-release/npm/blob/master/LICENSE) - _Semantic-release plugin to publish a npm package._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [semantic-release/github](https://github.com/semantic-release/github/blob/master/LICENSE) - _Semantic-release plugin to publish a GitHub release._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator/blob/master/LICENSE) - _Semantic-release plugin to generate changelog content with conventional-changelog._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [commitlint](https://github.com/marionebl/commitlint/blob/master/license.md) - _Lint commit messages._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [commitizen/cz-cli](https://github.com/commitizen/cz-cli/blob/master/LICENSE) - _The commitizen command line utility._ - [MIT](https://choosealicense.com/licenses/mit/)
+* [commitizen/cz-conventional-changelog](https://github.com/commitizen/cz-conventional-changelog/blob/master/LICENSE) _A commitizen adapter for the angular preset of conventional-changelog._ - [MIT](https://choosealicense.com/licenses/mit/)

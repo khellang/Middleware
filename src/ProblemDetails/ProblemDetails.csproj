@@ -1,18 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Version>3.0.1</Version>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Hellang.Middleware.ProblemDetails</AssemblyName>
-    <RootNamespace>Hellang.Middleware.ProblemDetails</RootNamespace>
-    <Description>Error handling middleware, using RFC7807</Description>
-    <PackageTags>middleware;error;exception;RFC7807</PackageTags>
-    <PackageIconUrl>https://raw.githubusercontent.com/khellang/Middleware/master/etc/problem-logo.png</PackageIconUrl>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.3" />
-    <PackageReference Include="Microsoft.Extensions.StackTrace.Sources" Version="3.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Extensions.TypeNameHelper.Sources" Version="3.0.0-*" PrivateAssets="All" />
-  </ItemGroup>
+  <Import Project="..\..\packages\Be.Vlaanderen.Basisregisters.Build.Pipeline\Content\Be.Vlaanderen.Basisregisters.Build.Pipeline.Settings.Library.props" />
+
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

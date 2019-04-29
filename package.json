@@ -1,0 +1,159 @@
+{
+  "name": "swagger",
+  "version": "1.0.4",
+  "description": "Swagger and ReDoc helpers.",
+  "author": "Basisregisters Vlaanderen",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:informatievlaanderen/swagger.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "7.5.2",
+    "@commitlint/config-conventional": "7.5.0",
+    "@commitlint/prompt": "7.5.0",
+    "@semantic-release/changelog": "3.0.2",
+    "@semantic-release/commit-analyzer": "6.1.0",
+    "@semantic-release/exec": "3.3.2",
+    "@semantic-release/git": "7.0.8",
+    "@semantic-release/npm": "5.1.7",
+    "@semantic-release/github": "5.2.10",
+    "@semantic-release/release-notes-generator": "7.1.4",
+    "commitizen": "3.1.1",
+    "cz-conventional-changelog": "2.1.0",
+    "husky": "2.1.0",
+    "form-data": "2.3.3",
+    "semantic-release": "15.13.12",
+    "merge": ">=1.2.1"
+  },
+  "scripts": {
+    "commit": "git-cz",
+    "semantic-release": "semantic-release"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release": {
+    "branch": "master",
+    "verifyConditions": [
+      "@semantic-release/changelog",
+      "@semantic-release/git",
+      "@semantic-release/github"
+    ],
+    "analyzeCommits": {
+      "path": "@semantic-release/commit-analyzer",
+      "preset": "angular",
+      "releaseRules": [
+        {
+          "breaking": true,
+          "release": "major"
+        },
+        {
+          "type": "docs",
+          "scope": "README",
+          "release": "patch"
+        },
+        {
+          "type": "refactor",
+          "scope": "/core.*/",
+          "release": "minor"
+        },
+        {
+          "type": "refactor",
+          "release": "patch"
+        },
+        {
+          "type": "chore",
+          "scope": "breaking",
+          "release": "major"
+        }
+      ],
+      "parserOpts": {
+        "noteKeywords": [
+          "BREAKING CHANGE",
+          "BREAKING CHANGES",
+          "BREAKING"
+        ]
+      }
+    },
+    "generateNotes": {
+      "path": "@semantic-release/release-notes-generator",
+      "preset": "angular",
+      "parserOpts": {
+        "noteKeywords": [
+          "BREAKING CHANGE",
+          "BREAKING CHANGES",
+          "BREAKING"
+        ]
+      },
+      "writerOpts": {
+        "commitsSort": [
+          "scope",
+          "subject"
+        ]
+      }
+    },
+    "prepare": [
+      {
+        "path": "@semantic-release/changelog",
+        "changelogFile": "CHANGELOG.md"
+      },
+      {
+        "path": "@semantic-release/npm",
+        "npmPublish": false
+      },
+      {
+        "path": "@semantic-release/exec",
+        "cmd": "BITBUCKET_BUILD_NUMBER=${nextRelease.version} ./build.sh Lib_Pack"
+      },
+      {
+        "path": "@semantic-release/git",
+        "assets": [
+          "CHANGELOG.md",
+          "package.json",
+          "package-lock.json"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "publish": [
+      {
+        "path": "@semantic-release/github",
+        "assets": [
+          {
+            "path": "dist/**/*.nupkg"
+          }
+        ]
+      },
+      {
+        "path": "@semantic-release/exec",
+        "cmd": "node packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-nuget.js dist/Be.Vlaanderen.Basisregisters.AspNetCore.Swagger/Be.Vlaanderen.Basisregisters.AspNetCore.Swagger.${nextRelease.version}.nupkg"
+      },
+      {
+        "path": "@semantic-release/exec",
+        "cmd": "node packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-nuget.js dist/Be.Vlaanderen.Basisregisters.AspNetCore.Swagger/Be.Vlaanderen.Basisregisters.AspNetCore.Swagger.ReDoc.${nextRelease.version}.nupkg"
+      },
+      {
+        "path": "@semantic-release/exec",
+        "cmd": "./packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-confluence.sh"
+      }
+    ],
+    "success": [
+      "@semantic-release/github"
+    ],
+    "fail": false
+  }
+}

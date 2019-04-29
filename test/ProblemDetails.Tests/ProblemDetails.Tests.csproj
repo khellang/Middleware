@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>Hellang.Middleware.ProblemDetails.Tests</AssemblyName>
-    <RootNamespace>Hellang.Middleware.ProblemDetails.Tests</RootNamespace>
-  </PropertyGroup>
-  
+  <Import Project="..\..\packages\Be.Vlaanderen.Basisregisters.Build.Pipeline\Content\Be.Vlaanderen.Basisregisters.Build.Pipeline.Settings.Test.props" />
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\ProblemDetails\ProblemDetails.csproj" />
   </ItemGroup>
+
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
