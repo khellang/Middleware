@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-
-namespace Hellang.Middleware.ProblemDetails
+namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
-    public class StatusCodeProblemDetails : Microsoft.AspNetCore.Mvc.ProblemDetails
+    using Microsoft.AspNetCore.WebUtilities;
+
+    public class StatusCodeProblemDetails : ProblemDetails
     {
         public StatusCodeProblemDetails(int statusCode)
         {
-            Status = statusCode;
-            Type = $"https://httpstatuses.com/{statusCode}";
+            HttpStatus = statusCode;
+            ProblemTypeUri = $"https://httpstatuses.com/{statusCode}";
             Title = ReasonPhrases.GetReasonPhrase(statusCode);
         }
     }

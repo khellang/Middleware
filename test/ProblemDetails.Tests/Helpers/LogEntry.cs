@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-
-namespace Hellang.Middleware.ProblemDetails.Tests.Helpers
+namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests.Helpers
 {
+    using System;
+    using Microsoft.Extensions.Logging;
+
     public sealed class LogEntry
     {
         public LogLevel Type { get; set; }

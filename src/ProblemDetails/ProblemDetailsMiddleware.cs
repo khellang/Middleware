@@ -1,24 +1,33 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.StackTrace.Sources;
-using Microsoft.Net.Http.Headers;
-using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
-
-namespace Hellang.Middleware.ProblemDetails
+namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Abstractions;
+    using Microsoft.AspNetCore.Mvc.Infrastructure;
+    using Microsoft.AspNetCore.Routing;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+    using Microsoft.Extensions.StackTrace.Sources;
+    using Microsoft.Net.Http.Headers;
+    using System;
+    using System.Threading.Tasks;
+
     public class ProblemDetailsMiddleware
     {
         private static readonly ActionDescriptor EmptyActionDescriptor = new ActionDescriptor();
 
         private static readonly RouteData EmptyRouteData = new RouteData();
+
+        private RequestDelegate Next { get; }
+
+        private ProblemDetailsOptions Options { get; }
+
+        private IActionResultExecutor<ObjectResult> Executor { get; }
+
+        private ILogger<ProblemDetailsMiddleware> Logger { get; }
+
+        private ExceptionDetailsProvider DetailsProvider { get; }
 
         public ProblemDetailsMiddleware(
             RequestDelegate next,
@@ -34,16 +43,6 @@ namespace Hellang.Middleware.ProblemDetails
             var fileProvider = Options.FileProvider ?? environment.ContentRootFileProvider;
             DetailsProvider = new ExceptionDetailsProvider(fileProvider, Options.SourceCodeLineCount);
         }
-
-        private RequestDelegate Next { get; }
-
-        private ProblemDetailsOptions Options { get; }
-
-        private IActionResultExecutor<ObjectResult> Executor { get; }
-
-        private ILogger<ProblemDetailsMiddleware> Logger { get; }
-
-        private ExceptionDetailsProvider DetailsProvider { get; }
 
         public async Task Invoke(HttpContext context)
         {
@@ -81,9 +80,7 @@ namespace Hellang.Middleware.ProblemDetails
                     var details = GetDetails(context, error);
 
                     if (Options.ShouldLogUnhandledException(context, error, details))
-                    {
                         Logger.UnhandledException(error);
-                    }
 
                     await WriteProblemDetails(context, details);
                     return;
@@ -98,61 +95,53 @@ namespace Hellang.Middleware.ProblemDetails
             }
         }
 
-        private MvcProblemDetails GetDetails(HttpContext context, Exception error)
+        private ProblemDetails GetDetails(HttpContext context, Exception error)
         {
             var statusCode = context.Response.StatusCode;
 
             if (error == null)
-            {
                 return Options.MapStatusCode(context, statusCode);
-            }
 
             var result = GetProblemDetails(context, error);
 
             // We don't want to leak exception details unless it's configured,
             // even if the user mapped the exception into ExceptionProblemDetails.
-            if (result is ExceptionProblemDetails ex)
-            {
-                if (Options.IncludeExceptionDetails(context))
-                {
-                    try
-                    {
-                        var details = DetailsProvider.GetDetails(ex.Error);
-                        return new DeveloperProblemDetails(ex, details);
-                    }
-                    catch (Exception e)
-                    {
-                        // Failed to get exception details for the specific exception.
-                        // Fall back to generic status code problem details below.
-                        Logger.ProblemDetailsMiddlewareException(e);
-                    }
-                }
+            if (!(result is ExceptionProblemDetails ex))
+                return result;
 
-                return Options.MapStatusCode(context, ex.Status ?? statusCode);
+            if (!Options.IncludeExceptionDetails(context))
+                return Options.MapStatusCode(context, ex.HttpStatus ?? statusCode);
+
+            try
+            {
+                var details = DetailsProvider.GetDetails(ex.Error);
+                return ex.WithExceptionDetails(details);
+            }
+            catch (Exception e)
+            {
+                // Failed to get exception details for the specific exception.
+                // Fall back to generic status code problem details below.
+                Logger.ProblemDetailsMiddlewareException(e);
             }
 
-            return result;
+            return Options.MapStatusCode(context, ex.HttpStatus ?? statusCode);
         }
 
-        private MvcProblemDetails GetProblemDetails(HttpContext context, Exception error)
+        private ProblemDetails GetProblemDetails(HttpContext context, Exception error)
         {
+            // The user has already provided a valid problem details object.
             if (error is ProblemDetailsException problem)
-            {
-                // The user has already provided a valid problem details object.
                 return problem.Details;
-            }
 
+            // The user has set up a mapping for the specific exception type.
             if (Options.TryMapProblemDetails(context, error, out var result))
-            {
-                // The user has set up a mapping for the specific exception type.
                 return result;
-            }
 
             // Fall back to the generic exception problem details.
             return new ExceptionProblemDetails(error);
         }
 
-        private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
+        private Task WriteProblemDetails(HttpContext context, ProblemDetails details)
         {
             Options.OnBeforeWriteDetails?.Invoke(context, details);
 
@@ -162,7 +151,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             var result = new ObjectResult(details)
             {
-                StatusCode = details.Status ?? context.Response.StatusCode,
+                StatusCode = details.HttpStatus ?? context.Response.StatusCode,
                 DeclaredType = details.GetType(),
             };
 
@@ -186,18 +175,14 @@ namespace Hellang.Middleware.ProblemDetails
                 // Because the CORS middleware adds all the headers early in the pipeline,
                 // we want to copy over the existing Access-Control-* headers after resetting the response.
                 if (Options.AllowedHeaderNames.Contains(header.Key))
-                {
                     headers.Add(header);
-                }
             }
 
             context.Response.Clear();
             context.Response.StatusCode = statusCode;
 
             foreach (var header in headers)
-            {
                 context.Response.Headers.Add(header);
-            }
         }
     }
 }

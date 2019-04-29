@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-
-namespace Hellang.Middleware.ProblemDetails.Tests.Helpers
+namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.Extensions.Logging;
+
     public class InMemoryLogger<T> : ILogger<T>
     {
         private static readonly string CategoryName = typeof(T).FullName;
@@ -16,9 +16,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests.Helpers
             get
             {
                 lock (_messages)
-                {
                     return _messages.ToList();
-                }
             }
         }
 
@@ -34,9 +32,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests.Helpers
             };
 
             lock (_messages)
-            {
                 _messages.Add(message);
-            }
         }
 
         public bool IsEnabled(LogLevel logLevel) => true;

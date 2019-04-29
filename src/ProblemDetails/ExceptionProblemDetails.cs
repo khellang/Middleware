@@ -1,19 +1,22 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
-
-namespace Hellang.Middleware.ProblemDetails
+namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
+    using Microsoft.AspNetCore.Http;
+    using Newtonsoft.Json;
+    using System;
+    using System.Runtime.Serialization;
+
     public class ExceptionProblemDetails : StatusCodeProblemDetails
     {
-        public ExceptionProblemDetails(Exception error) : this(error, StatusCodes.Status500InternalServerError)
-        {
-        }
+        [JsonProperty("error", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DataMember(Name = "error", Order = 600, EmitDefaultValue = false)]
+        public Exception Error { get; }
+
+        // Here to make DataContractSerializer happy
+        public ExceptionProblemDetails() : base(StatusCodes.Status500InternalServerError) { }
+
+        public ExceptionProblemDetails(Exception error) : this(error, StatusCodes.Status500InternalServerError) { }
 
         public ExceptionProblemDetails(Exception error, int statusCode) : base(statusCode)
-        {
-            Error = error ?? throw new ArgumentNullException(nameof(error));
-        }
-
-        public Exception Error { get; }
+            => Error = error ?? throw new ArgumentNullException(nameof(error));
     }
 }

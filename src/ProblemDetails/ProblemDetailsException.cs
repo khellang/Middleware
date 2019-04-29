@@ -1,14 +1,11 @@
-﻿using System;
-
-namespace Hellang.Middleware.ProblemDetails
+namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
+    using System;
+
     public class ProblemDetailsException : Exception
     {
-        public ProblemDetailsException(Microsoft.AspNetCore.Mvc.ProblemDetails details)
-        {
-            Details = details;
-        }
+        public ProblemDetails Details { get; }
 
-        public Microsoft.AspNetCore.Mvc.ProblemDetails Details { get; }
+        public ProblemDetailsException(ProblemDetails details) => Details = details;
     }
 }

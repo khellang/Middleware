@@ -1,14 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Net.Http.Headers;
-using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
-
-namespace Hellang.Middleware.ProblemDetails
+namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.FileProviders;
+    using Microsoft.Net.Http.Headers;
+    using System;
+    using System.Collections.Generic;
+
     public class ProblemDetailsOptions
     {
+        public int SourceCodeLineCount { get; set; }
+
+        public IFileProvider FileProvider { get; set; }
+
+        public Func<HttpContext, bool> IncludeExceptionDetails { get; set; }
+
+        public Func<HttpContext, bool> IsProblem { get; set; }
+
+        public Func<HttpContext, int, ProblemDetails> MapStatusCode { get; set; }
+        
+        public Action<HttpContext, ProblemDetails> OnBeforeWriteDetails { get; set; }
+
+        public Func<HttpContext, Exception, ProblemDetails, bool> ShouldLogUnhandledException { get; set; }
+
+        public HashSet<string> AllowedHeaderNames { get; }
+
+        private List<ExceptionMapper> Mappers { get; }
+
         public ProblemDetailsOptions()
         {
             SourceCodeLineCount = 6;
@@ -28,43 +45,17 @@ namespace Hellang.Middleware.ProblemDetails
             };
         }
 
-        public int SourceCodeLineCount { get; set; }
+        public void Map<TException>(Func<TException, ProblemDetails> mapping) where TException : Exception
+            => Map<TException>((ctx, ex) => mapping(ex));
 
-        public IFileProvider FileProvider { get; set; }
+        public void Map<TException>(Func<HttpContext, TException, ProblemDetails> mapping) where TException : Exception
+            => Mappers.Add(new ExceptionMapper(typeof(TException), (ctx, ex) => mapping(ctx, (TException)ex)));
 
-        public Func<HttpContext, bool> IncludeExceptionDetails { get; set; }
-
-        public Func<HttpContext, bool> IsProblem { get; set; }
-
-        public Func<HttpContext, int, MvcProblemDetails> MapStatusCode { get; set; }
-        
-        public Action<HttpContext, MvcProblemDetails> OnBeforeWriteDetails { get; set; }
-
-        public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }
-
-        public HashSet<string> AllowedHeaderNames { get; }
-
-        private List<ExceptionMapper> Mappers { get; }
-
-        public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
-        {
-            Map<TException>((ctx, ex) => mapping(ex));
-        }
-
-        public void Map<TException>(Func<HttpContext, TException, MvcProblemDetails> mapping) where TException : Exception
-        {
-            Mappers.Add(new ExceptionMapper(typeof(TException), (ctx, ex) => mapping(ctx, (TException)ex)));
-        }
-
-        internal bool TryMapProblemDetails(HttpContext context, Exception exception, out MvcProblemDetails problem)
+        internal bool TryMapProblemDetails(HttpContext context, Exception exception, out ProblemDetails problem)
         {
             foreach (var mapper in Mappers)
-            {
                 if (mapper.TryMap(context, exception, out problem))
-                {
                     return true;
-                }
-            }
 
             problem = default;
             return false;
@@ -72,7 +63,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         private sealed class ExceptionMapper
         {
-            public ExceptionMapper(Type type, Func<HttpContext, Exception, MvcProblemDetails> mapping)
+            public ExceptionMapper(Type type, Func<HttpContext, Exception, ProblemDetails> mapping)
             {
                 Type = type;
                 Mapping = mapping;
@@ -80,14 +71,11 @@ namespace Hellang.Middleware.ProblemDetails
 
             private Type Type { get; }
 
-            private Func<HttpContext, Exception, MvcProblemDetails> Mapping { get; }
+            private Func<HttpContext, Exception, ProblemDetails> Mapping { get; }
 
-            public bool CanMap(Type type)
-            {
-                return Type.IsAssignableFrom(type);
-            }
+            public bool CanMap(Type type) => Type.IsAssignableFrom(type);
 
-            public bool TryMap(HttpContext context, Exception exception, out MvcProblemDetails problem)
+            public bool TryMap(HttpContext context, Exception exception, out ProblemDetails problem)
             {
                 if (CanMap(exception.GetType()))
                 {

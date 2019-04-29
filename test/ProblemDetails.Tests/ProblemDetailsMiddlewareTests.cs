@@ -1,22 +1,22 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Hellang.Middleware.ProblemDetails.Tests.Helpers;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Net.Http.Headers;
-using Newtonsoft.Json;
-using Xunit;
-using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
+using Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests.Helpers;
 
-namespace Hellang.Middleware.ProblemDetails.Tests
+namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
 {
+    using System;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.TestHost;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Net.Http.Headers;
+    using Newtonsoft.Json;
+    using Xunit;
+
     public class ProblemDetailsMiddlewareTests
     {
         public ProblemDetailsMiddlewareTests()
@@ -62,10 +62,10 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         {
             var problemStatus = HttpStatusCode.TooManyRequests;
 
-            var details = new MvcProblemDetails
+            var details = new ProblemDetails
             {
                 Title = "Too Many Requests",
-                Status = (int) problemStatus,
+                HttpStatus = (int) problemStatus,
             };
 
             var ex = new ProblemDetailsException(details);
@@ -99,7 +99,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             void MapNotImplementException(ProblemDetailsOptions options)
             {
                 options.Map<NotImplementedException>(ex =>
-                    new ExceptionProblemDetails(ex) {Status = StatusCodes.Status501NotImplemented});
+                    new ExceptionProblemDetails(ex) {HttpStatus = StatusCodes.Status501NotImplemented});
             }
 
             var handler = ResponseThrows(new NotImplementedException());
@@ -117,10 +117,10 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [Fact]
         public async Task Explicit_Client_Exception_Is_Not_Logged_As_Unhandled_Error()
         {
-            var details = new MvcProblemDetails
+            var details = new ProblemDetails
             {
                 Title = "Too Many Requests",
-                Status = StatusCodes.Status429TooManyRequests,
+                HttpStatus = StatusCodes.Status429TooManyRequests,
             };
 
             var ex = new ProblemDetailsException(details);
@@ -141,7 +141,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             void MapNotImplementException(ProblemDetailsOptions options)
             {
                 options.Map<NotImplementedException>(ex =>
-                    new ExceptionProblemDetails(ex) { Status = StatusCodes.Status403Forbidden });
+                    new ExceptionProblemDetails(ex) { HttpStatus = StatusCodes.Status403Forbidden });
             }
 
             var handler = ResponseThrows(new NotImplementedException());
@@ -309,12 +309,8 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             }
 
             void ConfigureOptions(ProblemDetailsOptions options)
-            {
-                options.OnBeforeWriteDetails = (ctx, details) =>
-                {
-                    details.Type = "https://example.com";
-                };
-            }
+                => options.OnBeforeWriteDetails =
+                    (ctx, details) => details.ProblemTypeUri = "https://example.com";
 
             using (var server = CreateServer(handler: ResponseThrows(), configureOptions: ConfigureOptions))
             using (var client = server.CreateClient())
@@ -381,7 +377,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             json.NullValueHandling = NullValueHandling.Ignore;
         }
 
-        private class EvilProblemDetails : Microsoft.AspNetCore.Mvc.ProblemDetails
+        private class EvilProblemDetails : ProblemDetails
         {
             public string EvilProperty => throw new Exception("This should throw during serialization.");
         }
