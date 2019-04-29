@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.0.1...v3.1.0) (2019-04-29)
+
+
+### Features
+
+* plugin basisregisters problemdetails to save refactoring for now ([6c1c387](https://github.com/informatievlaanderen/problemdetails-middleware/commit/6c1c387))
+
 ## [1.0.4](https://github.com/informatievlaanderen/swagger/compare/v1.0.3...v1.0.4) (2019-04-25)
 
 ## [1.0.3](https://github.com/informatievlaanderen/swagger/compare/v1.0.2...v1.0.3) (2019-04-25)
