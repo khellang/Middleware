@@ -16,11 +16,15 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
     using Microsoft.Net.Http.Headers;
     using Newtonsoft.Json;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class ProblemDetailsMiddlewareTests
     {
-        public ProblemDetailsMiddlewareTests()
+        private readonly ITestOutputHelper _outputHelper;
+
+        public ProblemDetailsMiddlewareTests(ITestOutputHelper outputHelper)
         {
+            _outputHelper = outputHelper;
             Logger = new InMemoryLogger<ProblemDetailsMiddleware>();
         }
 
@@ -159,7 +163,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
         [Theory]
         [InlineData("Staging", 84)]
         [InlineData("Production", 84)]
-        [InlineData("Development", 2000)]
+        [InlineData("Development", 1500)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedMinimumLength)
         {
             using (var server = CreateServer(handler: ResponseThrows(), environment: environment))
@@ -168,6 +172,8 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
                 var response = await client.GetAsync(string.Empty);
 
                 var content = await response.Content.ReadAsStringAsync();
+
+                _outputHelper.WriteLine(content);
 
                 Assert.InRange(content.Length, expectedMinimumLength, int.MaxValue);
             }

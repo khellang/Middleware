@@ -20,9 +20,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SEMVER.md = SEMVER.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails", "src\ProblemDetails\ProblemDetails.csproj", "{88FA068F-E20F-44B1-AFD3-4C1F102EB976}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Be.Vlaanderen.Basisregisters.ProblemDetails", "src\Be.Vlaanderen.Basisregisters.ProblemDetails\Be.Vlaanderen.Basisregisters.ProblemDetails.csproj", "{88FA068F-E20F-44B1-AFD3-4C1F102EB976}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails.Tests", "test\ProblemDetails.Tests\ProblemDetails.Tests.csproj", "{4F560993-778B-4C15-B5BB-619DAFB1D6A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Be.Vlaanderen.Basisregisters.ProblemDetails.Tests", "test\Be.Vlaanderen.Basisregisters.ProblemDetails.Tests\Be.Vlaanderen.Basisregisters.ProblemDetails.Tests.csproj", "{4F560993-778B-4C15-B5BB-619DAFB1D6A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
