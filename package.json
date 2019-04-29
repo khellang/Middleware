@@ -1,12 +1,12 @@
 {
-  "name": "swagger",
-  "version": "1.0.4",
-  "description": "Swagger and ReDoc helpers.",
+  "name": "problemdetails-middleware",
+  "version": "0.0.1",
+  "description": "Error handling middleware, using RFC7807.",
   "author": "Basisregisters Vlaanderen",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:informatievlaanderen/swagger.git"
+    "url": "git@github.com:informatievlaanderen/problemdetails-middleware.git"
   },
   "dependencies": {},
   "devDependencies": {
@@ -140,11 +140,7 @@
       },
       {
         "path": "@semantic-release/exec",
-        "cmd": "node packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-nuget.js dist/Be.Vlaanderen.Basisregisters.AspNetCore.Swagger/Be.Vlaanderen.Basisregisters.AspNetCore.Swagger.${nextRelease.version}.nupkg"
-      },
-      {
-        "path": "@semantic-release/exec",
-        "cmd": "node packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-nuget.js dist/Be.Vlaanderen.Basisregisters.AspNetCore.Swagger/Be.Vlaanderen.Basisregisters.AspNetCore.Swagger.ReDoc.${nextRelease.version}.nupkg"
+        "cmd": "node packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-nuget.js dist/Be.Vlaanderen.Basisregisters.ProblemDetails/Be.Vlaanderen.Basisregisters.ProblemDetails.${nextRelease.version}.nupkg"
       },
       {
         "path": "@semantic-release/exec",
