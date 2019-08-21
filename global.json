@@ -1,8 +1,8 @@
 {
   "sdk": {
-    "version": "2.2.203"
+    "version": "2.2.401"
   },
   "clr": {
-    "version": "2.2.4"
+    "version": "2.2.6"
   }
 }

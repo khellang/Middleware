@@ -1,5 +1,3 @@
-using Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests.Helpers;
-
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
 {
     using System;
@@ -7,6 +5,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Helpers;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
