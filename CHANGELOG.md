@@ -1,3 +1,10 @@
+## [3.2.3](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.2...v3.2.3) (2019-09-03)
+
+
+### Bug Fixes
+
+* get rid of xml namespace for problemdetails ([49ece5f](https://github.com/informatievlaanderen/problemdetails-middleware/commit/49ece5f))
+
 ## [3.2.2](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.1...v3.2.2) (2019-09-03)
 
 
