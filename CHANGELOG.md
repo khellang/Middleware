@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.1...v3.2.2) (2019-09-03)
+
+
+### Bug Fixes
+
+* serialize xml as pascalcase ([b630f2d](https://github.com/informatievlaanderen/problemdetails-middleware/commit/b630f2d))
+
 ## [3.2.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.0...v3.2.1) (2019-09-03)
 
 
