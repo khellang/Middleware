@@ -19,6 +19,7 @@ nuget NETStandard.Library 2.0.3
 // PRODUCTION STUFF
 nuget System.Reflection.Metadata 1.6.0
 nuget Microsoft.AspNetCore.Mvc.Core 2.2.5
+nuget Microsoft.AspNetCore.Mvc.Formatters.Xml 2.2.0
 
 nuget Microsoft.Extensions.StackTrace.Sources 2.0.0
 nuget Microsoft.Extensions.TypeNameHelper.Sources 2.0.0
@@ -36,6 +37,6 @@ nuget xunit.runner.visualstudio 2.4.1
 nuget Microsoft.AspNetCore.TestHost 2.2.0
 
 // BUILD STUFF
-nuget FAKE 4.64.13 // Don't update to v5!
+nuget FAKE 4.64.17 // Don't update to v5!
 nuget SourceLink.Embed.AllSourceFiles 2.8.3 copy_local: true
 nuget SourceLink.Copy.PdbFiles 2.8.3 copy_local: true

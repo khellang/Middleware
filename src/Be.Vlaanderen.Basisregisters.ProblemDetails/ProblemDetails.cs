@@ -6,6 +6,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
     /// <summary>Implementation of Problem Details for HTTP APIs https://tools.ietf.org/html/rfc7807</summary>
     ///// <summary>A machine-readable format for specifying errors in HTTP API responses based on https://tools.ietf.org/html/rfc7807.</summary>
+    [DataContract]
     public class ProblemDetails
     {
         public static string DefaultTitle { get; } = "Er heeft zich een fout voorgedaan!"; // TODO: Localize

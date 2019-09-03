@@ -4,6 +4,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.AspNetCore.Builder;
@@ -299,7 +300,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
                 });
             }
         }
-
+        
         [Fact]
         public async Task Options_OnBeforeWriteDetails()
         {
@@ -354,7 +355,8 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
                     .AddCors()
                     .AddProblemDetails(configureOptions)
                     .AddMvcCore()
-                    .AddJsonFormatters(ConfigureJson))
+                    .AddJsonFormatters(ConfigureJson)
+                    .AddXmlDataContractSerializerFormatters())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())
                     .UseProblemDetails()

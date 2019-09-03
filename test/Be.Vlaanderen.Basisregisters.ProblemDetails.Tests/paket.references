@@ -2,6 +2,7 @@ Microsoft.NETCore.App
 
 Microsoft.NET.Test.Sdk
 Microsoft.AspNetCore.TestHost
+Microsoft.AspNetCore.Mvc.Formatters.Xml
 
 xunit
 xunit.runner.visualstudio

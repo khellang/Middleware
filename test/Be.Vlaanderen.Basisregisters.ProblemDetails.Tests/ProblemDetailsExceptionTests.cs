@@ -1,8 +1,5 @@
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using Xunit;
 
     public class ProblemDetailsExceptionTests
