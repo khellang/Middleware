@@ -8,6 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Internal;
 using Xunit;
 
+#if NETCOREAPP2_2
+using Environments = Microsoft.Extensions.Hosting.EnvironmentName;
+#else
+using Environments = Microsoft.Extensions.Hosting.Environments;
+#endif
+
 namespace RateLimiting.Tests
 {
     public class RateLimitingMiddlewareTests
@@ -53,7 +59,7 @@ namespace RateLimiting.Tests
         private static TestServer CreateServer(Action<RateLimitingOptions> configure, ISystemClock clock)
         {
             var builder = new WebHostBuilder()
-                .UseEnvironment(EnvironmentName.Development)
+                .UseEnvironment(Environments.Development)
                 .ConfigureServices(x => x
                     .AddDistributedMemoryCache(y => y.Clock = clock)
                     .AddRateLimiting(y =>

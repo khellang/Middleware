@@ -108,7 +108,12 @@ namespace SpaFallback.Tests
 
                 var content = await response.Content.ReadAsStreamAsync();
 
-                Assert.Equal(0, content.Length);
+                if (content.CanSeek)
+                {
+                    // ASP.NET Core 3.0 returns a ResponseBodyReaderStream which isn't seekable.
+                    Assert.Equal(0, content.Length);
+                }
+
                 Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             }
         }

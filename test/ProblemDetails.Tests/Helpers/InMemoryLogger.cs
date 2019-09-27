@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace Hellang.Middleware.ProblemDetails.Tests.Helpers
+namespace ProblemDetails.Tests.Helpers
 {
     public class InMemoryLogger<T> : ILogger<T>
     {

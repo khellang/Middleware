@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Hellang.Middleware.SpaFallback.Tests</AssemblyName>
-    <RootNamespace>Hellang.Middleware.SpaFallback.Tests</RootNamespace>
+    <RootNamespace>SpaFallback.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>1.2.0</Version>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>2.0.0</Version>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <AssemblyName>Hellang.Middleware.SpaFallback</AssemblyName>
     <RootNamespace>Hellang.Middleware.SpaFallback</RootNamespace>
     <Description>SPA fallback middleware for client-side routing</Description>
@@ -9,8 +9,12 @@
     <PackageTags>middleware;spa;routing</PackageTags>
   </PropertyGroup>
   
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Hellang.Middleware.ProblemDetails;
 using Xunit;
 
-namespace Hellang.Middleware.ProblemDetails.Tests
+namespace ProblemDetails.Tests
 {
     public class ProblemDetailsExceptionTests
     {

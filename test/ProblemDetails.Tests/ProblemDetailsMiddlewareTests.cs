@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Hellang.Middleware.ProblemDetails.Tests.Helpers;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,11 +11,17 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
-using Newtonsoft.Json;
+using ProblemDetails.Tests.Helpers;
 using Xunit;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
-namespace Hellang.Middleware.ProblemDetails.Tests
+#if NETCOREAPP2_2
+using Environments = Microsoft.Extensions.Hosting.EnvironmentName;
+#else
+using Environments = Microsoft.Extensions.Hosting.Environments;
+#endif
+
+namespace ProblemDetails.Tests
 {
     public class ProblemDetailsMiddlewareTests
     {
@@ -241,8 +247,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             Task WriteResponse(HttpContext context)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.Body.WriteByte(byte.MinValue);
-                return Task.CompletedTask;
+                return context.Response.WriteAsync("hello");
             }
 
             using (var server = CreateServer(handler: WriteResponse))
@@ -250,7 +255,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             {
                 var response = await client.GetAsync(string.Empty);
 
-                Assert.Equal(1, response.Content.Headers.ContentLength);
+                Assert.Equal(5, response.Content.Headers.ContentLength);
                 Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             }
         }
@@ -258,22 +263,16 @@ namespace Hellang.Middleware.ProblemDetails.Tests
         [Fact]
         public async Task Exceptions_After_Response_Started_IsNotHandled()
         {
-            Task WriteResponse(HttpContext context)
+            async Task WriteResponse(HttpContext context)
             {
-                context.Response.Body.WriteByte(byte.MinValue);
+                await context.Response.WriteAsync("hello");
                 throw new Exception("Request Failed");
             }
 
             using (var server = CreateServer(handler: WriteResponse))
             using (var client = server.CreateClient())
             {
-                await Assert.ThrowsAnyAsync<Exception>(async () =>
-                {
-                    var response = await client.GetAsync(string.Empty);
-
-                    Assert.Equal(1, response.Content.Headers.ContentLength);
-                    Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                });
+                await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
             }
         }
 
@@ -285,13 +284,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             using (var server = CreateServer(handler: ResponseThrows(ex)))
             using (var client = server.CreateClient())
             {
-                await Assert.ThrowsAnyAsync<Exception>(async () =>
-                {
-                    var response = await client.GetAsync(string.Empty);
-
-                    Assert.Equal(1, response.Content.Headers.ContentLength);
-                    Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                });
+                await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
             }
         }
 
@@ -316,7 +309,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
                 };
             }
 
-            using (var server = CreateServer(handler: ResponseThrows(), configureOptions: ConfigureOptions))
+            using (var server = CreateServer(handler: ResponseThrows(), ConfigureOptions))
             using (var client = server.CreateClient())
             {
                 var response = await client.GetAsync(string.Empty);
@@ -343,17 +336,16 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             Assert.Empty(logger.Messages.Where(m => m.Type == LogLevel.Error));
         }
 
-        private TestServer CreateServer(RequestDelegate handler,
-            Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
+        private TestServer CreateServer(RequestDelegate handler, Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
         {
             var builder = new WebHostBuilder()
-                .UseEnvironment(environment ?? EnvironmentName.Development)
+                .UseEnvironment(environment ?? Environments.Development)
                 .ConfigureServices(x => x
                     .AddSingleton<ILogger<ProblemDetailsMiddleware>>(Logger)
                     .AddCors()
                     .AddProblemDetails(configureOptions)
                     .AddMvcCore()
-                    .AddJsonFormatters(ConfigureJson))
+                    .AddJson())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())
                     .UseProblemDetails()
@@ -376,12 +368,7 @@ namespace Hellang.Middleware.ProblemDetails.Tests
             return context => throw exception ?? new Exception("Request failed.");
         }
 
-        private static void ConfigureJson(JsonSerializerSettings json)
-        {
-            json.NullValueHandling = NullValueHandling.Ignore;
-        }
-
-        private class EvilProblemDetails : Microsoft.AspNetCore.Mvc.ProblemDetails
+        private class EvilProblemDetails : MvcProblemDetails
         {
             public string EvilProperty => throw new Exception("This should throw during serialization.");
         }
