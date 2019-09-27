@@ -43,7 +43,7 @@ Detail  : Look somewhere else.
 Instance: https://example.com/problem/123
 ";
 
-            Assert.Equal(expected, actual);
+            Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
         }
     }
 }
