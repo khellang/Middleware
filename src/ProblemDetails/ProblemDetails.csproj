@@ -8,7 +8,6 @@
     <PackageId>Hellang.Middleware.ProblemDetails</PackageId>
     <PackageTags>middleware;error;exception;RFC7807</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/khellang/Middleware/master/etc/problem-logo.png</PackageIconUrl>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
