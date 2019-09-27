@@ -1,6 +1,46 @@
 {
   "version": 1,
   "dependencies": {
+    ".NETCoreApp,Version=v3.0": {
+      "Microsoft.Extensions.StackTrace.Sources": {
+        "type": "Direct",
+        "requested": "[3.0.0-*, )",
+        "resolved": "3.0.0-preview-181114-06",
+        "contentHash": "XUK8B8VPAVoUaf3JJQqhoy1+/O6NQCb0Gq2CEOat4I0oDAtbjxmwGssziFbaLgyM3dRur0C99SQ1nzv/R64t3g=="
+      },
+      "Microsoft.Extensions.TypeNameHelper.Sources": {
+        "type": "Direct",
+        "requested": "[3.0.0-*, )",
+        "resolved": "3.0.0-preview6.19253.5",
+        "contentHash": "ags2ep6dGufpA2yCGXevYJY9SZsnLFuFcwmMa64C1qljfHjxOfzr3xS2e6o70fTG5Zi6A+P2r5Ecjdehk8wWCg=="
+      },
+      "Microsoft.SourceLink.GitHub": {
+        "type": "Direct",
+        "requested": "[1.0.0-beta2-18618-05, )",
+        "resolved": "1.0.0-beta2-18618-05",
+        "contentHash": "7cQMyVdud/ritrYqgc99LecTC0g9rA2QhO1QFi6OBubsA++gMXRiXx/ct1rmycxM9EvHJSNZ9DHbZHu42RLMLQ==",
+        "dependencies": {
+          "Microsoft.Build.Tasks.Git": "1.0.0-beta2-18618-05",
+          "Microsoft.SourceLink.Common": "1.0.0-beta2-18618-05"
+        }
+      },
+      "System.Reflection.Metadata": {
+        "type": "Direct",
+        "requested": "[1.6.0, )",
+        "resolved": "1.6.0",
+        "contentHash": "I4aWCii7N1bmn43vviRfJQYW6UAco1G/CcjJouvgGdb/sr2BRTSnddhaPMg2oxu9VHFn8T1z3dTLq0pna8zmtA=="
+      },
+      "Microsoft.Build.Tasks.Git": {
+        "type": "Transitive",
+        "resolved": "1.0.0-beta2-18618-05",
+        "contentHash": "kcnqXhm6lxU8UFtpVO8enW7L8Gisw05bI46B3cWlW7K1dgGPb4hAyfiGyGczYOU6n4RtHO9CCfh0Lk74qkbF6w=="
+      },
+      "Microsoft.SourceLink.Common": {
+        "type": "Transitive",
+        "resolved": "1.0.0-beta2-18618-05",
+        "contentHash": "eJP4JUDOiiWPBvwN+/0v1otoT8VPFOm6upABUAS6TwFbLfjRiLI2Ko44gyxF0nW+uMQHx186tnTDt+fg7je97Q=="
+      }
+    },
     ".NETStandard,Version=v2.0": {
       "Microsoft.AspNetCore.Mvc.Core": {
         "type": "Direct",
@@ -33,8 +73,8 @@
       "Microsoft.Extensions.TypeNameHelper.Sources": {
         "type": "Direct",
         "requested": "[3.0.0-*, )",
-        "resolved": "3.0.0-preview3.19117.2",
-        "contentHash": "aa1JhvutzuXWtNsT1i+6JXRX/ulYyB9cemgaKVql3g3Lt32SlXPLUKaKEAl9jqxYt+IOGs8wqmIzgEy9AFXjBQ=="
+        "resolved": "3.0.0-preview6.19253.5",
+        "contentHash": "ags2ep6dGufpA2yCGXevYJY9SZsnLFuFcwmMa64C1qljfHjxOfzr3xS2e6o70fTG5Zi6A+P2r5Ecjdehk8wWCg=="
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
