@@ -165,7 +165,7 @@ namespace ProblemDetails.Tests
         [Theory]
         [InlineData("Staging", 84)]
         [InlineData("Production", 84)]
-        [InlineData("Development", 2000)]
+        [InlineData("Development", 1400)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedMinimumLength)
         {
             using (var server = CreateServer(handler: ResponseThrows(), environment: environment))
