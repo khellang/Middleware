@@ -40,59 +40,55 @@ namespace ProblemDetails.Tests
         [InlineData(HttpStatusCode.InternalServerError)]
         public async Task ErrorStatusCode_IsHandled(HttpStatusCode expected)
         {
-            using (var client = CreateClient(handler: ResponseWithStatusCode(expected)))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: ResponseWithStatusCode(expected));
 
-                Assert.Equal(expected, response.StatusCode);
-                await AssertIsProblemDetailsResponse(response);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.Equal(expected, response.StatusCode);
+            await AssertIsProblemDetailsResponse(response);
         }
 
         [Fact]
         public async Task Exception_IsHandled()
         {
-            using (var client = CreateClient(handler: ResponseThrows()))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: ResponseThrows());
 
-                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                await AssertIsProblemDetailsResponse(response);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            await AssertIsProblemDetailsResponse(response);
         }
 
         [Fact]
         public async Task ProblemDetailsException_IsHandled()
         {
-            var problemStatus = HttpStatusCode.TooManyRequests;
+            var expected = HttpStatusCode.TooManyRequests;
 
             var details = new MvcProblemDetails
             {
                 Title = "Too Many Requests",
-                Status = (int) problemStatus,
+                Status = (int) expected,
             };
 
             var ex = new ProblemDetailsException(details);
 
-            using (var client = CreateClient(handler: ResponseThrows(ex)))
-            {
-                var response = await client.GetAsync("/");
+            using var client = CreateClient(handler: ResponseThrows(ex));
 
-                Assert.Equal(problemStatus, response.StatusCode);
-                await AssertIsProblemDetailsResponse(response);
-            }
+            var response = await client.GetAsync("/");
+
+            Assert.Equal(expected, response.StatusCode);
+            await AssertIsProblemDetailsResponse(response);
         }
 
         [Fact]
         public async Task Catchall_Server_Exception_Is_Logged_As_Unhandled_Error()
         {
-            using (var client = CreateClient(handler: ResponseThrows()))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: ResponseThrows());
 
-                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                AssertUnhandledExceptionLogged(Logger);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            AssertUnhandledExceptionLogged(Logger);
         }
 
         [Fact]
@@ -106,13 +102,12 @@ namespace ProblemDetails.Tests
 
             var handler = ResponseThrows(new NotImplementedException());
 
-            using (var client = CreateClient(handler, MapNotImplementException))
-            {
-                var response = await client.GetAsync("/");
+            using var client = CreateClient(handler, MapNotImplementException);
 
-                Assert.Equal((HttpStatusCode)StatusCodes.Status501NotImplemented, response.StatusCode);
-                AssertUnhandledExceptionLogged(Logger);
-            }
+            var response = await client.GetAsync("/");
+
+            Assert.Equal((HttpStatusCode)StatusCodes.Status501NotImplemented, response.StatusCode);
+            AssertUnhandledExceptionLogged(Logger);
         }
 
         [Fact]
@@ -126,13 +121,12 @@ namespace ProblemDetails.Tests
 
             var ex = new ProblemDetailsException(details);
 
-            using (var client = CreateClient(handler: ResponseThrows(ex)))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: ResponseThrows(ex));
 
-                Assert.Equal((HttpStatusCode)StatusCodes.Status429TooManyRequests, response.StatusCode);
-                AssertUnhandledExceptionNotLogged(Logger);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.Equal((HttpStatusCode)StatusCodes.Status429TooManyRequests, response.StatusCode);
+            AssertUnhandledExceptionNotLogged(Logger);
         }
 
         [Fact]
@@ -146,13 +140,12 @@ namespace ProblemDetails.Tests
 
             var handler = ResponseThrows(new NotImplementedException());
 
-            using (var client = CreateClient(handler, MapNotImplementException))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler, MapNotImplementException);
 
-                Assert.Equal((HttpStatusCode)StatusCodes.Status403Forbidden, response.StatusCode);
-                AssertUnhandledExceptionNotLogged(Logger);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.Equal((HttpStatusCode)StatusCodes.Status403Forbidden, response.StatusCode);
+            AssertUnhandledExceptionNotLogged(Logger);
         }
 
         [Theory]
@@ -161,55 +154,51 @@ namespace ProblemDetails.Tests
         [InlineData("Development", 1400)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedMinimumLength)
         {
-            using (var client = CreateClient(handler: ResponseThrows(), environment: environment))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: ResponseThrows(), environment: environment);
 
-                var content = await response.Content.ReadAsStringAsync();
+            var response = await client.GetAsync(string.Empty);
 
-                Assert.InRange(content.Length, expectedMinimumLength, int.MaxValue);
-            }
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.InRange(content.Length, expectedMinimumLength, int.MaxValue);
         }
 
         [Fact]
         public async Task StatusCode_IsMaintainedWhenStrippingExceptionDetails()
         {
-            using (var client = CreateClient(handler: ResponseThrows(), environment: "Production"))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: ResponseThrows(), environment: "Production");
 
-                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
         public async Task CORSHeaders_AreMaintained()
         {
-            using (var client = CreateClient(handler: ResponseThrows()))
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "/");
+            using var client = CreateClient(handler: ResponseThrows());
 
-                request.Headers.Add(HeaderNames.Origin, "localhost");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/");
 
-                var response = await client.SendAsync(request);
+            request.Headers.Add(HeaderNames.Origin, "localhost");
 
-                Assert.Contains(response.Headers, x => x.Key.StartsWith("Access-Control-Allow-"));
-            }
+            var response = await client.SendAsync(request);
+
+            Assert.Contains(response.Headers, x => x.Key.StartsWith("Access-Control-Allow-"));
         }
 
         [Fact]
         public async Task ProblemResponses_ShouldNotBeCached()
         {
-            using (var client = CreateClient(handler: ResponseThrows()))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: ResponseThrows());
 
-                var cacheControl = response.Headers.CacheControl;
+            var response = await client.GetAsync(string.Empty);
 
-                Assert.True(cacheControl.NoCache, nameof(cacheControl.NoCache));
-                Assert.True(cacheControl.NoStore, nameof(cacheControl.NoStore));
-                Assert.True(cacheControl.MustRevalidate, nameof(cacheControl.MustRevalidate));
-            }
+            var cacheControl = response.Headers.CacheControl;
+
+            Assert.True(cacheControl.NoCache, nameof(cacheControl.NoCache));
+            Assert.True(cacheControl.NoStore, nameof(cacheControl.NoStore));
+            Assert.True(cacheControl.MustRevalidate, nameof(cacheControl.MustRevalidate));
         }
 
         [Theory]
@@ -220,13 +209,12 @@ namespace ProblemDetails.Tests
         [InlineData((HttpStatusCode) 800)]
         public async Task SuccessStatusCode_IsNotHandled(HttpStatusCode expected)
         {
-            using (var client = CreateClient(handler: ResponseWithStatusCode(expected)))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: ResponseWithStatusCode(expected));
 
-                Assert.Equal(expected, response.StatusCode);
-                Assert.Equal(0, response.Content.Headers.ContentLength);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.Equal(expected, response.StatusCode);
+            Assert.Equal(0, response.Content.Headers.ContentLength);
         }
 
         [Fact]
@@ -238,13 +226,12 @@ namespace ProblemDetails.Tests
                 return context.Response.WriteAsync("hello");
             }
 
-            using (var client = CreateClient(handler: WriteResponse))
-            {
-                var response = await client.GetAsync(string.Empty);
+            using var client = CreateClient(handler: WriteResponse);
 
-                Assert.Equal(5, response.Content.Headers.ContentLength);
-                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.Equal(5, response.Content.Headers.ContentLength);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
@@ -256,10 +243,9 @@ namespace ProblemDetails.Tests
                 throw new Exception("Request Failed");
             }
 
-            using (var client = CreateClient(handler: WriteResponse))
-            {
-                await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
-            }
+            using var client = CreateClient(handler: WriteResponse);
+
+            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
@@ -267,46 +253,33 @@ namespace ProblemDetails.Tests
         {
             var ex = new ProblemDetailsException(new EvilProblemDetails());
 
-            using (var client = CreateClient(handler: ResponseThrows(ex)))
-            {
-                await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
-            }
+            using var client = CreateClient(handler: ResponseThrows(ex));
+
+            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
         public async Task Options_OnBeforeWriteDetails()
         {
-            using (var client = CreateClient(handler: ResponseThrows()))
-            {
-                var response = await client.GetAsync(string.Empty);
-                var content = await response.Content.ReadAsStringAsync();
-
-                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                Assert.Contains("\"type\":\"https://httpstatuses.com/500\"", content);
-            }
+            var wasCalled = false;
 
             void ConfigureOptions(ProblemDetailsOptions options)
             {
-                options.OnBeforeWriteDetails = (ctx, details) =>
-                {
-                    details.Type = "https://example.com";
-                };
+                options.OnBeforeWriteDetails = (ctx, details) => wasCalled = true;
             }
 
-            using (var client = CreateClient(handler: ResponseThrows(), ConfigureOptions))
-            {
-                var response = await client.GetAsync(string.Empty);
-                var content = await response.Content.ReadAsStringAsync();
+            using var client = CreateClient(handler: ResponseThrows(), ConfigureOptions);
 
-                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-                Assert.Contains("\"type\":\"https://example.com\"", content);
-            }
+            var response = await client.GetAsync(string.Empty);
+
+            Assert.True(wasCalled);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         private static async Task AssertIsProblemDetailsResponse(HttpResponseMessage response)
         {
-            Assert.Equal("application/problem+json", response.Content.Headers.ContentType.MediaType);
             Assert.NotEmpty(await response.Content.ReadAsStringAsync());
+            Assert.Equal("application/problem+json", response.Content.Headers.ContentType.MediaType);
         }
 
         private static void AssertUnhandledExceptionLogged(InMemoryLogger<ProblemDetailsMiddleware> logger)
