@@ -37,7 +37,7 @@ namespace Hellang.Middleware.ProblemDetails
             Executor = executor;
             Logger = logger;
             var fileProvider = Options.FileProvider ?? environment.ContentRootFileProvider;
-            DetailsProvider = new ExceptionDetailsProvider(fileProvider, Options.SourceCodeLineCount);
+            DetailsProvider = new ExceptionDetailsProvider(fileProvider, logger, Options.SourceCodeLineCount);
         }
 
         private RequestDelegate Next { get; }
