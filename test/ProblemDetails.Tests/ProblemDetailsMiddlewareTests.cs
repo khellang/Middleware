@@ -40,8 +40,7 @@ namespace ProblemDetails.Tests
         [InlineData(HttpStatusCode.InternalServerError)]
         public async Task ErrorStatusCode_IsHandled(HttpStatusCode expected)
         {
-            using (var server = CreateServer(handler: ResponseWithStatusCode(expected)))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseWithStatusCode(expected)))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -53,8 +52,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task Exception_IsHandled()
         {
-            using (var server = CreateServer(handler: ResponseThrows()))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows()))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -76,8 +74,7 @@ namespace ProblemDetails.Tests
 
             var ex = new ProblemDetailsException(details);
 
-            using (var server = CreateServer(handler: ResponseThrows(ex)))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows(ex)))
             {
                 var response = await client.GetAsync("/");
 
@@ -89,8 +86,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task Catchall_Server_Exception_Is_Logged_As_Unhandled_Error()
         {
-            using (var server = CreateServer(handler: ResponseThrows()))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows()))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -110,8 +106,7 @@ namespace ProblemDetails.Tests
 
             var handler = ResponseThrows(new NotImplementedException());
 
-            using (var server = CreateServer(handler, MapNotImplementException))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler, MapNotImplementException))
             {
                 var response = await client.GetAsync("/");
 
@@ -131,8 +126,7 @@ namespace ProblemDetails.Tests
 
             var ex = new ProblemDetailsException(details);
 
-            using (var server = CreateServer(handler: ResponseThrows(ex)))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows(ex)))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -152,8 +146,7 @@ namespace ProblemDetails.Tests
 
             var handler = ResponseThrows(new NotImplementedException());
 
-            using (var server = CreateServer(handler, MapNotImplementException))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler, MapNotImplementException))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -168,8 +161,7 @@ namespace ProblemDetails.Tests
         [InlineData("Development", 1400)]
         public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedMinimumLength)
         {
-            using (var server = CreateServer(handler: ResponseThrows(), environment: environment))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows(), environment: environment))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -182,8 +174,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task StatusCode_IsMaintainedWhenStrippingExceptionDetails()
         {
-            using (var server = CreateServer(handler: ResponseThrows(), environment: "Production"))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows(), environment: "Production"))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -194,8 +185,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task CORSHeaders_AreMaintained()
         {
-            using (var server = CreateServer(handler: ResponseThrows()))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows()))
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, "/");
 
@@ -210,8 +200,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task ProblemResponses_ShouldNotBeCached()
         {
-            using (var server = CreateServer(handler: ResponseThrows()))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows()))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -231,8 +220,7 @@ namespace ProblemDetails.Tests
         [InlineData((HttpStatusCode) 800)]
         public async Task SuccessStatusCode_IsNotHandled(HttpStatusCode expected)
         {
-            using (var server = CreateServer(handler: ResponseWithStatusCode(expected)))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseWithStatusCode(expected)))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -250,8 +238,7 @@ namespace ProblemDetails.Tests
                 return context.Response.WriteAsync("hello");
             }
 
-            using (var server = CreateServer(handler: WriteResponse))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: WriteResponse))
             {
                 var response = await client.GetAsync(string.Empty);
 
@@ -269,8 +256,7 @@ namespace ProblemDetails.Tests
                 throw new Exception("Request Failed");
             }
 
-            using (var server = CreateServer(handler: WriteResponse))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: WriteResponse))
             {
                 await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
             }
@@ -281,8 +267,7 @@ namespace ProblemDetails.Tests
         {
             var ex = new ProblemDetailsException(new EvilProblemDetails());
 
-            using (var server = CreateServer(handler: ResponseThrows(ex)))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows(ex)))
             {
                 await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
             }
@@ -291,8 +276,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task Options_OnBeforeWriteDetails()
         {
-            using (var server = CreateServer(handler: ResponseThrows()))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows()))
             {
                 var response = await client.GetAsync(string.Empty);
                 var content = await response.Content.ReadAsStringAsync();
@@ -309,8 +293,7 @@ namespace ProblemDetails.Tests
                 };
             }
 
-            using (var server = CreateServer(handler: ResponseThrows(), ConfigureOptions))
-            using (var client = server.CreateClient())
+            using (var client = CreateClient(handler: ResponseThrows(), ConfigureOptions))
             {
                 var response = await client.GetAsync(string.Empty);
                 var content = await response.Content.ReadAsStringAsync();
@@ -336,7 +319,7 @@ namespace ProblemDetails.Tests
             Assert.Empty(logger.Messages.Where(m => m.Type == LogLevel.Error));
         }
 
-        private TestServer CreateServer(RequestDelegate handler, Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
+        private HttpClient CreateClient(RequestDelegate handler, Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
         {
             var builder = new WebHostBuilder()
                 .UseEnvironment(environment ?? Environments.Development)
@@ -351,7 +334,14 @@ namespace ProblemDetails.Tests
                     .UseProblemDetails()
                     .Run(handler));
 
-            return new TestServer(builder);
+            var server = new TestServer(builder);
+
+            var client = server.CreateClient();
+
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/problem+json");
+
+            return client;
         }
 
         private static RequestDelegate ResponseWithStatusCode(HttpStatusCode statusCode)
