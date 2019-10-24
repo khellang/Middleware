@@ -1,5 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\packages\Be.Vlaanderen.Basisregisters.Build.Pipeline\Content\Be.Vlaanderen.Basisregisters.Build.Pipeline.Settings.Library.props" />
 
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DocumentationFile>bin\Debug\netstandard2.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml</DocumentationFile>
+      <NoWarn>1701;1702;1705;1591</NoWarn>
+      <DefineConstants>TRACE;DEBUG;NETCOREAPP;NETCOREAPP2_2</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DocumentationFile>bin\Release\netstandard2.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml</DocumentationFile>
+      <NoWarn>1701;1702;1705;1591</NoWarn>
+    </PropertyGroup>
+
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

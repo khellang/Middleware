@@ -22,3 +22,4 @@ dependencies
 files
   bin\Release\netstandard2.0\Be.Vlaanderen.Basisregisters.ProblemDetails.dll => lib\netstandard2.0
   bin\Release\netstandard2.0\Be.Vlaanderen.Basisregisters.ProblemDetails.pdb => lib\netstandard2.0
+  bin\Release\netstandard2.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml => lib\netstandard2.0

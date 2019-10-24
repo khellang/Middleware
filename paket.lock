@@ -1,7 +1,7 @@
 RESTRICTION: || (== net472) (== netcoreapp2.2) (== netstandard2.0)
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    Be.Vlaanderen.Basisregisters.Build.Pipeline (1.9)
+    Be.Vlaanderen.Basisregisters.Build.Pipeline (1.11.1)
     FAKE (4.64.17)
     FluentValidation (8.4)
       System.ComponentModel.Annotations (>= 4.4.1)
