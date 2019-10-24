@@ -1,3 +1,10 @@
+## [3.2.4](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.3...v3.2.4) (2019-10-24)
+
+
+### Bug Fixes
+
+* add xml to nuget package ([56b28d2](https://github.com/informatievlaanderen/problemdetails-middleware/commit/56b28d2))
+
 ## [3.2.3](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.2...v3.2.3) (2019-09-03)
 
 
