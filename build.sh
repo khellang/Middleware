@@ -1,20 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-PAKET_EXE=.paket/paket.exe
-FAKE_EXE=packages/FAKE/tools/FAKE.exe
-
-run() {
-  if [ "$OS" != "Windows_NT" ]
-  then
-    mono "$@"
-  else
-    "$@"
-  fi
-}
-
-run $PAKET_EXE restore
-
+dotnet tool restore
+dotnet paket restore
 chmod +x packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/*
 
-run $FAKE_EXE build.fsx "$@"
+if [ $# -eq 0 ]
+then
+  FAKE_ALLOW_NO_DEPENDENCIES=true dotnet fake build
+else
+  FAKE_ALLOW_NO_DEPENDENCIES=true dotnet fake build -t "$@"
+fi
