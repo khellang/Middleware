@@ -1,3 +1,10 @@
+## [3.2.5](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.4...v3.2.5) (2019-10-28)
+
+
+### Bug Fixes
+
+* upgrade build tools, move to fake 5 ([3285936](https://github.com/informatievlaanderen/problemdetails-middleware/commit/3285936))
+
 ## [3.2.4](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.3...v3.2.4) (2019-10-24)
 
 
