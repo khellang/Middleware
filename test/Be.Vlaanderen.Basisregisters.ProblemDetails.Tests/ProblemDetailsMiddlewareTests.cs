@@ -10,6 +10,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Features;
     using Microsoft.AspNetCore.TestHost;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -246,6 +247,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
         {
             Task WriteResponse(HttpContext context)
             {
+                context.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.Body.WriteByte(byte.MinValue);
                 return Task.CompletedTask;
@@ -266,6 +268,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
         {
             Task WriteResponse(HttpContext context)
             {
+                context.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
                 context.Response.Body.WriteByte(byte.MinValue);
                 throw new Exception("Request Failed");
             }
@@ -354,8 +357,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
                     .AddSingleton<ILogger<ProblemDetailsMiddleware>>(Logger)
                     .AddCors()
                     .AddProblemDetails(configureOptions)
-                    .AddMvcCore()
-                    .AddJsonFormatters(ConfigureJson)
+                    //.AddMvcCore()
+                    .AddMvc()
+                    .AddNewtonsoftJson(y => ConfigureJson(y.SerializerSettings))
                     .AddXmlDataContractSerializerFormatters())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())

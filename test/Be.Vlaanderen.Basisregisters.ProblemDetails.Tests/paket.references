@@ -1,8 +1,7 @@
-Microsoft.NETCore.App
-
 Microsoft.NET.Test.Sdk
 Microsoft.AspNetCore.TestHost
-Microsoft.AspNetCore.Mvc.Formatters.Xml
+
+Microsoft.AspNetCore.Mvc.NewtonsoftJson
 
 xunit
 xunit.runner.visualstudio

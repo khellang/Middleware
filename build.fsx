@@ -2,7 +2,7 @@
 version 5.226.0
 framework: netstandard20
 source https://api.nuget.org/v3/index.json
-nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 2.0.1 //"
+nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 3.0.1 //"
 
 #load "packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/build-generic.fsx"
 

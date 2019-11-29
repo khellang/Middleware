@@ -15,11 +15,10 @@ licenseUrl https://opensource.org/licenses/MIT
 description Error handling middleware, using RFC7807
 
 dependencies
-  framework: netstandard20
+  framework: netcoreapp30
     System.Reflection.Metadata >= LOCKEDVERSION
-    Microsoft.AspNetCore.Mvc.Core >= LOCKEDVERSION
 
 files
-  bin\Release\netstandard2.0\Be.Vlaanderen.Basisregisters.ProblemDetails.dll => lib\netstandard2.0
-  bin\Release\netstandard2.0\Be.Vlaanderen.Basisregisters.ProblemDetails.pdb => lib\netstandard2.0
-  bin\Release\netstandard2.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml => lib\netstandard2.0
+  bin\Release\netcoreapp3.0\Be.Vlaanderen.Basisregisters.ProblemDetails.dll => lib\netcoreapp3.0
+  bin\Release\netcoreapp3.0\Be.Vlaanderen.Basisregisters.ProblemDetails.pdb => lib\netcoreapp3.0
+  bin\Release\netcoreapp3.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml => lib\netcoreapp3.0

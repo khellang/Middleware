@@ -2,6 +2,10 @@
   <Import Project="..\..\packages\Be.Vlaanderen.Basisregisters.Build.Pipeline\Content\Be.Vlaanderen.Basisregisters.Build.Pipeline.Settings.Test.props" />
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Be.Vlaanderen.Basisregisters.ProblemDetails\Be.Vlaanderen.Basisregisters.ProblemDetails.csproj" />
   </ItemGroup>
 
