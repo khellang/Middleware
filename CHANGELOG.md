@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.5...v4.0.0) (2019-11-29)
+
+
+### Code Refactoring
+
+* upgrade to netcoreapp30 ([d3594ca](https://github.com/informatievlaanderen/problemdetails-middleware/commit/d3594ca))
+
+
+### BREAKING CHANGES
+
+* Upgrade to .NET Core 3
+
 ## [3.2.5](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.4...v3.2.5) (2019-10-28)
 
 
