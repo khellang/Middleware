@@ -6,15 +6,15 @@
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp3.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netcoreapp3.1\Be.Vlaanderen.Basisregisters.ProblemDetails.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP;NETCOREAPP3_0</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP;NETCOREAPP3_1</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netcoreapp3.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netcoreapp3.1\Be.Vlaanderen.Basisregisters.ProblemDetails.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
-    <DefineConstants>NETCOREAPP;NETCOREAPP3_0</DefineConstants>
+    <DefineConstants>NETCOREAPP;NETCOREAPP3_1</DefineConstants>
   </PropertyGroup>
 
   <Import Project="..\..\.paket\Paket.Restore.targets" />
