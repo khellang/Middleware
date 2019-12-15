@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.0.0...v4.1.0) (2019-12-15)
+
+
+### Features
+
+* upgrade to netcoreapp31 ([b78dd41](https://github.com/informatievlaanderen/problemdetails-middleware/commit/b78dd411b33f528f63698e009f763aaaea25a2fa))
+
 # [4.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v3.2.5...v4.0.0) (2019-11-29)
 
 
