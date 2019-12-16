@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.1.0...v4.1.1) (2019-12-16)
+
+
+### Bug Fixes
+
+* update obsolete aspnetcore31 changes ([886a34f](https://github.com/informatievlaanderen/problemdetails-middleware/commit/886a34f9029c17cc19d0546d27b29f5f7bb09965))
+
 # [4.1.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.0.0...v4.1.0) (2019-12-15)
 
 
