@@ -303,7 +303,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
                 });
             }
         }
-        
+
         [Fact]
         public async Task Options_OnBeforeWriteDetails()
         {
@@ -352,7 +352,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
             Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
         {
             var builder = new WebHostBuilder()
-                .UseEnvironment(environment ?? EnvironmentName.Development)
+                .UseEnvironment(environment ?? Microsoft.Extensions.Hosting.Environments.Development)
                 .ConfigureServices(x => x
                     .AddSingleton<ILogger<ProblemDetailsMiddleware>>(Logger)
                     .AddCors()

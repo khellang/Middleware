@@ -3,6 +3,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
 
     public class ProblemDetailsOptionsSetup : IConfigureOptions<ProblemDetailsOptions>
@@ -23,7 +24,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         }
 
         private static bool IncludeExceptionDetails(HttpContext context)
-            => context.RequestServices.GetRequiredService<IHostingEnvironment>().IsDevelopment();
+            => context.RequestServices.GetRequiredService<IWebHostEnvironment>().IsDevelopment();
 
         // Err on the side of caution and treat missing status code as server error.
         private static bool IsServerError(int? statusCode)

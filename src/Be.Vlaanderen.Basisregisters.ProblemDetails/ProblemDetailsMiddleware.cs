@@ -33,7 +33,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             RequestDelegate next,
             IOptions<ProblemDetailsOptions> options,
             IActionResultExecutor<ObjectResult> executor,
-            IHostingEnvironment environment,
+            IWebHostEnvironment environment,
             ILogger<ProblemDetailsMiddleware> logger)
         {
             Next = next;
@@ -57,7 +57,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
                         Logger.ResponseStarted();
                         return;
                     }
-                    
+
                     ClearResponse(context, context.Response.StatusCode);
 
                     var details = GetDetails(context, error: null);
