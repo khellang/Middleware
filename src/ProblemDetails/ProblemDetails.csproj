@@ -1,30 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Version>4.0.0-beta.1</Version>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
-    <AssemblyName>Hellang.Middleware.ProblemDetails</AssemblyName>
-    <RootNamespace>Hellang.Middleware.ProblemDetails</RootNamespace>
-    <Description>Error handling middleware, using RFC7807</Description>
-    <PackageId>Hellang.Middleware.ProblemDetails</PackageId>
-    <PackageTags>middleware;error;exception;RFC7807</PackageTags>
-    <PackageIcon>problem-logo.png</PackageIcon>
-  </PropertyGroup>
+    <PropertyGroup>
+        <Version>4.0.0-beta.1</Version>
+        <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
+        <AssemblyName>Hellang.Middleware.ProblemDetails</AssemblyName>
+        <RootNamespace>Hellang.Middleware.ProblemDetails</RootNamespace>
+        <Description>Error handling middleware, using RFC7807</Description>
+        <PackageId>Hellang.Middleware.ProblemDetails</PackageId>
+        <PackageTags>middleware;error;exception;RFC7807</PackageTags>
+        <PackageIcon>problem-logo.png</PackageIcon>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="../../lib/AspNetCore/src/Shared/StackTrace/**/*.cs" />
-    <None Include="../../etc/problem-logo.png" Pack="true" PackagePath="/" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="../../lib/AspNetCore/src/Shared/StackTrace/**/*.cs" />
+        <None Include="../../etc/problem-logo.png" Pack="true" PackagePath="/" />
+    </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.11" />
-  </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.11" />
+    </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
-    <PackageReference Include="Microsoft.Extensions.TypeNameHelper.Sources" Version="5.0.0-*" PrivateAssets="All" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
+        <PackageReference Include="Microsoft.Extensions.TypeNameHelper.Sources" Version="5.0.0-*" PrivateAssets="All" />
+    </ItemGroup>
 </Project>
