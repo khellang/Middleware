@@ -1,5 +1,4 @@
 ﻿using Hellang.Middleware.ProblemDetails;
-using System.Net;
 using Xunit;
 using ReasonPhrases = Microsoft.AspNetCore.WebUtilities.ReasonPhrases;
 
@@ -51,7 +50,7 @@ Instance: https://example.com/problem/123
         [Fact]
         public void Constructor_FromHttpStatusCode()
         {
-            var exception = new ProblemDetailsException(HttpStatusCode.BadRequest);
+            var exception = new ProblemDetailsException(400);
 
             Assert.IsType<StatusCodeProblemDetails>(exception.Details);
             Assert.Equal(400, exception.Details.Status);
@@ -61,7 +60,7 @@ Instance: https://example.com/problem/123
         [Fact]
         public void Constructor_FromHttpStatusCodeAndTitle()
         {
-            var exception = new ProblemDetailsException(HttpStatusCode.BadRequest, "foobar");
+            var exception = new ProblemDetailsException(400, "foobar");
 
             Assert.IsType<StatusCodeProblemDetails>(exception.Details);
             Assert.Equal(400, exception.Details.Status);
