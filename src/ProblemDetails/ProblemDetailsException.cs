@@ -1,20 +1,22 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace Hellang.Middleware.ProblemDetails
 {
     public class ProblemDetailsException : Exception
     {
-        public ProblemDetailsException(int statusCode) : this(new StatusCodeProblemDetails(statusCode))
+        public ProblemDetailsException(int statusCode)
+            : this(new StatusCodeProblemDetails(statusCode))
         {
         }
 
-        public ProblemDetailsException(int statusCode, string title) : this(new StatusCodeProblemDetails(statusCode) { Title = title })
+        public ProblemDetailsException(int statusCode, string title)
+            : this(new StatusCodeProblemDetails(statusCode) { Title = title })
         {
         }
 
         public ProblemDetailsException(Microsoft.AspNetCore.Mvc.ProblemDetails details)
-             : base($"{details.Type} : {details.Title}")
+            : base($"{details.Type} : {details.Title}")
         {
             Details = details;
         }
