@@ -1,5 +1,6 @@
 ﻿using Hellang.Middleware.ProblemDetails;
 using Xunit;
+using ReasonPhrases = Microsoft.AspNetCore.WebUtilities.ReasonPhrases;
 
 namespace ProblemDetails.Tests
 {
@@ -44,6 +45,26 @@ Instance: https://example.com/problem/123
 ";
 
             Assert.Equal(expected, actual, ignoreLineEndingDifferences: true);
+        }
+
+        [Fact]
+        public void Constructor_FromHttpStatusCode()
+        {
+            var exception = new ProblemDetailsException(400);
+
+            Assert.IsType<StatusCodeProblemDetails>(exception.Details);
+            Assert.Equal(400, exception.Details.Status);
+            Assert.Equal(ReasonPhrases.GetReasonPhrase(400), exception.Details.Title);
+        }
+
+        [Fact]
+        public void Constructor_FromHttpStatusCodeAndTitle()
+        {
+            var exception = new ProblemDetailsException(400, "foobar");
+
+            Assert.IsType<StatusCodeProblemDetails>(exception.Details);
+            Assert.Equal(400, exception.Details.Status);
+            Assert.Equal("foobar", exception.Details.Title);
         }
     }
 }
