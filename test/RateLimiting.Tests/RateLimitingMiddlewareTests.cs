@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Hellang.Middleware.RateLimiting;
 using Microsoft.AspNetCore.Hosting;
@@ -36,27 +37,25 @@ namespace RateLimiting.Tests
                 UtcNow = DateTimeOffset.UtcNow.Date
             };
 
-            using (var server = CreateServer(Configure, clock))
-            using (var client = server.CreateClient())
+            using var client = CreateClient(Configure, clock);
+
+            for (var i = 0; i < 60; i++)
             {
-                for (var i = 0; i < 60; i++)
-                {
-                    using (var response = await client.GetAsync("/"))
-                    {
-                        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-                    }
-
-                    clock.Advance(TimeSpan.FromSeconds(1));
-                }
-
                 using (var response = await client.GetAsync("/"))
                 {
-                    Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
+                    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
                 }
+
+                clock.Advance(TimeSpan.FromSeconds(1));
+            }
+
+            using (var response = await client.GetAsync("/"))
+            {
+                Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
             }
         }
 
-        private static TestServer CreateServer(Action<RateLimitingOptions> configure, ISystemClock clock)
+        private static HttpClient CreateClient(Action<RateLimitingOptions> configure, ISystemClock clock)
         {
             var builder = new WebHostBuilder()
                 .UseEnvironment(Environments.Development)
@@ -71,7 +70,9 @@ namespace RateLimiting.Tests
                     .UseRemoteAddress(IPAddress.Parse("2.2.2.2"))
                     .UseRateLimiting());
 
-            return new TestServer(builder);
+            var server = new TestServer(builder);
+
+            return server.CreateClient();
         }
     }
 }

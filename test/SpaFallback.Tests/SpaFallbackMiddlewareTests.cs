@@ -22,70 +22,60 @@ namespace SpaFallback.Tests
         [Fact]
         public async Task StartedResponse_DoesNotFallback()
         {
-            using (var server = CreateServer())
-            using (var client = server.CreateClient())
-            {
-                var response = await client.GetAsync("/dotnet-bot.png");
+            using var client = CreateClient();
 
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var response = await client.GetAsync("/dotnet-bot.png");
 
-                var image = await response.Content.ReadAsStreamAsync();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-                Assert.Equal(61510, image.Length);
-            }
+            var image = await response.Content.ReadAsStreamAsync();
+
+            Assert.Equal(61510, image.Length);
         }
 
         [Fact]
         public async Task NotStartedResponse_DoesNotFallback()
         {
-            using (var server = CreateServer())
-            using (var client = server.CreateClient())
-            {
-                var response = await client.GetAsync("/no-content");
+            using var client = CreateClient();
 
-                var content = await response.Content.ReadAsStreamAsync();
+            var response = await client.GetAsync("/no-content");
 
-                Assert.Equal(0, content.Length);
-                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            }
+            var content = await response.Content.ReadAsStreamAsync();
+
+            Assert.Equal(0, content.Length);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
         [Fact]
         public async Task NoFallback_Throws()
         {
-            using (var server = CreateServer(requestPath: "/static"))
-            using (var client = server.CreateClient())
-            {
-                await Assert.ThrowsAsync<SpaFallbackException>(() => client.GetAsync("/no-fallback"));
-            }
+            using var client = CreateClient(requestPath: "/static");
+
+            await Assert.ThrowsAsync<SpaFallbackException>(() => client.GetAsync("/no-fallback"));
         }
 
         [Fact]
         public async Task Soft404_DoesNotFallback()
         {
-            using (var server = CreateServer())
-            using (var client = server.CreateClient())
-            {
-                var response = await client.GetAsync("/soft-404");
+            using var client = CreateClient();
 
-                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            }
+            var response = await client.GetAsync("/soft-404");
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
         public async Task NonExistingPath_DoesFallback()
         {
-            using (var server = CreateServer())
-            using (var client = server.CreateClient())
-            {
-                var response = await client.GetAsync("/does/not/exist");
+            using var client = CreateClient();
 
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var response = await client.GetAsync("/does/not/exist");
 
-                var page = await response.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-                Assert.Contains("This is the index file.", page);
-            }
+            var page = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("This is the index file.", page);
         }
 
         [Theory]
@@ -97,25 +87,23 @@ namespace SpaFallback.Tests
         [InlineData("OPTIONS")]
         public async Task NonGetRequest_DoesNotFallback(string method)
         {
-            using (var server = CreateServer())
-            using (var client = server.CreateClient())
+            using var client = CreateClient();
+
+            var httpMethod = new HttpMethod(method);
+
+            var request = new HttpRequestMessage(httpMethod, "/does/not/exist");
+
+            var response = await client.SendAsync(request);
+
+            var content = await response.Content.ReadAsStreamAsync();
+
+            if (content.CanSeek)
             {
-                var httpMethod = new HttpMethod(method);
-
-                var request = new HttpRequestMessage(httpMethod, "/does/not/exist");
-
-                var response = await client.SendAsync(request);
-
-                var content = await response.Content.ReadAsStreamAsync();
-
-                if (content.CanSeek)
-                {
-                    // ASP.NET Core 3.0 returns a ResponseBodyReaderStream which isn't seekable.
-                    Assert.Equal(0, content.Length);
-                }
-
-                Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+                // ASP.NET Core 3.0 returns a ResponseBodyReaderStream which isn't seekable.
+                Assert.Equal(0, content.Length);
             }
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Theory]
@@ -123,19 +111,17 @@ namespace SpaFallback.Tests
         [InlineData(false, HttpStatusCode.NotFound)]
         public async Task NonExistingFileName_ReturnsCorrectResponse(bool allowFileExtensions, HttpStatusCode expectedStatusCode)
         {
-            using (var server = CreateServer(allowFileExtensions: allowFileExtensions))
-            using (var client = server.CreateClient())
+            using var client = CreateClient(allowFileExtensions: allowFileExtensions);
+
+            var response = await client.GetAsync("/non-existing.file");
+
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+
+            if (allowFileExtensions)
             {
-                var response = await client.GetAsync("/non-existing.file");
+                var page = await response.Content.ReadAsStringAsync();
 
-                Assert.Equal(expectedStatusCode, response.StatusCode);
-
-                if (allowFileExtensions)
-                {
-                    var page = await response.Content.ReadAsStringAsync();
-
-                    Assert.Contains("This is the index file.", page);
-                }
+                Assert.Contains("This is the index file.", page);
             }
         }
 
@@ -148,7 +134,7 @@ namespace SpaFallback.Tests
                     .SuppressStatusMessages(true)));
         }
 
-        private static TestServer CreateServer(string requestPath = null, bool allowFileExtensions = false)
+        private static HttpClient CreateClient(string requestPath = null, bool allowFileExtensions = false)
         {
             var config = new List<KeyValuePair<string, string>>
             {
@@ -166,7 +152,9 @@ namespace SpaFallback.Tests
                 .ConfigureServices(x => x.AddSpaFallback(y => y.AllowFileExtensions = allowFileExtensions))
                 .Configure(x => x.UseSpaFallback().UseStaticFiles(options).Use(HandleRoutes));
 
-            return new TestServer(builder);
+            var server = new TestServer(builder);
+
+            return server.CreateClient();
         }
 
         private static Task HandleRoutes(HttpContext context, Func<Task> next)
