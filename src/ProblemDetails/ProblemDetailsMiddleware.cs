@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.StackTrace.Sources;
 using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
@@ -21,34 +19,26 @@ namespace Hellang.Middleware.ProblemDetails
 {
     public class ProblemDetailsMiddleware
     {
+        private readonly ProblemDetailsProvider _problemDetailsProvider;
         private static readonly ActionDescriptor EmptyActionDescriptor = new ActionDescriptor();
 
         private static readonly RouteData EmptyRouteData = new RouteData();
 
         public ProblemDetailsMiddleware(
             RequestDelegate next,
-            IOptions<ProblemDetailsOptions> options,
             IActionResultExecutor<ObjectResult> executor,
-            IHostingEnvironment environment,
-            ILogger<ProblemDetailsMiddleware> logger)
+            ILogger<ProblemDetailsMiddleware> logger,
+            ProblemDetailsProvider problemDetailsProvider)
         {
+            _problemDetailsProvider = problemDetailsProvider;
             Next = next;
-            Options = options.Value;
             Executor = executor;
             Logger = logger;
-            var fileProvider = Options.FileProvider ?? environment.ContentRootFileProvider;
-            DetailsProvider = new ExceptionDetailsProvider(fileProvider, logger, Options.SourceCodeLineCount);
         }
 
         private RequestDelegate Next { get; }
-
-        private ProblemDetailsOptions Options { get; }
-
         private IActionResultExecutor<ObjectResult> Executor { get; }
-
         private ILogger<ProblemDetailsMiddleware> Logger { get; }
-
-        private ExceptionDetailsProvider DetailsProvider { get; }
 
         public async Task Invoke(HttpContext context)
         {
@@ -56,17 +46,17 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 await Next(context);
 
-                if (Options.IsProblem(context))
+                if (_problemDetailsProvider.Options.IsProblem(context))
                 {
                     if (context.Response.HasStarted)
                     {
                         Logger.ResponseStarted();
                         return;
                     }
-                    
+
                     ClearResponse(context, context.Response.StatusCode);
 
-                    var details = GetDetails(context, error: null);
+                    var details = _problemDetailsProvider.GetDetails(context, error: null);
 
                     await WriteProblemDetails(context, details);
                 }
@@ -83,9 +73,9 @@ namespace Hellang.Middleware.ProblemDetails
                 {
                     ClearResponse(context, StatusCodes.Status500InternalServerError);
 
-                    var details = GetDetails(context, error);
+                    var details = _problemDetailsProvider.GetDetails(context, error);
 
-                    if (Options.ShouldLogUnhandledException(context, error, details))
+                    if (_problemDetailsProvider.Options.ShouldLogUnhandledException(context, error, details))
                     {
                         Logger.UnhandledException(error);
                     }
@@ -103,63 +93,9 @@ namespace Hellang.Middleware.ProblemDetails
             }
         }
 
-        private MvcProblemDetails GetDetails(HttpContext context, Exception error)
-        {
-            var statusCode = context.Response.StatusCode;
-
-            if (error == null)
-            {
-                return Options.MapStatusCode(context, statusCode);
-            }
-
-            var result = GetProblemDetails(context, error);
-
-            // We don't want to leak exception details unless it's configured,
-            // even if the user mapped the exception into ExceptionProblemDetails.
-            if (result is ExceptionProblemDetails ex)
-            {
-                if (Options.IncludeExceptionDetails(context))
-                {
-                    try
-                    {
-                        var details = DetailsProvider.GetDetails(ex.Error);
-                        return new DeveloperProblemDetails(ex, details);
-                    }
-                    catch (Exception e)
-                    {
-                        // Failed to get exception details for the specific exception.
-                        // Fall back to generic status code problem details below.
-                        Logger.ProblemDetailsMiddlewareException(e);
-                    }
-                }
-
-                return Options.MapStatusCode(context, ex.Status ?? statusCode);
-            }
-
-            return result;
-        }
-
-        private MvcProblemDetails GetProblemDetails(HttpContext context, Exception error)
-        {
-            if (error is ProblemDetailsException problem)
-            {
-                // The user has already provided a valid problem details object.
-                return problem.Details;
-            }
-
-            if (Options.TryMapProblemDetails(context, error, out var result))
-            {
-                // The user has set up a mapping for the specific exception type.
-                return result;
-            }
-
-            // Fall back to the generic exception problem details.
-            return new ExceptionProblemDetails(error);
-        }
-
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
         {
-            Options.OnBeforeWriteDetails?.Invoke(context, details);
+            _problemDetailsProvider.Options.OnBeforeWriteDetails?.Invoke(context, details);
 
             var routeData = context.GetRouteData() ?? EmptyRouteData;
 
@@ -190,7 +126,7 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 // Because the CORS middleware adds all the headers early in the pipeline,
                 // we want to copy over the existing Access-Control-* headers after resetting the response.
-                if (Options.AllowedHeaderNames.Contains(header.Key))
+                if (_problemDetailsProvider.Options.AllowedHeaderNames.Contains(header.Key))
                 {
                     headers.Add(header);
                 }

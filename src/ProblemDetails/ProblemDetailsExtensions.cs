@@ -22,6 +22,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             services.TryAddSingleton<ProblemDetailsMarkerService, ProblemDetailsMarkerService>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<ProblemDetailsOptions>, ProblemDetailsOptionsSetup>());
+            services.TryAddScoped<ProblemDetailsProvider>();
 
             return services;
         }
