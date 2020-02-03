@@ -1,3 +1,10 @@
+## [4.2.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.2.0...v4.2.1) (2020-02-03)
+
+
+### Bug Fixes
+
+* specify non nullable responses ([9f208b4](https://github.com/informatievlaanderen/problemdetails-middleware/commit/9f208b4de791d5abcf65d71593b38ee37bcb9cef))
+
 # [4.2.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.1.1...v4.2.0) (2020-01-31)
 
 
