@@ -20,7 +20,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
     internal class DeveloperProblemDetails : StatusCodeProblemDetails
     {
-        [JsonProperty("errors", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("errors", DefaultValueHandling = DefaultValueHandling.Ignore, Required = Required.Default)]
         [DataMember(Name = "errors", Order = 600, EmitDefaultValue = false)]
         public IReadOnlyCollection<ErrorDetails> Errors { get; }
 
@@ -104,17 +104,17 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
                 public string FilePath { get; set; }
 
                 public string FileName { get; set; }
-                
+
                 public string Function { get; set; }
-                
+
                 public int? Line { get; set; }
-                
+
                 public int? PreContextLine { get; set; }
-                
+
                 public IReadOnlyCollection<string> PreContextCode { get; set; }
-                
+
                 public IReadOnlyCollection<string> ContextCode { get; set; }
-                
+
                 public IReadOnlyCollection<string> PostContextCode { get; set; }
             }
         }

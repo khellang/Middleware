@@ -7,7 +7,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
     public class ExceptionProblemDetails : StatusCodeProblemDetails
     {
-        [JsonProperty("error", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("error", DefaultValueHandling = DefaultValueHandling.Ignore, Required = Required.Default)]
         [DataMember(Name = "error", Order = 600, EmitDefaultValue = false)]
         public Exception Error { get; }
 

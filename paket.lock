@@ -1,7 +1,7 @@
 RESTRICTION: == netcoreapp3.1
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    Be.Vlaanderen.Basisregisters.Build.Pipeline (3.3)
+    Be.Vlaanderen.Basisregisters.Build.Pipeline (3.3.1)
       Fake.Core.Environment (>= 5.19)
       Fake.Core.Process (>= 5.19)
       Fake.Core.Target (>= 5.19)

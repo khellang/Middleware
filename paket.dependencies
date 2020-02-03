@@ -21,7 +21,7 @@ nuget Newtonsoft.Json 12.0.3
 nuget FluentValidation.AspNetCore 8.6.1
 
 // VBR STUFF
-nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 3.3.0
+nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 3.3.1
 
 // TEST STUFF
 nuget Microsoft.AspNetCore.TestHost 3.1.1

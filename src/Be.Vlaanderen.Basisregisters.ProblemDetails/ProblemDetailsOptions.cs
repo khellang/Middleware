@@ -17,7 +17,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         public Func<HttpContext, bool> IsProblem { get; set; }
 
         public Func<HttpContext, int, ProblemDetails> MapStatusCode { get; set; }
-        
+
         public Action<HttpContext, ProblemDetails> OnBeforeWriteDetails { get; set; }
 
         public Func<HttpContext, Exception, ProblemDetails, bool> ShouldLogUnhandledException { get; set; }

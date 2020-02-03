@@ -12,7 +12,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     public class ValidationProblemDetails : StatusCodeProblemDetails
     {
         /// <summary>Validatie fouten.</summary>
-        [JsonProperty("validationErrors", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("validationErrors", Required = Required.DisallowNull)]
         [DataMember(Name = "validationErrors", Order = 600, EmitDefaultValue = false)]
         public string[] ValidationErrors { get; set; }
 
