@@ -1,3 +1,10 @@
+## [4.2.2](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.2.1...v4.2.2) (2020-02-04)
+
+
+### Bug Fixes
+
+* add datacontract attribute to all problemdetails ([fc7a068](https://github.com/informatievlaanderen/problemdetails-middleware/commit/fc7a06895ecc8fdf52dc129fbbe8d387fd9e54f8))
+
 ## [4.2.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.2.0...v4.2.1) (2020-02-03)
 
 
