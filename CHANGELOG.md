@@ -1,3 +1,10 @@
+## [4.2.3](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.2.2...v4.2.3) (2020-02-04)
+
+
+### Bug Fixes
+
+* add description attributes ([f26499b](https://github.com/informatievlaanderen/problemdetails-middleware/commit/f26499b0f4f5f3ac283bd1ec16517d7b549cf3df))
+
 ## [4.2.2](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.2.1...v4.2.2) (2020-02-04)
 
 
