@@ -1,5 +1,6 @@
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
+    using System.ComponentModel;
     using FluentValidation;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
@@ -15,6 +16,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         /// <summary>Validatie fouten.</summary>
         [JsonProperty("validationErrors", Required = Required.DisallowNull)]
         [DataMember(Name = "validationErrors", Order = 600, EmitDefaultValue = false)]
+        [Description("Validatie fouten.")]
         public string[] ValidationErrors { get; set; }
 
         // Here to make DataContractSerializer happy
