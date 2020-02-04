@@ -18,6 +18,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             new DeveloperProblemDetails(problem, details);
     }
 
+    [DataContract(Name = "DeveloperProblemDetails", Namespace = "")]
     internal class DeveloperProblemDetails : StatusCodeProblemDetails
     {
         [JsonProperty("errors", DefaultValueHandling = DefaultValueHandling.Ignore, Required = Required.Default)]

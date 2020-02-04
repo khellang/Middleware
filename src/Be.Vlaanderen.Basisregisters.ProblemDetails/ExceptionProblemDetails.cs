@@ -5,6 +5,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     using System;
     using System.Runtime.Serialization;
 
+    [DataContract(Name = "ExceptionProblemDetails", Namespace = "")]
     public class ExceptionProblemDetails : StatusCodeProblemDetails
     {
         [JsonProperty("error", DefaultValueHandling = DefaultValueHandling.Ignore, Required = Required.Default)]

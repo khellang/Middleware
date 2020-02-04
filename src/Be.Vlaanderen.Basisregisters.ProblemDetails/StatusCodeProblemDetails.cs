@@ -1,7 +1,9 @@
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
+    using System.Runtime.Serialization;
     using Microsoft.AspNetCore.WebUtilities;
 
+    [DataContract(Name = "StatusCodeProblemDetails", Namespace = "")]
     public class StatusCodeProblemDetails : ProblemDetails
     {
         public StatusCodeProblemDetails(int statusCode)
