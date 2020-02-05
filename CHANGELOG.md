@@ -1,3 +1,15 @@
+# [5.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.2.3...v5.0.0) (2020-02-05)
+
+
+### Code Refactoring
+
+* use dictionary for validation errors instead of array ([1dca8da](https://github.com/informatievlaanderen/problemdetails-middleware/commit/1dca8da67ebdb9772027b7b9713ffa80b5b9d97c))
+
+
+### BREAKING CHANGES
+
+* replaced the validation errors array with a dictionary
+
 ## [4.2.3](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.2.2...v4.2.3) (2020-02-04)
 
 
