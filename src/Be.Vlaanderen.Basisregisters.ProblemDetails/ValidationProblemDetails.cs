@@ -1,5 +1,6 @@
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
+    using System.Collections.Generic;
     using System.ComponentModel;
     using FluentValidation;
     using Microsoft.AspNetCore.Http;
@@ -17,7 +18,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         [JsonProperty("validationErrors", Required = Required.DisallowNull)]
         [DataMember(Name = "validationErrors", Order = 600, EmitDefaultValue = false)]
         [Description("Validatie fouten.")]
-        public string[] ValidationErrors { get; set; }
+        public Dictionary<string, string[]> ValidationErrors { get; set; }
 
         // Here to make DataContractSerializer happy
         public ValidationProblemDetails() : base(StatusCodes.Status400BadRequest) { }
@@ -27,7 +28,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             Detail = "Validatie mislukt!"; // TODO: Localize
             ProblemInstanceUri = GetProblemNumber();
             ProblemTypeUri = GetTypeUriFor(exception);
-            ValidationErrors = exception.Errors.Select(x => x.ErrorMessage).ToArray();
+            ValidationErrors = exception.Errors
+                .GroupBy(x => x.PropertyName, y => y.ErrorMessage)
+                .ToDictionary(x => x.Key, y => y.ToArray());
         }
     }
 }
