@@ -15,7 +15,7 @@ using ProblemDetails.Tests.Helpers;
 using Xunit;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
-#if NETCOREAPP2_2
+#if (NETCOREAPP2_1 || NETCOREAPP2_2)
 using Environments = Microsoft.Extensions.Hosting.EnvironmentName;
 #else
 using Environments = Microsoft.Extensions.Hosting.Environments;

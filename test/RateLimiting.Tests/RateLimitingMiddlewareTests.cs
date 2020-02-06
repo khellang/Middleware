@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Internal;
 using Xunit;
 
-#if NETCOREAPP2_2
+#if (NETCOREAPP2_1 || NETCOREAPP2_2)
 using Environments = Microsoft.Extensions.Hosting.EnvironmentName;
 #else
 using Environments = Microsoft.Extensions.Hosting.Environments;
