@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.0...v5.0.1) (2020-02-06)
+
+
+### Bug Fixes
+
+* set validationproblemdetail properties in default ctor ([36cb9e1](https://github.com/informatievlaanderen/problemdetails-middleware/commit/36cb9e1677b0fb1b91e4e351b970b4e8d59baea8))
+
 # [5.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v4.2.3...v5.0.0) (2020-02-05)
 
 
