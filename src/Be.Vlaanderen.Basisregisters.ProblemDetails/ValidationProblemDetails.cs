@@ -21,13 +21,15 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         public Dictionary<string, string[]> ValidationErrors { get; set; }
 
         // Here to make DataContractSerializer happy
-        public ValidationProblemDetails() : base(StatusCodes.Status400BadRequest) { }
-
-        public ValidationProblemDetails(ValidationException exception) : base(StatusCodes.Status400BadRequest)
+        public ValidationProblemDetails() : base(StatusCodes.Status400BadRequest)
         {
             Detail = "Validatie mislukt!"; // TODO: Localize
             ProblemInstanceUri = GetProblemNumber();
-            ProblemTypeUri = GetTypeUriFor(exception);
+            ProblemTypeUri = GetTypeUriFor(new ValidationException("irrelevant"));
+        }
+
+        public ValidationProblemDetails(ValidationException exception) : this()
+        {
             ValidationErrors = exception.Errors
                 .GroupBy(x => x.PropertyName, y => y.ErrorMessage)
                 .ToDictionary(x => x.Key, y => y.ToArray());
