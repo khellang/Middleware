@@ -1,3 +1,10 @@
+## [5.0.3](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.2...v5.0.3) (2020-02-11)
+
+
+### Bug Fixes
+
+* make sure to ignore the xml proxy for json ([46a81c5](https://github.com/informatievlaanderen/problemdetails-middleware/commit/46a81c5788df229ffce850c4073fd43b3d721131))
+
 ## [5.0.2](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.1...v5.0.2) (2020-02-11)
 
 
