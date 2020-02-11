@@ -1,3 +1,10 @@
+## [5.0.2](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.1...v5.0.2) (2020-02-11)
+
+
+### Bug Fixes
+
+* properly serialize xml validationerrors ([320fe4e](https://github.com/informatievlaanderen/problemdetails-middleware/commit/320fe4e15b344dd5f1f699aebe7e1a7a1ee330db))
+
 ## [5.0.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.0...v5.0.1) (2020-02-06)
 
 
