@@ -23,6 +23,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         [Description("Validatie fouten.")]
         public Dictionary<string, string[]> ValidationErrors { get; set; }
 
+        [JsonIgnore]
         [XmlElement("ValidationErrors")]
         [DataMember(Name = "ValidationErrors", Order = 600, EmitDefaultValue = false)]
         public ValidationErrorDetails ValidationErrorsProxy
