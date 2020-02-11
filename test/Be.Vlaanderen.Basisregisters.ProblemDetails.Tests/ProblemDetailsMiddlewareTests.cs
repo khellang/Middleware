@@ -1,6 +1,7 @@
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -332,9 +333,81 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
             }
         }
 
+        [Fact]
+        public async Task ProblemDetails_XmlValidationWorks()
+        {
+            var problemStatus = HttpStatusCode.TooManyRequests;
+
+            var details = new ValidationProblemDetails
+            {
+                Title = "Too Many Requests",
+                HttpStatus = (int) problemStatus,
+                ValidationErrors = new Dictionary<string, string[]>
+                {
+                    {"item1", new[] {"error1", "error2"}},
+                    {"item2", new[] {"error1", "error2", "error3", "error4"}}
+                }
+            };
+
+            var ex = new ProblemDetailsException(details);
+
+            using (var server = CreateServer(handler: ResponseThrows(ex)))
+            using (var client = server.CreateClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+                var response = await client.GetAsync("/");
+                var content = await response.Content.ReadAsStringAsync();
+
+                Assert.Equal(problemStatus, response.StatusCode);
+                await AssertIsProblemDetailsXmlResponse(response);
+                Assert.DoesNotContain("KeyValueOf", content);
+                Assert.DoesNotContain("KeyValuePairOf", content);
+                //Assert.Contains("errosdasdasar1", content);
+            }
+        }
+
+        [Fact]
+        public async Task ProblemDetails_JsonValidationWorks()
+        {
+            var problemStatus = HttpStatusCode.TooManyRequests;
+
+            var details = new ValidationProblemDetails
+            {
+                Title = "Too Many Requests",
+                HttpStatus = (int)problemStatus,
+                ValidationErrors = new Dictionary<string, string[]>
+                {
+                    {"item1", new[] {"error1", "error2"}},
+                    {"item2", new[] {"error1", "error2", "error3", "error4"}}
+                }
+            };
+
+            var ex = new ProblemDetailsException(details);
+
+            using (var server = CreateServer(handler: ResponseThrows(ex)))
+            using (var client = server.CreateClient())
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var response = await client.GetAsync("/");
+                var content = await response.Content.ReadAsStringAsync();
+
+                Assert.Equal(problemStatus, response.StatusCode);
+                await AssertIsProblemDetailsResponse(response);
+                Assert.DoesNotContain("KeyValueOf", content);
+                Assert.DoesNotContain("KeyValuePairOf", content);
+                //Assert.Contains("errosdasdasar1", content);
+            }
+        }
+
         private static async Task AssertIsProblemDetailsResponse(HttpResponseMessage response)
         {
             Assert.Equal("application/problem+json", response.Content.Headers.ContentType.MediaType);
+            Assert.NotEmpty(await response.Content.ReadAsStringAsync());
+        }
+
+        private static async Task AssertIsProblemDetailsXmlResponse(HttpResponseMessage response)
+        {
+            Assert.Equal("application/problem+xml", response.Content.Headers.ContentType.MediaType);
             Assert.NotEmpty(await response.Content.ReadAsStringAsync());
         }
 
