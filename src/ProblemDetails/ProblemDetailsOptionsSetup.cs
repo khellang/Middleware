@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -24,6 +24,11 @@ namespace Hellang.Middleware.ProblemDetails
             if (options.ShouldLogUnhandledException == null)
             {
                 options.ShouldLogUnhandledException = (ctx, e, d) => IsServerError(d.Status);
+            }
+
+            if (options.ShouldRethrowException == null)
+            {
+                options.ShouldRethrowException = (ctx, e) => false;
             }
 
             if (options.MapStatusCode == null)

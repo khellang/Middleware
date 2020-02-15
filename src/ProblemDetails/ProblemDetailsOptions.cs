@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
@@ -41,6 +41,8 @@ namespace Hellang.Middleware.ProblemDetails
         public Action<HttpContext, MvcProblemDetails> OnBeforeWriteDetails { get; set; }
 
         public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }
+
+        public Func<HttpContext, Exception, bool> ShouldRethrowException { get; set; }
 
         public HashSet<string> AllowedHeaderNames { get; }
 
