@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -256,6 +256,28 @@ namespace ProblemDetails.Tests
             using var client = CreateClient(handler: ResponseThrows(ex));
 
             await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+        }
+
+        [Fact]
+        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntended()
+        {
+            using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
+            {
+                options.ShouldRethrowException = (context, exception) => exception is DivideByZeroException;
+            });
+
+            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+        }
+
+        [Fact]
+        public async Task ProblemDetailsExceptionHandler_CatchException_RethrowIsUnintended()
+        {
+            using var client = CreateClient(handler: ResponseThrows(new InvalidCastException()), options =>
+            {
+                options.ShouldRethrowException = (context, exception) => exception is DivideByZeroException;
+            });
+
+            await client.GetAsync(string.Empty);
         }
 
         [Fact]

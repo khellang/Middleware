@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -91,7 +91,11 @@ namespace Hellang.Middleware.ProblemDetails
                     }
 
                     await WriteProblemDetails(context, details);
-                    return;
+
+                    if (!Options.ShouldRethrowException(context, error))
+                    {
+                        return;
+                    }
                 }
                 catch (Exception inner)
                 {
@@ -99,7 +103,7 @@ namespace Hellang.Middleware.ProblemDetails
                     Logger.ProblemDetailsMiddlewareException(inner);
                 }
 
-                throw; // Re-throw the original exception if we can't handle it properly.
+                throw; // Re-throw the original exception if we can't handle it properly or it's intended.
             }
         }
 
