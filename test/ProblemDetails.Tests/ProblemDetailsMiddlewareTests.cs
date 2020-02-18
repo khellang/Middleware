@@ -263,7 +263,29 @@ namespace ProblemDetails.Tests
         {
             using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
             {
-                options.ShouldRethrowException = (context, exception) => exception is DivideByZeroException;
+                options.Rethrow<DivideByZeroException>();
+            });
+
+            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+        }
+
+        [Fact]
+        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndExceptionDerived()
+        {
+            using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
+            {
+                options.Rethrow<Exception>();
+            });
+
+            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+        }
+
+        [Fact]
+        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndPredicate()
+        {
+            using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
+            {
+                options.Rethrow<Exception>((ctx, ex ) => true);
             });
 
             await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
@@ -272,9 +294,10 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task ProblemDetailsExceptionHandler_CatchException_RethrowIsUnintended()
         {
-            using var client = CreateClient(handler: ResponseThrows(new InvalidCastException()), options =>
+            using var client = CreateClient(handler: ResponseThrows(new InvalidCastException("A")), options =>
             {
-                options.ShouldRethrowException = (context, exception) => exception is DivideByZeroException;
+                options.Rethrow<DivideByZeroException>();
+                options.Rethrow<InvalidCastException>((context, ex) => ex.Message != "A");
             });
 
             await client.GetAsync(string.Empty);
