@@ -13,6 +13,7 @@ namespace Hellang.Middleware.ProblemDetails
         {
             SourceCodeLineCount = 6;
             Mappers = new List<ExceptionMapper>();
+            RethrowPolicies = new List<Func<HttpContext, Exception, bool>>();
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 HeaderNames.AccessControlAllowCredentials,
@@ -42,11 +43,11 @@ namespace Hellang.Middleware.ProblemDetails
 
         public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }
 
-        public Func<HttpContext, Exception, bool> ShouldRethrowException { get; set; }
-
         public HashSet<string> AllowedHeaderNames { get; }
 
         private List<ExceptionMapper> Mappers { get; }
+
+        private List<Func<HttpContext, Exception, bool>> RethrowPolicies { get; }
 
         public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
         {
@@ -56,6 +57,29 @@ namespace Hellang.Middleware.ProblemDetails
         public void Map<TException>(Func<HttpContext, TException, MvcProblemDetails> mapping) where TException : Exception
         {
             Mappers.Add(new ExceptionMapper(typeof(TException), (ctx, ex) => mapping(ctx, (TException)ex)));
+        }
+
+        public void Rethrow<TException>() where TException : Exception
+        {
+            Rethrow<TException>((ctx, ex) => true);
+        }
+
+        public void Rethrow<TException>(Func<HttpContext, TException, bool> predicate) where TException : Exception
+        {
+            RethrowPolicies.Add((ctx, ex) => ex is TException exception && predicate(ctx, exception));
+        }
+
+        internal bool ShouldRethrowException(HttpContext httpContext, Exception exception)
+        {
+            foreach (var policy in RethrowPolicies)
+            {
+                if (policy(httpContext, exception))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal bool TryMapProblemDetails(HttpContext context, Exception exception, out MvcProblemDetails problem)

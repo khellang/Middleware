@@ -26,11 +26,6 @@ namespace Hellang.Middleware.ProblemDetails
                 options.ShouldLogUnhandledException = (ctx, e, d) => IsServerError(d.Status);
             }
 
-            if (options.ShouldRethrowException == null)
-            {
-                options.ShouldRethrowException = (ctx, e) => false;
-            }
-
             if (options.MapStatusCode == null)
             {
                 options.MapStatusCode = (ctx, statusCode) => new StatusCodeProblemDetails(statusCode);
