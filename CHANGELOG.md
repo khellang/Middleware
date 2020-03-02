@@ -1,3 +1,10 @@
+## [5.0.4](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.3...v5.0.4) (2020-03-02)
+
+
+### Bug Fixes
+
+* bump netcore to 3.1.2 ([dff8454](https://github.com/informatievlaanderen/problemdetails-middleware/commit/dff8454949cc09aa91db69869aa8b78413bcac91))
+
 ## [5.0.3](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.2...v5.0.3) (2020-02-11)
 
 
