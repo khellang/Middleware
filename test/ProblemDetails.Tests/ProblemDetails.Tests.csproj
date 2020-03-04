@@ -2,8 +2,9 @@
   <PropertyGroup>
     <AssemblyName>Hellang.Middleware.ProblemDetails.Tests</AssemblyName>
     <RootNamespace>ProblemDetails.Tests</RootNamespace>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\ProblemDetails\ProblemDetails.csproj" />
   </ItemGroup>

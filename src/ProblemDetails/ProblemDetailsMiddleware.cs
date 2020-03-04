@@ -5,17 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.StackTrace.Sources;
 using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
-
-#if NETSTANDARD2_0
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
-#endif
 
 namespace Hellang.Middleware.ProblemDetails
 {
@@ -29,7 +24,7 @@ namespace Hellang.Middleware.ProblemDetails
             RequestDelegate next,
             IOptions<ProblemDetailsOptions> options,
             IActionResultExecutor<ObjectResult> executor,
-            IHostingEnvironment environment,
+            IHostEnvironment environment,
             ILogger<ProblemDetailsMiddleware> logger)
         {
             Next = next;
@@ -63,7 +58,7 @@ namespace Hellang.Middleware.ProblemDetails
                         Logger.ResponseStarted();
                         return;
                     }
-                    
+
                     ClearResponse(context, context.Response.StatusCode);
 
                     var details = GetDetails(context, error: null);

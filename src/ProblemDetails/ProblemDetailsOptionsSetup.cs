@@ -1,14 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-
-#if NETSTANDARD2_0
-using Microsoft.AspNetCore.Hosting;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
 using Microsoft.Extensions.Hosting;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
-#endif
 
 namespace Hellang.Middleware.ProblemDetails
 {
@@ -39,7 +32,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         private static bool IncludeExceptionDetails(HttpContext context)
         {
-            return context.RequestServices.GetRequiredService<IHostingEnvironment>().IsDevelopment();
+            return context.RequestServices.GetRequiredService<IHostEnvironment>().IsDevelopment();
         }
 
         private static bool IsServerError(int? statusCode)

@@ -9,17 +9,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using ProblemDetails.Tests.Helpers;
 using Xunit;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
-
-#if (NETCOREAPP2_1 || NETCOREAPP2_2)
-using Environments = Microsoft.Extensions.Hosting.EnvironmentName;
-#else
-using Environments = Microsoft.Extensions.Hosting.Environments;
-#endif
 
 namespace ProblemDetails.Tests
 {
