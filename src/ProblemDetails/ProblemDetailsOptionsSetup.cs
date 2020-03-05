@@ -11,22 +11,22 @@ namespace Hellang.Middleware.ProblemDetails
     {
         public void Configure(ProblemDetailsOptions options)
         {
-            if (options.IncludeExceptionDetails == null)
+            if (options.IncludeExceptionDetails is null)
             {
                 options.IncludeExceptionDetails = IncludeExceptionDetails;
             }
 
-            if (options.ShouldLogUnhandledException == null)
+            if (options.ShouldLogUnhandledException is null)
             {
                 options.ShouldLogUnhandledException = (ctx, e, d) => IsServerError(d.Status);
             }
 
-            if (options.MapStatusCode == null)
+            if (options.MapStatusCode is null)
             {
                 options.MapStatusCode = ctx => new StatusCodeProblemDetails(ctx.Response.StatusCode);
             }
 
-            if (options.IsProblem == null)
+            if (options.IsProblem is null)
             {
                 options.IsProblem = IsProblem;
             }

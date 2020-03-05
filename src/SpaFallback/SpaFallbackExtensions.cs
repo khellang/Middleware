@@ -36,7 +36,7 @@ namespace Hellang.Middleware.SpaFallback
 
         public static IServiceCollection AddSpaFallback(this IServiceCollection services, Action<SpaFallbackOptions> configure)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
@@ -57,14 +57,14 @@ namespace Hellang.Middleware.SpaFallback
 
         public static IApplicationBuilder UseSpaFallback(this IApplicationBuilder app)
         {
-            if (app == null)
+            if (app is null)
             {
                 throw new ArgumentNullException(nameof(app));
             }
 
             var marker = app.ApplicationServices.GetService<SpaFallbackMarkerService>();
 
-            if (marker == null)
+            if (marker is null)
             {
                 var message = new StringBuilder()
                     .AppendLine($"Unable to find the required services for the {nameof(UseSpaFallback)} middleware to function correctly.")
