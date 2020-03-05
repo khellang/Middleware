@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 
 namespace Hellang.Middleware.ProblemDetails
@@ -14,6 +15,7 @@ namespace Hellang.Middleware.ProblemDetails
             Error = error ?? throw new ArgumentNullException(nameof(error));
         }
 
-        public Exception Error { get; }
+        [JsonIgnore]
+        public Exception Error { get; set; }
     }
 }

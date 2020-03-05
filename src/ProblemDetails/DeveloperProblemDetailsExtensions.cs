@@ -5,27 +5,21 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.StackTrace.Sources;
+using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace Hellang.Middleware.ProblemDetails
 {
-    internal class DeveloperProblemDetails : StatusCodeProblemDetails
+    internal static class DeveloperProblemDetailsExtensions
     {
-        public DeveloperProblemDetails(ExceptionProblemDetails problem, IEnumerable<ExceptionDetails> details)
-            : base(problem.Status ?? StatusCodes.Status500InternalServerError)
+        public static MvcProblemDetails WithExceptionDetails(this MvcProblemDetails problem, Exception error, IEnumerable<ExceptionDetails> details)
         {
-            Detail = problem.Detail ?? problem.Error.Message;
-            Title = problem.Title ?? TypeNameHelper.GetTypeDisplayName(problem.Error.GetType());
-            Instance = problem.Instance ?? GetHelpLink(problem.Error);
-
-            if (!string.IsNullOrEmpty(problem.Type))
-            {
-                Type = problem.Type;
-            }
-
-            Errors = GetErrors(details).ToList();
+            problem.Title ??= TypeNameHelper.GetTypeDisplayName(error.GetType());
+            problem.Status ??= StatusCodes.Status500InternalServerError;
+            problem.Extensions["errors"] = GetErrors(details).ToList();
+            problem.Instance ??= GetHelpLink(error);
+            problem.Detail ??= error.Message;
+            return problem;
         }
-
-        public IReadOnlyCollection<ErrorDetails> Errors { get; }
 
         private static IEnumerable<ErrorDetails> GetErrors(IEnumerable<ExceptionDetails> details)
         {
@@ -51,7 +45,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             return null;
         }
-        
+
         public class ErrorDetails
         {
             public ErrorDetails(ExceptionDetails detail)
@@ -65,11 +59,11 @@ namespace Hellang.Middleware.ProblemDetails
             public string Message { get; }
 
             public string Type { get; }
-            
+
             public string Raw { get; }
-            
+
             public IReadOnlyCollection<StackFrame> StackFrames { get; }
-            
+
             private static IEnumerable<StackFrame> GetStackFrames(IEnumerable<StackFrameSourceCodeInfo> stackFrames)
             {
                 foreach (var stackFrame in stackFrames)
@@ -109,17 +103,17 @@ namespace Hellang.Middleware.ProblemDetails
                 public string FilePath { get; set; }
 
                 public string FileName { get; set; }
-                
+
                 public string Function { get; set; }
-                
+
                 public int? Line { get; set; }
-                
+
                 public int? PreContextLine { get; set; }
-                
+
                 public IReadOnlyCollection<string> PreContextCode { get; set; }
-                
+
                 public IReadOnlyCollection<string> ContextCode { get; set; }
-                
+
                 public IReadOnlyCollection<string> PostContextCode { get; set; }
             }
         }

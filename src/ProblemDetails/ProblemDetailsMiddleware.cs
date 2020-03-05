@@ -111,41 +111,36 @@ namespace Hellang.Middleware.ProblemDetails
                 return Options.MapStatusCode(context, statusCode);
             }
 
-            var result = GetProblemDetails(context, error);
-
-            // We don't want to leak exception details unless it's configured,
-            // even if the user mapped the exception into ExceptionProblemDetails.
-            if (result is ExceptionProblemDetails ex)
-            {
-                if (Options.IncludeExceptionDetails(context))
-                {
-                    try
-                    {
-                        var details = DetailsProvider.GetDetails(ex.Error);
-                        return new DeveloperProblemDetails(ex, details);
-                    }
-                    catch (Exception e)
-                    {
-                        // Failed to get exception details for the specific exception.
-                        // Fall back to generic status code problem details below.
-                        Logger.ProblemDetailsMiddlewareException(e);
-                    }
-                }
-
-                return Options.MapStatusCode(context, ex.Status ?? statusCode);
-            }
-
-            return result;
-        }
-
-        private MvcProblemDetails GetProblemDetails(HttpContext context, Exception error)
-        {
             if (error is ProblemDetailsException problem)
             {
                 // The user has already provided a valid problem details object.
                 return problem.Details;
             }
 
+            var result = MapToProblemDetails(context, error);
+
+            if (Options.IncludeExceptionDetails(context))
+            {
+                try
+                {
+                    var details = DetailsProvider.GetDetails(error);
+
+                    // Instead of returning a new object, we mutate the existing problem so users keep all details.
+                    return result.WithExceptionDetails(error, details);
+                }
+                catch (Exception e)
+                {
+                    // Failed to get exception details for the specific exception.
+                    // Fall back to generic status code problem details below.
+                    Logger.ProblemDetailsMiddlewareException(e);
+                }
+            }
+
+            return result;
+        }
+
+        private MvcProblemDetails MapToProblemDetails(HttpContext context, Exception error)
+        {
             if (Options.TryMapProblemDetails(context, error, out var result))
             {
                 // The user has set up a mapping for the specific exception type.
