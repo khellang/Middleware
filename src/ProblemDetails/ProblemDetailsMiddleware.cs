@@ -61,7 +61,7 @@ namespace Hellang.Middleware.ProblemDetails
 
                     ClearResponse(context, context.Response.StatusCode);
 
-                    var details = GetDetails(context, error: null);
+                    var details = Options.MapStatusCode(context);
 
                     await WriteProblemDetails(context, details);
                 }
@@ -104,13 +104,6 @@ namespace Hellang.Middleware.ProblemDetails
 
         private MvcProblemDetails GetDetails(HttpContext context, Exception error)
         {
-            var statusCode = context.Response.StatusCode;
-
-            if (error == null)
-            {
-                return Options.MapStatusCode(context, statusCode);
-            }
-
             if (error is ProblemDetailsException problem)
             {
                 // The user has already provided a valid problem details object.
@@ -123,15 +116,13 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 try
                 {
-                    var details = DetailsProvider.GetDetails(error);
-
                     // Instead of returning a new object, we mutate the existing problem so users keep all details.
-                    return result.WithExceptionDetails(error, details);
+                    return result.WithExceptionDetails(error, DetailsProvider.GetDetails(error));
                 }
                 catch (Exception e)
                 {
                     // Failed to get exception details for the specific exception.
-                    // Fall back to generic status code problem details below.
+                    // Just log the failure and return the original problem details below.
                     Logger.ProblemDetailsMiddlewareException(e);
                 }
             }
@@ -147,8 +138,8 @@ namespace Hellang.Middleware.ProblemDetails
                 return result;
             }
 
-            // Fall back to the generic exception problem details.
-            return new StatusCodeProblemDetails(StatusCodes.Status500InternalServerError);
+            // Fall back to the generic status code problem details.
+            return Options.MapStatusCode(context);
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
