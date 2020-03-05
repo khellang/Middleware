@@ -43,7 +43,8 @@ namespace ProblemDetails.Tests
             var response = await client.GetAsync(string.Empty);
 
             Assert.Equal(expected, response.StatusCode);
-            await AssertIsProblemDetailsResponse(response);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
         }
 
         [Fact]
@@ -54,7 +55,8 @@ namespace ProblemDetails.Tests
             var response = await client.GetAsync(string.Empty);
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-            await AssertIsProblemDetailsResponse(response);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: true);
         }
 
         [Fact]
@@ -76,7 +78,8 @@ namespace ProblemDetails.Tests
             var response = await client.GetAsync("/");
 
             Assert.Equal(expected, (int)response.StatusCode);
-            await AssertIsProblemDetailsResponse(response);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
         }
 
         [Fact]
@@ -320,16 +323,19 @@ namespace ProblemDetails.Tests
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
-        private static async Task AssertIsProblemDetailsResponse(HttpResponseMessage response)
+        private static async Task AssertIsProblemDetailsResponse(HttpResponseMessage response, bool expectExceptionDetails)
         {
             Assert.Equal(ProblemJsonMediaType, response.Content.Headers.ContentType.MediaType);
 
             var content = await response.Content.ReadJsonAsync<MvcProblemDetails>();
 
             Assert.NotNull(content);
+            
             Assert.NotEmpty(content.Type);
             Assert.NotEmpty(content.Title);
             Assert.NotNull(content.Status);
+
+            Assert.Equal(expectExceptionDetails, content.Extensions.ContainsKey("errors"));
         }
 
         private static void AssertUnhandledExceptionLogged(InMemoryLogger<ProblemDetailsMiddleware> logger)
