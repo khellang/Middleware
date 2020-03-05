@@ -33,12 +33,12 @@ namespace Hellang.Middleware.ProblemDetails
 
         public IFileProvider FileProvider { get; set; }
 
-        public Func<HttpContext, bool> IncludeExceptionDetails { get; set; }
+        public Func<HttpContext, Exception, bool> IncludeExceptionDetails { get; set; }
 
         public Func<HttpContext, bool> IsProblem { get; set; }
 
         public Func<HttpContext, int, MvcProblemDetails> MapStatusCode { get; set; }
-        
+
         public Action<HttpContext, MvcProblemDetails> OnBeforeWriteDetails { get; set; }
 
         public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }

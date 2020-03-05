@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -30,7 +31,7 @@ namespace Hellang.Middleware.ProblemDetails
             }
         }
 
-        private static bool IncludeExceptionDetails(HttpContext context)
+        private static bool IncludeExceptionDetails(HttpContext context, Exception exception)
         {
             return context.RequestServices.GetRequiredService<IHostEnvironment>().IsDevelopment();
         }

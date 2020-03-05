@@ -119,7 +119,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             var result = MapToProblemDetails(context, error);
 
-            if (Options.IncludeExceptionDetails(context))
+            if (Options.IncludeExceptionDetails(context, error))
             {
                 try
                 {

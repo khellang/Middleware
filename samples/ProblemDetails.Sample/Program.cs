@@ -60,7 +60,7 @@ namespace Hellang.Middleware.ProblemDetails.Sample
         private void ConfigureProblemDetails(ProblemDetailsOptions options)
         {
             // This is the default behavior; only include exception details in a development environment.
-            options.IncludeExceptionDetails = ctx => Environment.IsDevelopment();
+            options.IncludeExceptionDetails = (ctx, ex) => Environment.IsDevelopment();
 
             // This will map NotImplementedException to the 501 Not Implemented status code.
             options.Map<NotImplementedException>(ex => new ExceptionProblemDetails(ex, StatusCodes.Status501NotImplemented));
