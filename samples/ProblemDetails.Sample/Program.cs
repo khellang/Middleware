@@ -29,7 +29,7 @@ namespace Hellang.Middleware.ProblemDetails.Sample
         {
             return Host.CreateDefaultBuilder(args)
                 .UseEnvironment(Environments.Development)
-                //.UseEnvironment(EnvironmentName.Production) // Uncomment to remove exception details from responses.
+                //.UseEnvironment(Environments.Production) // Uncomment to remove exception details from responses.
                 .ConfigureWebHostDefaults(web =>
                 {
                     web.UseStartup<Startup>();
