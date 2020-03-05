@@ -144,6 +144,8 @@ namespace Hellang.Middleware.ProblemDetails
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
         {
+            Options.AddTraceId(context, details);
+
             Options.OnBeforeWriteDetails?.Invoke(context, details);
 
             var routeData = context.GetRouteData() ?? EmptyRouteData;

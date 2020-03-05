@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
@@ -41,6 +42,13 @@ namespace Hellang.Middleware.ProblemDetails
         /// The <see cref="IFileProvider"/> for getting file information when reading stack trace information.
         /// </summary>
         public IFileProvider FileProvider { get; set; }
+
+        /// <summary>
+        /// Gets or sets the function for getting a <c>traceId</c> to include in the problem response.
+        /// The default gets the ID from <see cref="Activity.Current"/> with a
+        /// fallback to <see cref="HttpContext.TraceIdentifier"/>.
+        /// </summary>
+        public Func<HttpContext, string> GetTraceId { get; set; }
 
         /// <summary>
         /// Gets or sets the predicate used for determining whether exception details (stack trace etc.)
@@ -156,6 +164,23 @@ namespace Hellang.Middleware.ProblemDetails
             }
 
             return false;
+        }
+
+        internal void AddTraceId(HttpContext context, MvcProblemDetails details)
+        {
+            const string key = "traceId";
+
+            if (details.Extensions.ContainsKey(key))
+            {
+                return;
+            }
+
+            var traceId = GetTraceId.Invoke(context);
+
+            if (!string.IsNullOrEmpty(traceId))
+            {
+                details.Extensions[key] = traceId;
+            }
         }
 
         internal bool TryMapProblemDetails(HttpContext context, Exception exception, out MvcProblemDetails problem)

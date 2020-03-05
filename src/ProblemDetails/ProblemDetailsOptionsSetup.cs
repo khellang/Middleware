@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -28,6 +29,11 @@ namespace Hellang.Middleware.ProblemDetails
             if (options.IsProblem == null)
             {
                 options.IsProblem = IsProblem;
+            }
+
+            if (options.GetTraceId is null)
+            {
+                options.GetTraceId = ctx => Activity.Current?.Id ?? ctx.TraceIdentifier;
             }
         }
 
