@@ -1,8 +1,13 @@
 using System;
 using System.Text;
+using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace Hellang.Middleware.ProblemDetails
 {
+    /// <summary>
+    /// An exception for passing an <see cref="MvcProblemDetails"/> instance to
+    /// be handled by the <see cref="ProblemDetailsMiddleware"/>.
+    /// </summary>
     public class ProblemDetailsException : Exception
     {
         public ProblemDetailsException(int statusCode)
@@ -15,7 +20,7 @@ namespace Hellang.Middleware.ProblemDetails
         {
         }
 
-        public ProblemDetailsException(Microsoft.AspNetCore.Mvc.ProblemDetails details)
+        public ProblemDetailsException(MvcProblemDetails details)
             : base($"{details.Type} : {details.Title}")
         {
             Details = details;

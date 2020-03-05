@@ -8,11 +8,22 @@ namespace Hellang.Middleware.ProblemDetails
 {
     public static class ProblemDetailsExtensions
     {
+        /// <summary>
+        /// Adds the required services services for <see cref="UseProblemDetails"/> to work correctly,
+        /// using the default options.
+        /// </summary>
+        /// <param name="services">The service collection to add the services to.</param>
         public static IServiceCollection AddProblemDetails(this IServiceCollection services)
         {
             return services.AddProblemDetails(configure: null);
         }
 
+        /// <summary>
+        /// Adds the required services services for <see cref="UseProblemDetails"/> to work correctly,
+        /// using the specified <paramref name="configure"/> callback for configuration.
+        /// </summary>
+        /// <param name="services">The service collection to add the services to.</param>
+        /// <param name="configure"></param>
         public static IServiceCollection AddProblemDetails(this IServiceCollection services, Action<ProblemDetailsOptions> configure)
         {
             if (configure != null)
@@ -26,6 +37,11 @@ namespace Hellang.Middleware.ProblemDetails
             return services;
         }
 
+        /// <summary>
+        /// Adds the <see cref="ProblemDetailsMiddleware"/> to the application pipeline.
+        /// </summary>
+        /// <param name="app">The application builder to add the middleware to.</param>
+        /// <exception cref="InvalidOperationException">If <see cref="AddProblemDetails(Microsoft.Extensions.DependencyInjection.IServiceCollection)"/> hasn't been called.</exception>
         public static IApplicationBuilder UseProblemDetails(this IApplicationBuilder app)
         {
             var markerService = app.ApplicationServices.GetService<ProblemDetailsMarkerService>();
