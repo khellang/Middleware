@@ -49,6 +49,11 @@ namespace Hellang.Middleware.ProblemDetails
 
         private List<Func<HttpContext, Exception, bool>> RethrowPolicies { get; }
 
+        public void MapToStatusCode<TException>(int statusCode) where TException : Exception
+        {
+            Map<TException>((ctx, ex) => new StatusCodeProblemDetails(statusCode));
+        }
+
         public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
         {
             Map<TException>((ctx, ex) => mapping(ex));

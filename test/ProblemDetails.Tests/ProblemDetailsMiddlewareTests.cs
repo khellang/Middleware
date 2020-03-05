@@ -98,8 +98,7 @@ namespace ProblemDetails.Tests
         {
             void MapNotImplementException(ProblemDetailsOptions options)
             {
-                options.Map<NotImplementedException>(ex =>
-                    new ExceptionProblemDetails(ex) {Status = StatusCodes.Status501NotImplemented});
+                options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
             }
 
             var handler = ResponseThrows(new NotImplementedException());
@@ -136,8 +135,7 @@ namespace ProblemDetails.Tests
         {
             void MapNotImplementException(ProblemDetailsOptions options)
             {
-                options.Map<NotImplementedException>(ex =>
-                    new ExceptionProblemDetails(ex) { Status = StatusCodes.Status403Forbidden });
+                options.MapToStatusCode<NotImplementedException>(StatusCodes.Status403Forbidden);
             }
 
             var handler = ResponseThrows(new NotImplementedException());
