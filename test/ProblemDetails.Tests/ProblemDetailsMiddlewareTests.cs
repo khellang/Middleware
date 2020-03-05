@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,8 @@ namespace ProblemDetails.Tests
 {
     public class ProblemDetailsMiddlewareTests
     {
+        private const string ProblemJsonMediaType = "application/problem+json";
+
         public ProblemDetailsMiddlewareTests()
         {
             Logger = new InMemoryLogger<ProblemDetailsMiddleware>();
@@ -57,12 +60,13 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task ProblemDetailsException_IsHandled()
         {
-            var expected = HttpStatusCode.TooManyRequests;
+            const int expected = StatusCodes.Status429TooManyRequests;
 
             var details = new MvcProblemDetails
             {
-                Title = "Too Many Requests",
-                Status = (int) expected,
+                Title = ReasonPhrases.GetReasonPhrase(expected),
+                Type = $"https://httpstatuses.com/{expected}",
+                Status = expected,
             };
 
             var ex = new ProblemDetailsException(details);
@@ -71,7 +75,7 @@ namespace ProblemDetails.Tests
 
             var response = await client.GetAsync("/");
 
-            Assert.Equal(expected, response.StatusCode);
+            Assert.Equal(expected, (int)response.StatusCode);
             await AssertIsProblemDetailsResponse(response);
         }
 
@@ -144,18 +148,18 @@ namespace ProblemDetails.Tests
         }
 
         [Theory]
-        [InlineData("Staging", 84)]
-        [InlineData("Production", 84)]
-        [InlineData("Development", 1400)]
-        public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedMinimumLength)
+        [InlineData("Staging", false)]
+        [InlineData("Production", false)]
+        [InlineData("Development", true)]
+        public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, bool expectExceptionDetails)
         {
             using var client = CreateClient(handler: ResponseThrows(), environment: environment);
 
             var response = await client.GetAsync(string.Empty);
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadJsonAsync<MvcProblemDetails>();
 
-            Assert.InRange(content.Length, expectedMinimumLength, int.MaxValue);
+            Assert.Equal(expectExceptionDetails, content.Extensions.ContainsKey("errors"));
         }
 
         [Fact]
@@ -318,8 +322,14 @@ namespace ProblemDetails.Tests
 
         private static async Task AssertIsProblemDetailsResponse(HttpResponseMessage response)
         {
-            Assert.NotEmpty(await response.Content.ReadAsStringAsync());
-            Assert.Equal("application/problem+json", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal(ProblemJsonMediaType, response.Content.Headers.ContentType.MediaType);
+
+            var content = await response.Content.ReadJsonAsync<MvcProblemDetails>();
+
+            Assert.NotNull(content);
+            Assert.NotEmpty(content.Type);
+            Assert.NotEmpty(content.Title);
+            Assert.NotNull(content.Status);
         }
 
         private static void AssertUnhandledExceptionLogged(InMemoryLogger<ProblemDetailsMiddleware> logger)
@@ -352,7 +362,7 @@ namespace ProblemDetails.Tests
             var client = server.CreateClient();
 
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.ParseAdd("application/problem+json");
+            client.DefaultRequestHeaders.Accept.ParseAdd(ProblemJsonMediaType);
 
             return client;
         }
