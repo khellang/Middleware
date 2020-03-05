@@ -148,7 +148,7 @@ namespace Hellang.Middleware.ProblemDetails
             }
 
             // Fall back to the generic exception problem details.
-            return new ExceptionProblemDetails(error);
+            return new StatusCodeProblemDetails(StatusCodes.Status500InternalServerError);
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
