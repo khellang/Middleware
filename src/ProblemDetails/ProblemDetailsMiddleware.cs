@@ -11,10 +11,10 @@ using Microsoft.Extensions.StackTrace.Sources;
 using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
-#if NETSTANDARD2_0
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
+#if NETCOREAPP3_0
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+#else
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
 namespace Hellang.Middleware.ProblemDetails

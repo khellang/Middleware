@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,7 +21,13 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 Type = problem.Type;
             }
-
+            
+#if NETCOREAPP
+            foreach (var kvp in problem.Extensions)
+            {
+                Extensions[kvp.Key] = kvp.Value;
+            }
+#endif
             Errors = GetErrors(details).ToList();
         }
 
