@@ -35,6 +35,12 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 options.GetTraceId = ctx => Activity.Current?.Id ?? ctx.TraceIdentifier;
             }
+
+            if (options.ContentTypes.Count == 0)
+            {
+                options.ContentTypes.Add("application/problem+json");
+                options.ContentTypes.Add("application/problem+xml");
+            }
         }
 
         private static bool IncludeExceptionDetails(HttpContext context, Exception exception)
