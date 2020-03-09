@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
@@ -14,6 +15,7 @@ namespace Hellang.Middleware.ProblemDetails
             SourceCodeLineCount = 6;
             Mappers = new List<ExceptionMapper>();
             RethrowPolicies = new List<Func<HttpContext, Exception, bool>>();
+            ContentTypes = new MediaTypeCollection();
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 HeaderNames.AccessControlAllowCredentials,
@@ -48,6 +50,8 @@ namespace Hellang.Middleware.ProblemDetails
         private List<ExceptionMapper> Mappers { get; }
 
         private List<Func<HttpContext, Exception, bool>> RethrowPolicies { get; }
+
+        public MediaTypeCollection ContentTypes { get; }
 
         public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
         {
