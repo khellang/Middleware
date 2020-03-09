@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
@@ -17,6 +18,7 @@ namespace Hellang.Middleware.ProblemDetails
             SourceCodeLineCount = 6;
             Mappers = new List<ExceptionMapper>();
             RethrowPolicies = new List<Func<HttpContext, Exception, bool>>();
+            ContentTypes = new MediaTypeCollection();
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 HeaderNames.AccessControlAllowCredentials,
@@ -103,6 +105,8 @@ namespace Hellang.Middleware.ProblemDetails
         private List<ExceptionMapper> Mappers { get; }
 
         private List<Func<HttpContext, Exception, bool>> RethrowPolicies { get; }
+
+        public MediaTypeCollection ContentTypes { get; }
 
         /// <summary>
         /// Maps the specified exception type <typeparamref name="TException"/> to the specified

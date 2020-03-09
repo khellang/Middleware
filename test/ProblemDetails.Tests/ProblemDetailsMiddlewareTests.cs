@@ -59,6 +59,40 @@ namespace ProblemDetails.Tests
             await AssertIsProblemDetailsResponse(response, expectExceptionDetails: true);
         }
 
+        [Theory]
+        [InlineData("application/json", "application/problem+json")]
+        [InlineData("application/csv", "application/problem+json")]
+        public async Task ContentTypes_Default_Options(string requestAcceptContentType, string responseContentType)
+        {
+            using var client = CreateClient(handler: ResponseThrows(), options => options.Map<Exception>(_ => new MvcProblemDetails()));
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.ParseAdd(requestAcceptContentType);
+
+            var response = await client.GetAsync(string.Empty);
+            Assert.Equal(responseContentType, response.Content.Headers.ContentType.MediaType);
+        }
+
+        [Theory]
+        [InlineData("application/problem+json", "application/json", "application/problem+json")]
+        [InlineData("application/problem+json", "application/xml", "application/problem+json")]
+        [InlineData("application/problem+json", "application/csv", "application/problem+json")]
+        public async Task ContentTypes_Custom_Options(string optionsContentType, string requestAcceptContentType, string responseContentType)
+        {
+            void MapNotImplementException(ProblemDetailsOptions options)
+            {
+                options.ContentTypes.Clear();
+                options.ContentTypes.Add(optionsContentType);
+                options.Map<Exception>(_ => new MvcProblemDetails());
+            }
+
+            using var client = CreateClient(handler: ResponseThrows(), MapNotImplementException);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.ParseAdd(requestAcceptContentType);
+
+            var response = await client.GetAsync(string.Empty);
+            Assert.Equal(responseContentType, response.Content.Headers.ContentType.MediaType);
+        }
+
         [Fact]
         public async Task ProblemDetailsException_IsHandled()
         {
@@ -355,7 +389,7 @@ namespace ProblemDetails.Tests
                     .AddCors()
                     .AddProblemDetails(configureOptions)
                     .AddMvcCore()
-                    .AddJson())
+                    .AddFormatters())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())
                     .UseProblemDetails()

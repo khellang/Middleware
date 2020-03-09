@@ -158,8 +158,7 @@ namespace Hellang.Middleware.ProblemDetails
                 DeclaredType = details.GetType(),
             };
 
-            result.ContentTypes.Add("application/problem+json");
-            result.ContentTypes.Add("application/problem+xml");
+            result.ContentTypes = Options.ContentTypes;
 
             return Executor.ExecuteAsync(actionContext, result);
         }
