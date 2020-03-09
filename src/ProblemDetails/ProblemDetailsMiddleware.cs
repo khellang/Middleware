@@ -155,10 +155,9 @@ namespace Hellang.Middleware.ProblemDetails
             var result = new ObjectResult(details)
             {
                 StatusCode = details.Status ?? context.Response.StatusCode,
+                ContentTypes = Options.ContentTypes,
                 DeclaredType = details.GetType(),
             };
-
-            result.ContentTypes = Options.ContentTypes;
 
             return Executor.ExecuteAsync(actionContext, result);
         }
