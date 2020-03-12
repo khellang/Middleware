@@ -13,7 +13,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     /// <summary>
     /// Implementation of Problem Details for HTTP APIs https://tools.ietf.org/html/rfc7807 with additional Validation Errors
     /// </summary>
-    [DataContract(Name = "ValidationProblemDetails", Namespace = "")]
+    [DataContract(Name = "ProblemDetails", Namespace = "")]
     public class ValidationProblemDetails : StatusCodeProblemDetails
     {
         /// <summary>Validatie fouten.</summary>
