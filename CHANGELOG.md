@@ -1,3 +1,10 @@
+## [5.0.5](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.4...v5.0.5) (2020-03-12)
+
+
+### Bug Fixes
+
+* correct contract name of validationproblemdetails ([282bd55](https://github.com/informatievlaanderen/problemdetails-middleware/commit/282bd55ad12556f0cbf776dae125d97959d2e7a0))
+
 ## [5.0.4](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.3...v5.0.4) (2020-03-02)
 
 
