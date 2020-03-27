@@ -53,11 +53,33 @@ namespace Hellang.Middleware.ProblemDetails
 
         public MediaTypeCollection ContentTypes { get; }
 
+        /// <summary>
+        /// Registers a callback to map an exception to corresponding <see cref="MvcProblemDetails"/>.
+        /// </summary>
+        /// <typeparam name="TException">Type of the thrown exception.</typeparam>
+        /// <param name="mapping">Callback that maps the exception to corresponding <see cref="MvcProblemDetails"/>.</param>
+        /// <remarks>
+        /// Mappers are called in the order they're registered.
+        ///
+        /// Returning null from the mapper will signify that you can't or don't want to map the exception to <see cref="MvcProblemDetails"/>.
+        /// This will cause cause the exception to be rethrown.
+        /// </remarks>
         public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
         {
             Map<TException>((ctx, ex) => mapping(ex));
         }
 
+        /// <summary>
+        /// Registers a callback to map an exception to corresponding <see cref="MvcProblemDetails"/>.
+        /// </summary>
+        /// <typeparam name="TException">Type of the thrown exception.</typeparam>
+        /// <param name="mapping">Callback that maps the exception to corresponding <see cref="MvcProblemDetails"/>.</param>
+        /// <remarks>
+        /// Mappers are called in the order they're registered.
+        ///
+        /// Returning null from the mapper will signify that you can't or don't want to map the exception to <see cref="MvcProblemDetails"/>.
+        /// This will cause cause the exception to be rethrown.
+        /// </remarks>
         public void Map<TException>(Func<HttpContext, TException, MvcProblemDetails> mapping) where TException : Exception
         {
             Mappers.Add(new ExceptionMapper(typeof(TException), (ctx, ex) => mapping(ctx, (TException)ex)));

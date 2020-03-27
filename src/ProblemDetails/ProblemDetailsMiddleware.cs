@@ -85,6 +85,11 @@ namespace Hellang.Middleware.ProblemDetails
 
                     var details = GetDetails(context, error);
 
+                    if (details == null) // Re-throw the original exception if we can't or don't want to map it to ProblemDetails
+                    {
+                        throw;
+                    }
+
                     if (Options.ShouldLogUnhandledException(context, error, details))
                     {
                         Logger.UnhandledException(error);
