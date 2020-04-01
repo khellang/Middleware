@@ -99,6 +99,10 @@ namespace Hellang.Middleware.ProblemDetails
                             return;
                         }
                     }
+                    else
+                    {
+                        Logger.IgnoredException(error);
+                    }
                 }
                 catch (Exception inner)
                 {

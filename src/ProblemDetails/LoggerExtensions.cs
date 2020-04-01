@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.Logging;
 
 namespace Hellang.Middleware.ProblemDetails
@@ -7,6 +7,9 @@ namespace Hellang.Middleware.ProblemDetails
     {
         private static readonly Action<ILogger, Exception> _unhandledException =
             LoggerMessage.Define(LogLevel.Error, new EventId(1, "UnhandledException"), "An unhandled exception has occurred while executing the request.");
+
+        private static readonly Action<ILogger, Exception> _ignoredException =
+            LoggerMessage.Define(LogLevel.Information, new EventId(1, "IgnoredException"), "An exception has occurred while executing the request, but it was ignored by custom mapping rules.");
 
         private static readonly Action<ILogger, Exception> _responseStarted =
             LoggerMessage.Define(LogLevel.Warning, new EventId(2, "ResponseStarted"), "The response has already started, the problem details middleware will not be executed.");
@@ -27,6 +30,11 @@ namespace Hellang.Middleware.ProblemDetails
         public static void ProblemDetailsMiddlewareException(this ILogger logger, Exception exception)
         {
             _problemDetailsMiddlewareException(logger, exception);
+        }
+
+        public static void IgnoredException(this ILogger logger, Exception exception)
+        {
+            _ignoredException(logger, exception);
         }
     }
 }
