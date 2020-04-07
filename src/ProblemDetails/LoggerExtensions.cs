@@ -14,6 +14,9 @@ namespace Hellang.Middleware.ProblemDetails
         private static readonly Action<ILogger, Exception> _problemDetailsMiddlewareException =
             LoggerMessage.Define(LogLevel.Error, new EventId(3, "Exception"), "An exception was thrown attempting to execute the problem details middleware.");
 
+        private static readonly Action<ILogger, Exception> _ignoredException =
+            LoggerMessage.Define(LogLevel.Information, new EventId(4, "IgnoredException"), "An exception has occurred while executing the request, but it was ignored by custom mapping rules.");
+
         public static void UnhandledException(this ILogger logger, Exception exception)
         {
             _unhandledException(logger, exception);
@@ -27,6 +30,11 @@ namespace Hellang.Middleware.ProblemDetails
         public static void ProblemDetailsMiddlewareException(this ILogger logger, Exception exception)
         {
             _problemDetailsMiddlewareException(logger, exception);
+        }
+
+        public static void IgnoredException(this ILogger logger, Exception exception)
+        {
+            _ignoredException(logger, exception);
         }
     }
 }

@@ -80,16 +80,23 @@ namespace Hellang.Middleware.ProblemDetails
 
                     var details = GetDetails(context, error);
 
-                    if (Options.ShouldLogUnhandledException(context, error, details))
+                    if (details != null) // Don't handle the exception if we can't or don't want to convert it to ProblemDetails
                     {
-                        Logger.UnhandledException(error);
+                        if (Options.ShouldLogUnhandledException(context, error, details))
+                        {
+                            Logger.UnhandledException(error);
+                        }
+
+                        await WriteProblemDetails(context, details);
+
+                        if (!Options.ShouldRethrowException(context, error))
+                        {
+                            return;
+                        }
                     }
-
-                    await WriteProblemDetails(context, details);
-
-                    if (!Options.ShouldRethrowException(context, error))
+                    else
                     {
-                        return;
+                        Logger.IgnoredException(error);
                     }
                 }
                 catch (Exception inner)
@@ -158,6 +165,8 @@ namespace Hellang.Middleware.ProblemDetails
                 ContentTypes = Options.ContentTypes,
                 DeclaredType = details.GetType(),
             };
+
+            result.ContentTypes = Options.ContentTypes;
 
             return Executor.ExecuteAsync(actionContext, result);
         }

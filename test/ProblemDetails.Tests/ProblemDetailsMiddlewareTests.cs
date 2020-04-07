@@ -283,6 +283,17 @@ namespace ProblemDetails.Tests
         }
 
         [Fact]
+        public async Task ProblemDetailsExceptionHandler_RethrowsException_WhenExceptionIsMappedToNull()
+        {
+            using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
+            {
+                options.Map<DivideByZeroException>(ex => null);
+            });
+
+            await Assert.ThrowsAnyAsync<DivideByZeroException>(() => client.GetAsync(string.Empty));
+        }
+
+        [Fact]
         public async Task ProblemDetailsExceptionHandler_RethrowsException()
         {
             var ex = new ProblemDetailsException(new EvilProblemDetails());
