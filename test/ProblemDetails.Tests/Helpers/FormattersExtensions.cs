@@ -1,8 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-#if (NETCOREAPP2_1 || NETCOREAPP2_2)
-using Newtonsoft.Json;
-#endif
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ProblemDetails.Tests.Helpers
 {
@@ -10,12 +7,12 @@ namespace ProblemDetails.Tests.Helpers
     {
         public static IMvcCoreBuilder AddFormatters(this IMvcCoreBuilder mvc)
         {
-#if (NETCOREAPP2_1 || NETCOREAPP2_2)
-            return mvc.AddJsonFormatters(json => json.NullValueHandling = NullValueHandling.Ignore)
-#else
-            return mvc.AddJsonOptions(json => { json.JsonSerializerOptions.IgnoreNullValues = true; })
-#endif
-                .AddXmlDataContractSerializerFormatters();
+            return mvc.AddJsonOptions(ConfigureJson).AddXmlDataContractSerializerFormatters();
+        }
+
+        private static void ConfigureJson(JsonOptions json)
+        {
+            json.JsonSerializerOptions.IgnoreNullValues = true;
         }
     }
 }
