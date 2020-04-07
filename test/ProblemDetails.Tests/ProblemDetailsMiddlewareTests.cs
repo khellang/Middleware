@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
@@ -196,7 +197,7 @@ namespace ProblemDetails.Tests
 
             var response = await client.GetAsync(string.Empty);
 
-            var content = await response.Content.ReadJsonAsync<MvcProblemDetails>();
+            var content = await response.Content.ReadFromJsonAsync<MvcProblemDetails>();
 
             Assert.Equal(expectExceptionDetails, content.Extensions.ContainsKey("errors"));
         }
@@ -374,7 +375,7 @@ namespace ProblemDetails.Tests
         {
             Assert.Equal(ProblemJsonMediaType, response.Content.Headers.ContentType.MediaType);
 
-            var content = await response.Content.ReadJsonAsync<MvcProblemDetails>();
+            var content = await response.Content.ReadFromJsonAsync<MvcProblemDetails>();
 
             Assert.NotNull(content);
 
