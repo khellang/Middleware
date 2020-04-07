@@ -60,15 +60,17 @@ namespace ProblemDetails.Tests
         }
 
         [Theory]
-        [InlineData("application/json", "application/problem+json")]
         [InlineData("application/csv", "application/problem+json")]
+        [InlineData("application/json", "application/problem+json")]
         public async Task ContentTypes_Default_Options(string requestAcceptContentType, string responseContentType)
         {
             using var client = CreateClient(handler: ResponseThrows(), options => options.Map<Exception>(_ => new MvcProblemDetails()));
+
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.ParseAdd(requestAcceptContentType);
 
             var response = await client.GetAsync(string.Empty);
+
             Assert.Equal(responseContentType, response.Content.Headers.ContentType.MediaType);
         }
 
@@ -78,18 +80,20 @@ namespace ProblemDetails.Tests
         [InlineData("application/problem+json", "application/csv", "application/problem+json")]
         public async Task ContentTypes_Custom_Options(string optionsContentType, string requestAcceptContentType, string responseContentType)
         {
-            void MapNotImplementException(ProblemDetailsOptions options)
+            void Configure(ProblemDetailsOptions options)
             {
                 options.ContentTypes.Clear();
                 options.ContentTypes.Add(optionsContentType);
                 options.Map<Exception>(_ => new MvcProblemDetails());
             }
 
-            using var client = CreateClient(handler: ResponseThrows(), MapNotImplementException);
+            using var client = CreateClient(handler: ResponseThrows(), Configure);
+
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.ParseAdd(requestAcceptContentType);
 
             var response = await client.GetAsync(string.Empty);
+
             Assert.Equal(responseContentType, response.Content.Headers.ContentType.MediaType);
         }
 
@@ -123,26 +127,26 @@ namespace ProblemDetails.Tests
 
             var response = await client.GetAsync(string.Empty);
 
-            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
             AssertUnhandledExceptionLogged(Logger);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
         public async Task Mapped_Server_Exception_Is_Logged_As_Unhandled_Error()
         {
-            void MapNotImplementException(ProblemDetailsOptions options)
+            static void Configure(ProblemDetailsOptions options)
             {
                 options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
             }
 
             var handler = ResponseThrows(new NotImplementedException());
 
-            using var client = CreateClient(handler, MapNotImplementException);
+            using var client = CreateClient(handler, Configure);
 
             var response = await client.GetAsync("/");
 
-            Assert.Equal((HttpStatusCode)StatusCodes.Status501NotImplemented, response.StatusCode);
             AssertUnhandledExceptionLogged(Logger);
+            Assert.Equal((HttpStatusCode)StatusCodes.Status501NotImplemented, response.StatusCode);
         }
 
         [Fact]
@@ -160,26 +164,26 @@ namespace ProblemDetails.Tests
 
             var response = await client.GetAsync(string.Empty);
 
-            Assert.Equal((HttpStatusCode)StatusCodes.Status429TooManyRequests, response.StatusCode);
             AssertUnhandledExceptionNotLogged(Logger);
+            Assert.Equal((HttpStatusCode)StatusCodes.Status429TooManyRequests, response.StatusCode);
         }
 
         [Fact]
         public async Task Mapped_Client_Exception_Is_Not_Logged_As_Unhandled_Error()
         {
-            void MapNotImplementException(ProblemDetailsOptions options)
+            static void Configure(ProblemDetailsOptions options)
             {
                 options.MapToStatusCode<NotImplementedException>(StatusCodes.Status403Forbidden);
             }
 
             var handler = ResponseThrows(new NotImplementedException());
 
-            using var client = CreateClient(handler, MapNotImplementException);
+            using var client = CreateClient(handler, Configure);
 
             var response = await client.GetAsync(string.Empty);
 
-            Assert.Equal((HttpStatusCode)StatusCodes.Status403Forbidden, response.StatusCode);
             AssertUnhandledExceptionNotLogged(Logger);
+            Assert.Equal((HttpStatusCode)StatusCodes.Status403Forbidden, response.StatusCode);
         }
 
         [Theory]
@@ -254,7 +258,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task StartedResponse_IsNotHandled()
         {
-            Task WriteResponse(HttpContext context)
+            static Task WriteResponse(HttpContext context)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 return context.Response.WriteAsync("hello");
@@ -269,9 +273,9 @@ namespace ProblemDetails.Tests
         }
 
         [Fact]
-        public async Task Exceptions_After_Response_Started_IsNotHandled()
+        public Task Exceptions_After_Response_Started_IsNotHandled()
         {
-            async Task WriteResponse(HttpContext context)
+            static async Task WriteResponse(HttpContext context)
             {
                 await context.Response.WriteAsync("hello");
                 throw new Exception("Request Failed");
@@ -279,61 +283,61 @@ namespace ProblemDetails.Tests
 
             using var client = CreateClient(handler: WriteResponse);
 
-            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public async Task ProblemDetailsExceptionHandler_RethrowsException_WhenExceptionIsMappedToNull()
+        public Task ProblemDetailsExceptionHandler_RethrowsException_WhenExceptionIsMappedToNull()
         {
             using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
             {
                 options.Map<DivideByZeroException>(ex => null);
             });
 
-            await Assert.ThrowsAnyAsync<DivideByZeroException>(() => client.GetAsync(string.Empty));
+            return Assert.ThrowsAnyAsync<DivideByZeroException>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public async Task ProblemDetailsExceptionHandler_RethrowsException()
+        public Task ProblemDetailsExceptionHandler_RethrowsException()
         {
             var ex = new ProblemDetailsException(new EvilProblemDetails());
 
             using var client = CreateClient(handler: ResponseThrows(ex));
 
-            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntended()
+        public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntended()
         {
             using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
             {
                 options.Rethrow<DivideByZeroException>();
             });
 
-            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndExceptionDerived()
+        public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndExceptionDerived()
         {
             using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
             {
                 options.Rethrow<Exception>();
             });
 
-            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndPredicate()
+        public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndPredicate()
         {
             using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
             {
                 options.Rethrow<Exception>((ctx, ex ) => true);
             });
 
-            await Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
@@ -373,7 +377,7 @@ namespace ProblemDetails.Tests
             var content = await response.Content.ReadJsonAsync<MvcProblemDetails>();
 
             Assert.NotNull(content);
-            
+
             Assert.NotEmpty(content.Type);
             Assert.NotEmpty(content.Title);
             Assert.NotNull(content.Status);
@@ -397,10 +401,10 @@ namespace ProblemDetails.Tests
                 .UseEnvironment(environment ?? Environments.Development)
                 .ConfigureServices(x => x
                     .AddSingleton<ILogger<ProblemDetailsMiddleware>>(Logger)
-                    .AddCors()
                     .AddProblemDetails(configureOptions)
                     .AddMvcCore()
-                    .AddFormatters())
+                    .AddFormatters()
+                    .AddCors())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())
                     .UseProblemDetails()

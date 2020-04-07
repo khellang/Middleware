@@ -6,19 +6,6 @@ namespace ProblemDetails.Tests
 {
     public class ProblemDetailsExceptionTests
     {
-        private static Microsoft.AspNetCore.Mvc.ProblemDetails CreateProblemDetails()
-        {
-            return new Microsoft.AspNetCore.Mvc.ProblemDetails
-            {
-                Type = "https://httpstatuses.com/303",
-                Title = "See other",
-                Status = 303,
-                Detail = "Look somewhere else.",
-                Instance = "https://example.com/problem/123",
-            };
-
-        }
-
         [Fact]
         public void Constructor_InitializesMessage()
         {
@@ -67,6 +54,18 @@ Instance: https://example.com/problem/123
 
             Assert.Equal(400, exception.Details.Status);
             Assert.Equal("foobar", exception.Details.Title);
+        }
+
+        private static Microsoft.AspNetCore.Mvc.ProblemDetails CreateProblemDetails()
+        {
+            return new Microsoft.AspNetCore.Mvc.ProblemDetails
+            {
+                Type = "https://httpstatuses.com/303",
+                Title = "See other",
+                Status = 303,
+                Detail = "Look somewhere else.",
+                Instance = "https://example.com/problem/123",
+            };
         }
     }
 }
