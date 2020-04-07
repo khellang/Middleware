@@ -121,6 +121,16 @@ namespace Hellang.Middleware.ProblemDetails
         }
 
         /// <summary>
+        /// Configures the middleware to ignore any exception of the specified exception type <typeparamref name="TException"/>.
+        /// This will cause cause the exception to be rethrown to be handled upstream.
+        /// </summary>
+        /// <typeparam name="TException">The exception type to ignore.</typeparam>
+        public void Ignore<TException>() where TException : Exception
+        {
+            Map<TException>(_ => null);
+        }
+
+        /// <summary>
         /// Maps the specified exception type <typeparamref name="TException"/> to a <see cref="ProblemDetails"/> instance
         /// using the specified <paramref name="mapping"/> function.
         /// </summary>
