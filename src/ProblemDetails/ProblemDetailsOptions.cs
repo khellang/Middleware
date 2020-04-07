@@ -117,7 +117,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// <typeparam name="TException">The exception type to map to the specified status code.</typeparam>
         public void MapToStatusCode<TException>(int statusCode) where TException : Exception
         {
-            Map<TException>((ctx, ex) => new StatusCodeProblemDetails(statusCode));
+            Map<TException>((ctx, ex) => StatusCodeProblemDetails.Create(statusCode));
         }
 
         /// <summary>

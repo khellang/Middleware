@@ -23,7 +23,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             if (options.MapStatusCode is null)
             {
-                options.MapStatusCode = ctx => new StatusCodeProblemDetails(ctx.Response.StatusCode);
+                options.MapStatusCode = ctx => StatusCodeProblemDetails.Create(ctx.Response.StatusCode);
             }
 
             if (options.IsProblem is null)

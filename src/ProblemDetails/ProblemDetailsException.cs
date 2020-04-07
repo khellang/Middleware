@@ -11,12 +11,12 @@ namespace Hellang.Middleware.ProblemDetails
     public class ProblemDetailsException : Exception
     {
         public ProblemDetailsException(int statusCode)
-            : this(new StatusCodeProblemDetails(statusCode))
+            : this(StatusCodeProblemDetails.Create(statusCode))
         {
         }
 
         public ProblemDetailsException(int statusCode, string title)
-            : this(new StatusCodeProblemDetails(statusCode) { Title = title })
+            : this(StatusCodeProblemDetails.Create(statusCode, title))
         {
         }
 
@@ -26,7 +26,7 @@ namespace Hellang.Middleware.ProblemDetails
             Details = details;
         }
 
-        public Microsoft.AspNetCore.Mvc.ProblemDetails Details { get; }
+        public MvcProblemDetails Details { get; }
 
         public override string ToString()
         {
