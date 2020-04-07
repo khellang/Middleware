@@ -52,7 +52,8 @@ Instance: https://example.com/problem/123
         {
             var exception = new ProblemDetailsException(400);
 
-            Assert.IsType<StatusCodeProblemDetails>(exception.Details);
+            Assert.IsType<Microsoft.AspNetCore.Mvc.ProblemDetails>(exception.Details);
+
             Assert.Equal(400, exception.Details.Status);
             Assert.Equal(ReasonPhrases.GetReasonPhrase(400), exception.Details.Title);
         }
@@ -62,7 +63,8 @@ Instance: https://example.com/problem/123
         {
             var exception = new ProblemDetailsException(400, "foobar");
 
-            Assert.IsType<StatusCodeProblemDetails>(exception.Details);
+            Assert.IsType<Microsoft.AspNetCore.Mvc.ProblemDetails>(exception.Details);
+
             Assert.Equal(400, exception.Details.Status);
             Assert.Equal("foobar", exception.Details.Title);
         }
