@@ -215,6 +215,12 @@ namespace Hellang.Middleware.ProblemDetails
 
         internal bool TryMapProblemDetails(HttpContext context, Exception exception, out MvcProblemDetails problem)
         {
+            if (exception is null)
+            {
+                problem = default;
+                return false;
+            }
+
             foreach (var mapper in Mappers)
             {
                 if (mapper.TryMap(context, exception, out problem))

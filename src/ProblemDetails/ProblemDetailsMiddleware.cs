@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.StackTrace.Sources;
 using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
@@ -23,27 +21,26 @@ namespace Hellang.Middleware.ProblemDetails
         public ProblemDetailsMiddleware(
             RequestDelegate next,
             IOptions<ProblemDetailsOptions> options,
+            ProblemDetailsFactory factory,
             IActionResultExecutor<ObjectResult> executor,
-            IHostEnvironment environment,
             ILogger<ProblemDetailsMiddleware> logger)
         {
             Next = next;
+            Factory = factory;
             Options = options.Value;
             Executor = executor;
             Logger = logger;
-            var fileProvider = Options.FileProvider ?? environment.ContentRootFileProvider;
-            DetailsProvider = new ExceptionDetailsProvider(fileProvider, logger, Options.SourceCodeLineCount);
         }
 
         private RequestDelegate Next { get; }
+
+        private ProblemDetailsFactory Factory { get; }
 
         private ProblemDetailsOptions Options { get; }
 
         private IActionResultExecutor<ObjectResult> Executor { get; }
 
         private ILogger<ProblemDetailsMiddleware> Logger { get; }
-
-        private ExceptionDetailsProvider DetailsProvider { get; }
 
         public async Task Invoke(HttpContext context)
         {
@@ -78,7 +75,7 @@ namespace Hellang.Middleware.ProblemDetails
                 {
                     ClearResponse(context, StatusCodes.Status500InternalServerError);
 
-                    var details = GetDetails(context, error);
+                    var details = Factory.GetDetails(context, error);
 
                     if (details != null) // Don't handle the exception if we can't or don't want to convert it to ProblemDetails
                     {
@@ -107,46 +104,6 @@ namespace Hellang.Middleware.ProblemDetails
 
                 throw; // Re-throw the original exception if we can't handle it properly or it's intended.
             }
-        }
-
-        private MvcProblemDetails GetDetails(HttpContext context, Exception error)
-        {
-            if (error is ProblemDetailsException problem)
-            {
-                // The user has already provided a valid problem details object.
-                return problem.Details;
-            }
-
-            var result = MapToProblemDetails(context, error);
-
-            if (Options.IncludeExceptionDetails(context, error))
-            {
-                try
-                {
-                    // Instead of returning a new object, we mutate the existing problem so users keep all details.
-                    return result.WithExceptionDetails(error, DetailsProvider.GetDetails(error));
-                }
-                catch (Exception e)
-                {
-                    // Failed to get exception details for the specific exception.
-                    // Just log the failure and return the original problem details below.
-                    Logger.ProblemDetailsMiddlewareException(e);
-                }
-            }
-
-            return result;
-        }
-
-        private MvcProblemDetails MapToProblemDetails(HttpContext context, Exception error)
-        {
-            if (Options.TryMapProblemDetails(context, error, out var result))
-            {
-                // The user has set up a mapping for the specific exception type.
-                return result;
-            }
-
-            // Fall back to the generic status code problem details.
-            return Options.MapStatusCode(context);
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)

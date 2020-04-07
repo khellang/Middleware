@@ -31,6 +31,7 @@ namespace Hellang.Middleware.ProblemDetails
                 services.Configure(configure);
             }
 
+            services.TryAddSingleton<ProblemDetailsFactory>();
             services.TryAddSingleton<ProblemDetailsMarkerService, ProblemDetailsMarkerService>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<ProblemDetailsOptions>, ProblemDetailsOptionsSetup>());
 
