@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -44,66 +45,85 @@ namespace Hellang.Middleware.ProblemDetails
 
         public async Task Invoke(HttpContext context)
         {
+            ExceptionDispatchInfo edi = null;
+
             try
             {
                 await Next(context);
 
                 if (Options.IsProblem(context))
                 {
-                    if (context.Response.HasStarted)
+                    await HandleProblem(context);
+                }
+            }
+            catch (Exception ex)
+            {
+                edi = ExceptionDispatchInfo.Capture(ex);
+            }
+
+            if (edi != null)
+            {
+                await HandleException(context, edi);
+            }
+        }
+
+        private Task HandleProblem(HttpContext context)
+        {
+            if (context.Response.HasStarted)
+            {
+                Logger.ResponseStarted();
+                return Task.CompletedTask;
+            }
+
+            ClearResponse(context, context.Response.StatusCode);
+
+            var details = Options.MapStatusCode(context);
+
+            return WriteProblemDetails(context, details);
+        }
+
+        private async Task HandleException(HttpContext context, ExceptionDispatchInfo edi)
+        {
+            if (context.Response.HasStarted)
+            {
+                Logger.ResponseStarted();
+                edi.Throw(); // Re-throw the original exception if we can't handle it properly.
+            }
+
+            try
+            {
+                ClearResponse(context, StatusCodes.Status500InternalServerError);
+
+                var error = edi.SourceException;
+
+                var details = Factory.GetDetails(context, error);
+
+                if (details != null) // Don't handle the exception if we can't or don't want to convert it to ProblemDetails
+                {
+                    if (Options.ShouldLogUnhandledException(context, error, details))
                     {
-                        Logger.ResponseStarted();
-                        return;
+                        Logger.UnhandledException(error);
                     }
-
-                    ClearResponse(context, context.Response.StatusCode);
-
-                    var details = Options.MapStatusCode(context);
 
                     await WriteProblemDetails(context, details);
+
+                    if (!Options.ShouldRethrowException(context, error))
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    Logger.IgnoredException(error);
                 }
             }
-            catch (Exception error)
+            catch (Exception inner)
             {
-                if (context.Response.HasStarted)
-                {
-                    Logger.ResponseStarted();
-                    throw; // Re-throw the original exception if we can't handle it properly.
-                }
-
-                try
-                {
-                    ClearResponse(context, StatusCodes.Status500InternalServerError);
-
-                    var details = Factory.GetDetails(context, error);
-
-                    if (details != null) // Don't handle the exception if we can't or don't want to convert it to ProblemDetails
-                    {
-                        if (Options.ShouldLogUnhandledException(context, error, details))
-                        {
-                            Logger.UnhandledException(error);
-                        }
-
-                        await WriteProblemDetails(context, details);
-
-                        if (!Options.ShouldRethrowException(context, error))
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        Logger.IgnoredException(error);
-                    }
-                }
-                catch (Exception inner)
-                {
-                    // If we fail to write a problem response, we log the exception and throw the original below.
-                    Logger.ProblemDetailsMiddlewareException(inner);
-                }
-
-                throw; // Re-throw the original exception if we can't handle it properly or it's intended.
+                // If we fail to write a problem response, we log the exception and throw the original below.
+                Logger.ProblemDetailsMiddlewareException(inner);
             }
+
+            edi.Throw(); // Re-throw the original exception if we can't handle it properly or it's intended.
         }
 
         private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
