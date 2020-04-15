@@ -102,11 +102,15 @@ namespace Hellang.Middleware.ProblemDetails
         /// </summary>
         public HashSet<string> AllowedHeaderNames { get; }
 
+        /// <summary>
+        /// Gets the supported <c>Content-Type</c> values for use in content negotiation.
+        /// The default values are <c>application/problem+json</c> and <c>application/problem+xml</c>.
+        /// </summary>
+        public MediaTypeCollection ContentTypes { get; }
+
         private List<ExceptionMapper> Mappers { get; }
 
         private List<Func<HttpContext, Exception, bool>> RethrowPolicies { get; }
-
-        public MediaTypeCollection ContentTypes { get; }
 
         /// <summary>
         /// Maps the specified exception type <typeparamref name="TException"/> to the specified

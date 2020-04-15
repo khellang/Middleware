@@ -217,7 +217,7 @@ namespace ProblemDetails.Tests
         {
             using var client = CreateClient(handler: ResponseThrows());
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "/");
+            var request = new HttpRequestMessage(HttpMethod.Options, "/");
 
             request.Headers.Add(HeaderNames.Origin, "localhost");
 
