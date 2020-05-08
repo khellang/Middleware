@@ -1,3 +1,10 @@
+## [5.0.6](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.5...v5.0.6) (2020-05-08)
+
+
+### Bug Fixes
+
+* move to GH-actions ([b934aa3](https://github.com/informatievlaanderen/problemdetails-middleware/commit/b934aa34d4a84e50a04bb21202743498b3fbe93c))
+
 ## [5.0.5](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.4...v5.0.5) (2020-03-12)
 
 
