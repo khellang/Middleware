@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    if: github.repository == 'Informatievlaanderen/problemdetails-middleware'
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2.1.0
+
+    - name: Cache NPM
+      uses: actions/cache@v1.1.2
+      env:
+        cache-name: cache-npm
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+
+    - name: Cache Paket
+      uses: actions/cache@v1.1.2
+      env:
+        cache-name: cache-paket
+      with:
+        path: packages
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('paket.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+
+    - name: Cache Python
+      uses: actions/cache@v1.1.2
+      env:
+        cache-name: cache-pip
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
+
+    - name: Parse repository name
+      run: echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+      shell: bash
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1.4.1
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.201
+
+    - name: Set up Python
+      uses: actions/setup-python@v1.2.0
+      with:
+        python-version: '3.x'
+
+    - name: Node version
+      shell: bash
+      run: node --version
+
+    - name: .NET version
+      shell: bash
+      run: dotnet --info
+
+    - name: Python version
+      shell: bash
+      run: python --version
+
+    - name: Install NPM dependencies
+      shell: bash
+      run: npm install
+
+    - name: Install Python dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests markdown argparse
+
+    - name: Run Semantic Release
+      shell: bash
+      run: npx semantic-release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GIT_COMMIT: ${{ github.sha }}
+        GIT_USERNAME: release-bot
+        GIT_AUTHOR_NAME: release-bot
+        GIT_COMMITTER_NAME: release-bot
+        GIT_EMAIL: informatie.vlaanderen@vlaanderen.be
+        GIT_AUTHOR_EMAIL: informatie.vlaanderen@vlaanderen.be
+        GIT_COMMITTER_EMAIL: informatie.vlaanderen@vlaanderen.be
+
+    - name: Set Release Version
+      run: |
+        [ ! -f semver ] && echo none > semver
+        echo ::set-env name=RELEASE_VERSION::$(cat semver)
+      shell: bash
+
+    - name: Publish to NuGet
+      if: env.RELEASE_VERSION != 'none'
+      shell: bash
+      run: |
+        node packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-nuget.js dist/$LIBNAME/$LIBNAME.$SEMVER.nupkg
+      env:
+        LIBNAME: Be.Vlaanderen.Basisregisters.ProblemDetails
+        SEMVER: ${{ env.RELEASE_VERSION }}
+        NUGET_HOST: https://www.nuget.org
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+    - name: Publish to Confluence
+      if: env.RELEASE_VERSION != 'none'
+      shell: bash
+      run: ./packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-confluence.sh
+      env:
+        CIRCLE_PROJECT_REPONAME: ${{ env.REPOSITORY_NAME }}
+        CONFLUENCE_USERNAME: david.cumps@vlaanderen.be
+        CONFLUENCE_PASSWORD: ${{ secrets.CONFLUENCE_PASSWORD }}

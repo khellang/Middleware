@@ -1,13 +1,6 @@
-// Only the target frameworks that are used in projects.
-// If you change the target framework of the projects then you need to run paket install again.
 framework: netcoreapp31
-
-// When doing development as a non-employee, uncomment this to use the public NuGet feed
 source https://api.nuget.org/v3/index.json
 source https://dotnet.myget.org/F/aspnetcore-master/api/v3/index.json
-
-// When doing development as an employee, uncomment this to use the private NuGet proxy
-// source https://informatievlaanderen.myget.org/F/nuget-mirror/api/v3/index.json username: "%MYGET_FEED_USER%" password: "%MYGET_FEED_PASS%" authtype: "basic"
 
 // PRODUCTION STUFF
 nuget System.Reflection.Metadata 1.8.0
@@ -15,17 +8,17 @@ nuget System.Reflection.Metadata 1.8.0
 nuget Microsoft.Extensions.StackTrace.Sources 2.0.0
 nuget Microsoft.Extensions.TypeNameHelper.Sources 2.0.0
 
-nuget Microsoft.AspNetCore.Mvc.NewtonsoftJson 3.1.2
+nuget Microsoft.AspNetCore.Mvc.NewtonsoftJson 3.1.3
 
 nuget Newtonsoft.Json 12.0.3
 nuget FluentValidation.AspNetCore 8.6.2
 
 // VBR STUFF
-nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 3.3.2
+nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 4.0.6
 
 // TEST STUFF
-nuget Microsoft.AspNetCore.TestHost 3.1.2
-nuget Microsoft.NET.Test.Sdk 16.5.0
+nuget Microsoft.AspNetCore.TestHost 3.1.3
+nuget Microsoft.NET.Test.Sdk 16.6.1
 nuget xunit 2.4.1
 nuget xunit.runner.visualstudio 2.4.1
 
