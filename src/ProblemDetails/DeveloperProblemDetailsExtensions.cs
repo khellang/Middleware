@@ -11,11 +11,11 @@ namespace Hellang.Middleware.ProblemDetails
 {
     internal static class DeveloperProblemDetailsExtensions
     {
-        public static MvcProblemDetails WithExceptionDetails(this MvcProblemDetails problem, Exception error, IEnumerable<ExceptionDetails> details)
+        public static MvcProblemDetails WithExceptionDetails(this MvcProblemDetails problem, string propertyName, Exception error, IEnumerable<ExceptionDetails> details)
         {
             problem.Title ??= TypeNameHelper.GetTypeDisplayName(error.GetType());
+            problem.Extensions[propertyName] = GetErrors(details).ToList();
             problem.Status ??= StatusCodes.Status500InternalServerError;
-            problem.Extensions["errors"] = GetErrors(details).ToList();
             problem.Instance ??= GetHelpLink(error);
             problem.Detail ??= error.Message;
             return problem;

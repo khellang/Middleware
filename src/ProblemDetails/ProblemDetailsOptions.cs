@@ -13,12 +13,15 @@ namespace Hellang.Middleware.ProblemDetails
 {
     public class ProblemDetailsOptions
     {
+        public const string DefaultExceptionDetailsPropertyName = "errors";
+
         public ProblemDetailsOptions()
         {
             SourceCodeLineCount = 6;
             Mappers = new List<ExceptionMapper>();
             RethrowPolicies = new List<Func<HttpContext, Exception, bool>>();
             ContentTypes = new MediaTypeCollection();
+            ExceptionDetailsPropertyName = DefaultExceptionDetailsPropertyName;
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 HeaderNames.AccessControlAllowCredentials,
@@ -58,6 +61,12 @@ namespace Hellang.Middleware.ProblemDetails
         /// The default returns <c>true</c> when <see cref="IHostEnvironment.EnvironmentName"/> is "Development".
         /// </summary>
         public Func<HttpContext, Exception, bool> IncludeExceptionDetails { get; set; }
+
+        /// <summary>
+        /// The property name to use for exception details.
+        /// This defaults to <see cref="DefaultExceptionDetailsPropertyName"/> (<c>errors</c>).
+        /// </summary>
+        public string ExceptionDetailsPropertyName { get; set; }
 
         /// <summary>
         /// Gets or sets the predicate used for determining whether a request/response should be considered

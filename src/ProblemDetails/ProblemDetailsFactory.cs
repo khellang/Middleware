@@ -42,7 +42,7 @@ namespace Hellang.Middleware.ProblemDetails
                 try
                 {
                     // Instead of returning a new object, we mutate the existing problem so users keep all details.
-                    return result.WithExceptionDetails(error, DetailsProvider.GetDetails(error));
+                    return result.WithExceptionDetails(Options.ExceptionDetailsPropertyName, error, DetailsProvider.GetDetails(error));
                 }
                 catch (Exception e)
                 {
