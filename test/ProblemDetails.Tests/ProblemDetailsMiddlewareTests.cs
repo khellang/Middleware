@@ -140,7 +140,7 @@ namespace ProblemDetails.Tests
                 options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
             }
 
-            var handler = ResponseThrows(new NotImplementedException());
+            var handler = ResponseThrows<NotImplementedException>();
 
             using var client = CreateClient(handler, Configure);
 
@@ -290,7 +290,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public Task ProblemDetailsExceptionHandler_RethrowsException_WhenExceptionIsMappedToNull()
         {
-            using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
+            using var client = CreateClient(handler: ResponseThrows<DivideByZeroException>(), options =>
             {
                 options.Map<DivideByZeroException>(ex => null);
             });
@@ -311,7 +311,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntended()
         {
-            using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
+            using var client = CreateClient(handler: ResponseThrows<DivideByZeroException>(), options =>
             {
                 options.Rethrow<DivideByZeroException>();
             });
@@ -322,7 +322,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndExceptionDerived()
         {
-            using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
+            using var client = CreateClient(handler: ResponseThrows<DivideByZeroException>(), options =>
             {
                 options.Rethrow<Exception>();
             });
@@ -333,7 +333,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndPredicate()
         {
-            using var client = CreateClient(handler: ResponseThrows(new DivideByZeroException()), options =>
+            using var client = CreateClient(handler: ResponseThrows<DivideByZeroException>(), options =>
             {
                 options.Rethrow<Exception>((ctx, ex ) => true);
             });
@@ -428,6 +428,11 @@ namespace ProblemDetails.Tests
                 context.Response.StatusCode = (int)statusCode;
                 return Task.CompletedTask;
             };
+        }
+
+        private static RequestDelegate ResponseThrows<TException>() where TException : Exception, new()
+        {
+            return ResponseThrows(new TException());
         }
 
         private static RequestDelegate ResponseThrows(Exception exception = null)
