@@ -274,71 +274,71 @@ namespace ProblemDetails.Tests
         }
 
         [Fact]
-        public Task Exceptions_After_Response_Started_IsNotHandled()
+        public async Task Exceptions_After_Response_Started_IsNotHandled()
         {
             static async Task WriteResponse(HttpContext context)
             {
                 await context.Response.WriteAsync("hello");
-                throw new Exception("Request Failed");
+                throw new InvalidOperationException("Request Failed");
             }
 
             using var client = CreateClient(handler: WriteResponse);
 
-            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            await AssertThrowsInnerAsync<InvalidOperationException>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public Task ProblemDetailsExceptionHandler_RethrowsException_WhenExceptionIsMappedToNull()
+        public async Task ProblemDetailsExceptionHandler_RethrowsException_WhenExceptionIsMappedToNull()
         {
             using var client = CreateClient(handler: ResponseThrows<DivideByZeroException>(), options =>
             {
                 options.Map<DivideByZeroException>(ex => null);
             });
 
-            return Assert.ThrowsAnyAsync<DivideByZeroException>(() => client.GetAsync(string.Empty));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public Task ProblemDetailsExceptionHandler_RethrowsException()
+        public async Task ProblemDetailsExceptionHandler_RethrowsException()
         {
             var ex = new ProblemDetailsException(new EvilProblemDetails());
 
             using var client = CreateClient(handler: ResponseThrows(ex));
 
-            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            await AssertThrowsInnerAsync<ProblemDetailsException>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntended()
+        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntended()
         {
             using var client = CreateClient(handler: ResponseThrows<DivideByZeroException>(), options =>
             {
                 options.Rethrow<DivideByZeroException>();
             });
 
-            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            await AssertThrowsInnerAsync<DivideByZeroException>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndExceptionDerived()
+        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndExceptionDerived()
         {
             using var client = CreateClient(handler: ResponseThrows<DivideByZeroException>(), options =>
             {
                 options.Rethrow<Exception>();
             });
 
-            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            await AssertThrowsInnerAsync<DivideByZeroException>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
-        public Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndPredicate()
+        public async Task ProblemDetailsExceptionHandler_RethrowsException_RethrowIsIntendedAndPredicate()
         {
             using var client = CreateClient(handler: ResponseThrows<DivideByZeroException>(), options =>
             {
-                options.Rethrow<Exception>((ctx, ex ) => true);
+                options.Rethrow<DivideByZeroException>((ctx, ex ) => true);
             });
 
-            return Assert.ThrowsAnyAsync<Exception>(() => client.GetAsync(string.Empty));
+            await AssertThrowsInnerAsync<DivideByZeroException>(() => client.GetAsync(string.Empty));
         }
 
         [Fact]
@@ -396,6 +396,21 @@ namespace ProblemDetails.Tests
             Assert.Empty(logger.Messages.Where(m => m.Type == LogLevel.Error));
         }
 
+        private static async Task AssertThrowsInnerAsync<T>(Func<Task> testCode)
+        {
+            Assert.IsType<T>(GetInnermostException(await Record.ExceptionAsync(testCode)));
+        }
+
+        private static Exception GetInnermostException(Exception exception)
+        {
+            while (exception.InnerException != null)
+            {
+                exception = exception.InnerException;
+            }
+
+            return exception;
+        }
+
         private HttpClient CreateClient(RequestDelegate handler, Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
         {
             var builder = new WebHostBuilder()
@@ -442,7 +457,7 @@ namespace ProblemDetails.Tests
 
         private class EvilProblemDetails : MvcProblemDetails
         {
-            public string EvilProperty => throw new Exception("This should throw during serialization.");
+            public string EvilProperty => throw new InvalidOperationException("This should throw during serialization.");
         }
     }
 }
