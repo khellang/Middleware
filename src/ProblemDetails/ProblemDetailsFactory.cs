@@ -37,6 +37,12 @@ namespace Hellang.Middleware.ProblemDetails
 
             var result = MapToProblemDetails(context, error);
 
+            if (result is null)
+            {
+                // Developer has explicitly ignored the problem.
+                return null;
+            }
+
             if (Options.IncludeExceptionDetails(context, error))
             {
                 try
