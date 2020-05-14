@@ -193,7 +193,26 @@ namespace Hellang.Middleware.ProblemDetails
         /// <typeparam name="TException">The type of exception to re-throw.</typeparam>
         public void Rethrow<TException>(Func<HttpContext, TException, bool> predicate) where TException : Exception
         {
-            RethrowPolicies.Add((ctx, ex) => ex is TException exception && predicate(ctx, exception));
+            Rethrow((ctx, ex) => ex is TException exception && predicate(ctx, exception));
+        }
+
+        /// <summary>
+        /// Configures the middleware to re-throw all exceptions. This can be useful if you
+        /// have upstream middleware that needs to do additional handling of exceptions.
+        /// </summary>
+        public void RethrowAll()
+        {
+            RethrowPolicies.Clear(); // There's no point in keeping multiple policies
+            Rethrow((ctx, ex) => true); // when this one always returns true :)
+        }
+
+        /// <summary>
+        /// Configures the middleware to re-throw exceptions, based on the specified <paramref name="predicate"/>.
+        /// </summary>
+        /// <param name="predicate">The predicate to determine whether an exception should be re-thrown.</param>
+        public void Rethrow(Func<HttpContext, Exception, bool> predicate)
+        {
+            RethrowPolicies.Add(predicate);
         }
 
         internal bool ShouldRethrowException(HttpContext httpContext, Exception exception)
