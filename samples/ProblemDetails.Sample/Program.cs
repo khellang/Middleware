@@ -59,8 +59,13 @@ namespace Hellang.Middleware.ProblemDetails.Sample
 
         private void ConfigureProblemDetails(ProblemDetailsOptions options)
         {
-            // This is the default behavior; only include exception details in a development environment.
+            // Only include exception details in a development environment. There's really no nee
+            // to set this as it's the default behavior. It's just included here for completeness :)
             options.IncludeExceptionDetails = (ctx, ex) => Environment.IsDevelopment();
+
+            // You can configure the middleware to re-throw certain types of exceptions, all exceptions or based on a predicate.
+            // This is useful if you have upstream middleware that needs to do additional handling of exceptions.
+            options.Rethrow<NotSupportedException>();
 
             // This will map NotImplementedException to the 501 Not Implemented status code.
             options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
