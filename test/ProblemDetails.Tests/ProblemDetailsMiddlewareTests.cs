@@ -432,7 +432,7 @@ namespace ProblemDetails.Tests
 
         private static RequestDelegate ResponseThrows(Exception exception = null)
         {
-            return context => throw exception ?? new Exception("Request failed.");
+            return context => Task.FromException(exception ?? new InvalidOperationException("Request failed."));
         }
 
         private class EvilProblemDetails : MvcProblemDetails
