@@ -52,7 +52,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.201
+        dotnet-version: ${{ secrets.VBR_DOTNET_VERSION }}
 
     - name: Set up Python
       uses: actions/setup-python@v1.2.0
@@ -87,12 +87,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GIT_COMMIT: ${{ github.sha }}
-        GIT_USERNAME: release-bot
-        GIT_AUTHOR_NAME: release-bot
-        GIT_COMMITTER_NAME: release-bot
-        GIT_EMAIL: informatie.vlaanderen@vlaanderen.be
-        GIT_AUTHOR_EMAIL: informatie.vlaanderen@vlaanderen.be
-        GIT_COMMITTER_EMAIL: informatie.vlaanderen@vlaanderen.be
+        GIT_USERNAME: ${{ secrets.VBR_GIT_USER }}
+        GIT_AUTHOR_NAME: ${{ secrets.VBR_GIT_USER }}
+        GIT_COMMITTER_NAME: ${{ secrets.VBR_GIT_USER }}
+        GIT_EMAIL: ${{ secrets.VBR_GIT_EMAIL }}
+        GIT_AUTHOR_EMAIL: ${{ secrets.VBR_GIT_EMAIL }}
+        GIT_COMMITTER_EMAIL: ${{ secrets.VBR_GIT_EMAIL }}
 
     - name: Set Release Version
       run: |
@@ -108,7 +108,7 @@ jobs:
       env:
         LIBNAME: Be.Vlaanderen.Basisregisters.ProblemDetails
         SEMVER: ${{ env.RELEASE_VERSION }}
-        NUGET_HOST: https://www.nuget.org
+        NUGET_HOST: ${{ secrets.NUGET_HOST }}
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
     - name: Publish to Confluence
@@ -116,6 +116,6 @@ jobs:
       shell: bash
       run: ./packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/ci-confluence.sh
       env:
-        CIRCLE_PROJECT_REPONAME: ${{ env.REPOSITORY_NAME }}
-        CONFLUENCE_USERNAME: david.cumps@vlaanderen.be
-        CONFLUENCE_PASSWORD: ${{ secrets.CONFLUENCE_PASSWORD }}
+        CONFLUENCE_TITLE: ${{ env.REPOSITORY_NAME }}
+        CONFLUENCE_USERNAME: ${{ secrets.VBR_CONFLUENCE_USER }}
+        CONFLUENCE_PASSWORD: ${{ secrets.VBR_CONFLUENCE_PASSWORD }}
