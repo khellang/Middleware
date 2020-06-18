@@ -2,11 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
-    if: github.repository == 'Informatievlaanderen/problemdetails-middleware'
+    if: github.repository_owner == 'Informatievlaanderen'
     name: Build
     runs-on: ubuntu-latest
 
@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2.1.0
 
     - name: Cache NPM
-      uses: actions/cache@v1.1.2
+      uses: actions/cache@v2
       env:
         cache-name: cache-npm
       with:
@@ -25,7 +25,7 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-
 
     - name: Cache Paket
-      uses: actions/cache@v1.1.2
+      uses: actions/cache@v2
       env:
         cache-name: cache-paket
       with:
@@ -35,7 +35,7 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-
 
     - name: Cache Python
-      uses: actions/cache@v1.1.2
+      uses: actions/cache@v2
       env:
         cache-name: cache-pip
       with:
