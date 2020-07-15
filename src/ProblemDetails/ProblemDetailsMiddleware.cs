@@ -126,7 +126,7 @@ namespace Hellang.Middleware.ProblemDetails
             edi.Throw(); // Re-throw the original exception if we can't handle it properly or it's intended.
         }
 
-        private Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
+        private async Task WriteProblemDetails(HttpContext context, MvcProblemDetails details)
         {
             Options.AddTraceId(context, details);
 
@@ -145,7 +145,9 @@ namespace Hellang.Middleware.ProblemDetails
 
             result.ContentTypes = Options.ContentTypes;
 
-            return Executor.ExecuteAsync(actionContext, result);
+            await Executor.ExecuteAsync(actionContext, result);
+
+            await context.Response.CompleteAsync();
         }
 
         private void ClearResponse(HttpContext context, int statusCode)
