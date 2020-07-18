@@ -8,16 +8,16 @@ nuget System.Reflection.Metadata 1.8.1
 nuget Microsoft.Extensions.StackTrace.Sources 2.0.0
 nuget Microsoft.Extensions.TypeNameHelper.Sources 2.0.0
 
-nuget Microsoft.AspNetCore.Mvc.NewtonsoftJson 3.1.5
+nuget Microsoft.AspNetCore.Mvc.NewtonsoftJson 3.1.6
 
 nuget Newtonsoft.Json 12.0.3
-nuget FluentValidation.AspNetCore 8.6.2
+nuget FluentValidation.AspNetCore 9.0.1
 
 // VBR STUFF
-nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 4.2.1
+nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 4.2.2
 
 // TEST STUFF
-nuget Microsoft.AspNetCore.TestHost 3.1.5
+nuget Microsoft.AspNetCore.TestHost 3.1.6
 nuget Microsoft.NET.Test.Sdk 16.6.1
 nuget xunit 2.4.1
 nuget xunit.runner.visualstudio 2.4.2
