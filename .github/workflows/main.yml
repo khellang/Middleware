@@ -44,7 +44,7 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}
 
     - name: Parse repository name
-      run: echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+      run: echo REPOSITORY_NAME=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//") >> $GITHUB_ENV
       shell: bash
 
     - name: Setup Node.js
@@ -98,7 +98,7 @@ jobs:
     - name: Set Release Version
       run: |
         [ ! -f semver ] && echo none > semver
-        echo ::set-env name=RELEASE_VERSION::$(cat semver)
+        echo RELEASE_VERSION=$(cat semver) >> $GITHUB_ENV
       shell: bash
 
     - name: Publish to NuGet
