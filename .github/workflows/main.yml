@@ -51,12 +51,12 @@ jobs:
       uses: actions/setup-node@v2.1.4
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v2.1.4
+      uses: actions/setup-dotnet@v1.7.2
       with:
         dotnet-version: ${{ secrets.VBR_DOTNET_VERSION }}
 
     - name: Set up Python
-      uses: actions/setup-python@v2.1.2
+      uses: actions/setup-python@v2.1.4
       with:
         python-version: '3.x'
 
