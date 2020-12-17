@@ -1,8 +1,8 @@
 #r "paket:
-version 5.241.6
+version 6.0.0-beta8
 framework: netstandard20
 source https://api.nuget.org/v3/index.json
-nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 4.2.3 //"
+nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 4.2.5 //"
 
 #load "packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/build-generic.fsx"
 
