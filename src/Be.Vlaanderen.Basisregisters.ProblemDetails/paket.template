@@ -19,6 +19,6 @@ dependencies
     System.Reflection.Metadata >= LOCKEDVERSION
 
 files
-  bin\Release\net5.0\linux-x64\Be.Vlaanderen.Basisregisters.ProblemDetails.dll => lib\net5.0
-  bin\Release\net5.0\linux-x64\Be.Vlaanderen.Basisregisters.ProblemDetails.pdb => lib\net5.0
-  bin\Release\net5.0\linux-x64\Be.Vlaanderen.Basisregisters.ProblemDetails.xml => lib\net5.0
+  bin\Release\net5.0\Be.Vlaanderen.Basisregisters.ProblemDetails.dll => lib\net5.0
+  bin\Release\net5.0\Be.Vlaanderen.Basisregisters.ProblemDetails.pdb => lib\net5.0
+  bin\Release\net5.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml => lib\net5.0

@@ -1,7 +1,7 @@
 RESTRICTION: == net50
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    Be.Vlaanderen.Basisregisters.Build.Pipeline (4.2.5)
+    Be.Vlaanderen.Basisregisters.Build.Pipeline (5.0.1)
       Fake.Core.Environment (>= 5.20.3)
       Fake.Core.Process (>= 5.20.3)
       Fake.Core.Target (>= 5.20.3)
