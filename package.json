@@ -1,6 +1,6 @@
 {
   "name": "problemdetails-middleware",
-  "version": "5.0.10",
+  "version": "5.0.11",
   "description": "Error handling middleware, using RFC7807.",
   "author": "Basisregisters Vlaanderen",
   "license": "MIT",

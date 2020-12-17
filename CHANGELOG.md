@@ -1,3 +1,12 @@
+## [5.0.11](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.10...v5.0.11) (2020-12-17)
+
+
+### Bug Fixes
+
+* move to 5.0.1 ([a6cab2c](https://github.com/informatievlaanderen/problemdetails-middleware/commit/a6cab2c18693873040eaad0a07aacb04acb02ed5))
+* move to 5.0.1 ([2464c65](https://github.com/informatievlaanderen/problemdetails-middleware/commit/2464c65675089a8455551b58db0890c3227c5d4a))
+* move to 5.0.1 ([f5b54ac](https://github.com/informatievlaanderen/problemdetails-middleware/commit/f5b54ac5dbccd0e9de7de964f1dd36bcb7b30724))
+
 ## [5.0.10](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.9...v5.0.10) (2020-09-21)
 
 
