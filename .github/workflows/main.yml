@@ -56,7 +56,7 @@ jobs:
         dotnet-version: ${{ secrets.VBR_DOTNET_VERSION }}
 
     - name: Set up Python
-      uses: actions/setup-python@v2.2.0
+      uses: actions/setup-python@v2.2.1
       with:
         python-version: '3.x'
 
