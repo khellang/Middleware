@@ -23,7 +23,7 @@
     "commitizen": "4.2.2",
     "cz-conventional-changelog": "3.3.0",
     "form-data": "3.0.0",
-    "husky": "4.3.6",
+    "husky": "4.3.7",
     "merge": "2.1.0",
     "semantic-release": "17.3.1",
     "lodash": "4.17.20"
