@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Hellang.Middleware.ProblemDetails.Tests</AssemblyName>
     <RootNamespace>ProblemDetails.Tests</RootNamespace>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +9,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="System.Net.Http.Json" Version="3.2.0-preview3.20175.8" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
 </Project>
