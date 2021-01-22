@@ -56,7 +56,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         {
             Detail = "Validatie mislukt!"; // TODO: Localize
             ProblemInstanceUri = GetProblemNumber();
-            ProblemTypeUri = GetTypeUriFor(new ValidationException("irrelevant"));
+            ProblemTypeUri = GetTypeUriFor<ValidationException>();
         }
 
         public ValidationProblemDetails(ValidationException exception) : this()

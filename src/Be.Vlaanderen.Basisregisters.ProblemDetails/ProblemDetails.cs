@@ -15,6 +15,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         public static string GetProblemNumber() => $"{Guid.NewGuid():N}";
 
         public static string GetTypeUriFor<T>(T exception) where T : Exception
+            => GetTypeUriFor<T>();
+
+        public static string GetTypeUriFor<T>() where T : Exception
         {
             var name = typeof(T).Name.Replace("Exception", string.Empty);
             if (string.IsNullOrWhiteSpace(name))
