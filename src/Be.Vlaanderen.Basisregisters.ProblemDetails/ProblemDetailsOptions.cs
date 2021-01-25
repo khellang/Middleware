@@ -1,19 +1,12 @@
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.FileProviders;
     using Microsoft.Net.Http.Headers;
     using System;
     using System.Collections.Generic;
 
     public class ProblemDetailsOptions
     {
-        public int SourceCodeLineCount { get; set; }
-
-        public IFileProvider FileProvider { get; set; }
-
-        public Func<HttpContext, bool> IncludeExceptionDetails { get; set; }
-
         public Func<HttpContext, bool> IsProblem { get; set; }
 
         public Func<HttpContext, int, ProblemDetails> MapStatusCode { get; set; }
@@ -28,7 +21,6 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
         public ProblemDetailsOptions()
         {
-            SourceCodeLineCount = 6;
             Mappers = new List<ExceptionMapper>();
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {

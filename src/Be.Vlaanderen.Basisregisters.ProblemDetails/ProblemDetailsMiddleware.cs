@@ -1,6 +1,5 @@
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
-    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -8,7 +7,6 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using Microsoft.Extensions.StackTrace.Sources;
     using Microsoft.Net.Http.Headers;
     using System;
     using System.Threading.Tasks;
@@ -27,21 +25,16 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
         private ILogger<ProblemDetailsMiddleware> Logger { get; }
 
-        private ExceptionDetailsProvider DetailsProvider { get; }
-
         public ProblemDetailsMiddleware(
             RequestDelegate next,
             IOptions<ProblemDetailsOptions> options,
             IActionResultExecutor<ObjectResult> executor,
-            IWebHostEnvironment environment,
             ILogger<ProblemDetailsMiddleware> logger)
         {
             Next = next;
             Options = options.Value;
             Executor = executor;
             Logger = logger;
-            var fileProvider = Options.FileProvider ?? environment.ContentRootFileProvider;
-            DetailsProvider = new ExceptionDetailsProvider(fileProvider, Options.SourceCodeLineCount);
         }
 
         public async Task Invoke(HttpContext context)
@@ -95,7 +88,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             }
         }
 
-        private ProblemDetails GetDetails(HttpContext context, Exception error)
+        private ProblemDetails GetDetails(HttpContext context, Exception? error)
         {
             var statusCode = context.Response.StatusCode;
 
@@ -108,21 +101,6 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             // even if the user mapped the exception into ExceptionProblemDetails.
             if (!(result is ExceptionProblemDetails ex))
                 return result;
-
-            if (!Options.IncludeExceptionDetails(context))
-                return Options.MapStatusCode(context, ex.HttpStatus ?? statusCode);
-
-            try
-            {
-                var details = DetailsProvider.GetDetails(ex.Error);
-                return ex.WithExceptionDetails(details);
-            }
-            catch (Exception e)
-            {
-                // Failed to get exception details for the specific exception.
-                // Fall back to generic status code problem details below.
-                Logger.ProblemDetailsMiddlewareException(e);
-            }
 
             return Options.MapStatusCode(context, ex.HttpStatus ?? statusCode);
         }
