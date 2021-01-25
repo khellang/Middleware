@@ -337,6 +337,3 @@ NUGET
       NETStandard.Library (>= 1.6.1)
       xunit.extensibility.core (2.4.1)
     xunit.runner.visualstudio (2.4.3)
-  remote: https://dotnet.myget.org/F/aspnetcore-master/api/v3/index.json
-    Microsoft.Extensions.StackTrace.Sources (2.0.0)
-    Microsoft.Extensions.TypeNameHelper.Sources (2.0.0)

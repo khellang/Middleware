@@ -1,8 +1,5 @@
 System.Reflection.Metadata
 
-Microsoft.Extensions.StackTrace.Sources
-Microsoft.Extensions.TypeNameHelper.Sources
-
 Newtonsoft.Json
 FluentValidation.AspNetCore
 

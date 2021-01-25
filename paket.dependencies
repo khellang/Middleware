@@ -1,12 +1,8 @@
 framework: net5.0
 source https://api.nuget.org/v3/index.json
-source https://dotnet.myget.org/F/aspnetcore-master/api/v3/index.json
 
 // PRODUCTION STUFF
 nuget System.Reflection.Metadata 5.0.0
-
-nuget Microsoft.Extensions.StackTrace.Sources 2.0.0
-nuget Microsoft.Extensions.TypeNameHelper.Sources 2.0.0
 
 nuget Microsoft.AspNetCore.Mvc.NewtonsoftJson 5.0.1
 
