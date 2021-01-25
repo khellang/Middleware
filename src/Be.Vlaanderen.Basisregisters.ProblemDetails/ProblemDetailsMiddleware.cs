@@ -97,12 +97,11 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
             var result = GetProblemDetails(context, error);
 
-            // We don't want to leak exception details unless it's configured,
+            // We don't want to leak exception details,
             // even if the user mapped the exception into ExceptionProblemDetails.
-            if (!(result is ExceptionProblemDetails ex))
-                return result;
-
-            return Options.MapStatusCode(context, ex.HttpStatus ?? statusCode);
+            return result is ExceptionProblemDetails ex
+                ? Options.MapStatusCode(context, ex.HttpStatus ?? statusCode)
+                : result;
         }
 
         private ProblemDetails GetProblemDetails(HttpContext context, Exception error)
