@@ -165,8 +165,8 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
         [Theory]
         [InlineData("Staging", 84)]
         [InlineData("Production", 84)]
-        [InlineData("Development", 1500)]
-        public async Task ExceptionDetails_AreOnlyIncludedInDevelopment(string environment, int expectedMinimumLength)
+        [InlineData("Development", 84)]
+        public async Task ExceptionDetails_AreNeverIncludedInDevelopment(string environment, int expectedMinimumLength)
         {
             using (var server = CreateServer(handler: ResponseThrows(), environment: environment))
             using (var client = server.CreateClient())
