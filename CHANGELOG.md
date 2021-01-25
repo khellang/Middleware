@@ -1,3 +1,23 @@
+# [6.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.12...v6.0.0) (2021-01-25)
+
+
+### Bug Fixes
+
+* adjust test condition for exception details GRAR-170 ([1026eda](https://github.com/informatievlaanderen/problemdetails-middleware/commit/1026eda0b9eb93b40d441cde4f40a6574fd348b8))
+* remove broken package dependencies GRAR-170 ([fa0a2dc](https://github.com/informatievlaanderen/problemdetails-middleware/commit/fa0a2dc146d83c245399e06a5423b872af953200))
+* remove developer problem details GRAR-170 ([c03d55d](https://github.com/informatievlaanderen/problemdetails-middleware/commit/c03d55d31766daf90e139ca280fcf48c1fc47674))
+
+
+### Features
+
+* add get problem type based on exception type GRAR-170 ([92d2184](https://github.com/informatievlaanderen/problemdetails-middleware/commit/92d21840d82b032c24cd9fe349dd3d11612659ef))
+
+
+### BREAKING CHANGES
+
+* CHANGES;
+remove IncludeEceptionDetails, SourceCodeLineCount, FileProvider from ProblemDetailsOptions
+
 ## [5.0.12](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.11...v5.0.12) (2020-12-17)
 
 
