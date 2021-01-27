@@ -1,3 +1,10 @@
+## [6.0.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.0...v6.0.1) (2021-01-27)
+
+
+### Bug Fixes
+
+* use the correct assembly in the extraxted function GRAR-170 ([47a9b81](https://github.com/informatievlaanderen/problemdetails-middleware/commit/47a9b8145d3f50c4cd6e3a32d362678699b421a6))
+
 # [6.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v5.0.12...v6.0.0) (2021-01-25)
 
 
