@@ -3,6 +3,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     using Newtonsoft.Json;
     using System;
     using System.ComponentModel;
+    using System.Reflection;
     using System.Runtime.Serialization;
 
     /// <summary>Implementation of Problem Details for HTTP APIs https://tools.ietf.org/html/rfc7807</summary>
@@ -14,17 +15,21 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
         public static string GetProblemNumber() => $"{Guid.NewGuid():N}";
 
-        public static string GetTypeUriFor<T>(T exception) where T : Exception
-            => GetTypeUriFor<T>();
+        public static string GetTypeUriFor<T>(T _) where T : Exception
+            => GetTypeUriFor<T>(Assembly.GetCallingAssembly());
 
         public static string GetTypeUriFor<T>() where T : Exception
+            => GetTypeUriFor<T>(Assembly.GetCallingAssembly());
+
+        internal static string GetTypeUriFor<T>(Assembly callingAssembly) where T : Exception
         {
             var name = typeof(T).Name.Replace("Exception", string.Empty);
             if (string.IsNullOrWhiteSpace(name))
                 name = "Unknown";
 
-            var assembly = System.Reflection.Assembly.GetCallingAssembly().GetName();
-            return $"urn:{assembly.Name}:{name}".ToLowerInvariant();
+            // retrieving the calling assembly here will result in the wrong assembly,
+            // only the directly used functions should call Assembly.GetCallingAssembly() 
+            return $"urn:{callingAssembly.GetName().Name}:{name}".ToLowerInvariant();
         }
 
         /// <summary>URI referentie die het probleem type bepaalt.</summary>
