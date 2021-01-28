@@ -16,20 +16,24 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         public static string GetProblemNumber() => $"{Guid.NewGuid():N}";
 
         public static string GetTypeUriFor<T>(T _) where T : Exception
-            => GetTypeUriFor<T>(Assembly.GetCallingAssembly());
+            => GetTypeUriFor<T>();
 
         public static string GetTypeUriFor<T>() where T : Exception
-            => GetTypeUriFor<T>(Assembly.GetCallingAssembly());
+            => GetTypeUriFor<T>(Assembly.GetExecutingAssembly().GetName().Name ?? "problem-details-namespace");
 
-        internal static string GetTypeUriFor<T>(Assembly callingAssembly) where T : Exception
+        public static string GetTypeUriFor<T>(T _, string customNamespace) where T : Exception
+            => GetTypeUriFor<T>(customNamespace);
+
+        public static string GetTypeUriFor<T>(string customNamespace) where T : Exception
         {
+            if (string.IsNullOrWhiteSpace(customNamespace))
+                throw new ArgumentNullException(nameof(customNamespace));
+
             var name = typeof(T).Name.Replace("Exception", string.Empty);
             if (string.IsNullOrWhiteSpace(name))
                 name = "Unknown";
 
-            // retrieving the calling assembly here will result in the wrong assembly,
-            // only the directly used functions should call Assembly.GetCallingAssembly() 
-            return $"urn:{callingAssembly.GetName().Name}:{name}".ToLowerInvariant();
+            return $"urn:{customNamespace}:{name}".ToLowerInvariant();
         }
 
         /// <summary>URI referentie die het probleem type bepaalt.</summary>
