@@ -19,7 +19,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             => GetTypeUriFor<T>();
 
         public static string GetTypeUriFor<T>() where T : Exception
-            => GetTypeUriFor<T>(Assembly.GetExecutingAssembly().GetName().Name ?? "problem-details-namespace");
+            => GetTypeUriFor<T>(Assembly.GetEntryAssembly()?.GetName().Name ?? "problem-details-undefined-namespace");
 
         public static string GetTypeUriFor<T>(T _, string customNamespace) where T : Exception
             => GetTypeUriFor<T>(customNamespace);
