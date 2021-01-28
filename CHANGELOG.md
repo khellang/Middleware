@@ -1,3 +1,10 @@
+## [6.0.2](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.1...v6.0.2) (2021-01-28)
+
+
+### Bug Fixes
+
+* use executing assembly as default namespace ([2e3f894](https://github.com/informatievlaanderen/problemdetails-middleware/commit/2e3f894a573be5c866e53c4f632c20bfbfa22b7b))
+
 ## [6.0.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.0...v6.0.1) (2021-01-27)
 
 
