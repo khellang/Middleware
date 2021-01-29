@@ -1,3 +1,10 @@
+## [6.0.3](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.2...v6.0.3) (2021-01-29)
+
+
+### Bug Fixes
+
+* change the namespace to entry assembly GRAR-170 ([fb516b4](https://github.com/informatievlaanderen/problemdetails-middleware/commit/fb516b41ce1eee6c8c025592dee7ab347e920807))
+
 ## [6.0.2](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.1...v6.0.2) (2021-01-28)
 
 
