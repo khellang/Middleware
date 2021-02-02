@@ -1,8 +1,8 @@
 {
   "sdk": {
-    "version": "5.0.101"
+    "version": "5.0.102"
   },
   "clr": {
-    "version": "5.0.1"
+    "version": "5.0.2"
   }
 }
