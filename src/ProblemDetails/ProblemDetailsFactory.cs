@@ -48,7 +48,7 @@ namespace Hellang.Middleware.ProblemDetails
                 try
                 {
                     // Instead of returning a new object, we mutate the existing problem so users keep all details.
-                    return result.WithExceptionDetails(Options.ExceptionDetailsPropertyName, error, DetailsProvider.GetDetails(error));
+                    result = result.WithExceptionDetails(Options.ExceptionDetailsPropertyName, error, DetailsProvider.GetDetails(error));
                 }
                 catch (Exception e)
                 {
@@ -57,6 +57,10 @@ namespace Hellang.Middleware.ProblemDetails
                     Logger.ProblemDetailsMiddlewareException(e);
                 }
             }
+
+            Options.AddTraceId(context, result);
+
+            Options.OnBeforeWriteDetails?.Invoke(context, result);
 
             return result;
         }
