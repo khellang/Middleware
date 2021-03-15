@@ -135,10 +135,10 @@ namespace Hellang.Middleware.ProblemDetails.Sample
             throw new ProblemDetailsException(validation);
         }
 
-        [HttpGet("title")]
-        public ActionResult<string> Title()
+        [HttpGet("detail")]
+        public ActionResult<string> Detail()
         {
-            return BadRequest("This is a title.");
+            return BadRequest("This will end up in the 'detail' field.");
         }
 
         [HttpGet("result")]
