@@ -72,12 +72,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         private static bool IsProblem(HttpContext context)
         {
-            if (context.Response.StatusCode < 400)
-            {
-                return false;
-            }
-
-            if (context.Response.StatusCode >= 600)
+            if (!IsProblemStatusCode(context.Response.StatusCode))
             {
                 return false;
             }
@@ -93,6 +88,17 @@ namespace Hellang.Middleware.ProblemDetails
             }
 
             return false;
+        }
+
+        internal static bool IsProblemStatusCode(int? statusCode)
+        {
+            return statusCode switch
+            {
+                >= 600 => false,
+                < 400 => false,
+                null => false,
+                _ => true
+            };
         }
     }
 }
