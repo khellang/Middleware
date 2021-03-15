@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Hellang.Middleware.ProblemDetails.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +41,8 @@ namespace Hellang.Middleware.ProblemDetails.Sample
         {
             services.AddProblemDetails(ConfigureProblemDetails)
                 .AddControllers()
+                    // Adds MVC conventions to work better with the ProblemDetails middleware.
+                    .AddProblemDetailsConventions()
                 .AddJsonOptions(x => x.JsonSerializerOptions.IgnoreNullValues = true);
         }
 
@@ -104,22 +107,23 @@ namespace Hellang.Middleware.ProblemDetails.Sample
     }
 
     [Route("mvc")]
+    [ApiController]
     public class MvcController : ControllerBase
     {
         [HttpGet("status/{statusCode}")]
-        public IActionResult Status([FromRoute] int statusCode)
+        public ActionResult Status([FromRoute] int statusCode)
         {
             return StatusCode(statusCode);
         }
 
         [HttpGet("error")]
-        public IActionResult Error()
+        public ActionResult Error()
         {
             throw new NotImplementedException("This is an exception thrown from an MVC controller.");
         }
 
         [HttpGet("error/details")]
-        public IActionResult ErrorDetails()
+        public ActionResult ErrorDetails()
         {
             ModelState.AddModelError("someProperty", "This property failed validation.");
 
@@ -131,8 +135,14 @@ namespace Hellang.Middleware.ProblemDetails.Sample
             throw new ProblemDetailsException(validation);
         }
 
+        [HttpGet("title")]
+        public ActionResult<string> Title()
+        {
+            return BadRequest("This is a title.");
+        }
+
         [HttpGet("result")]
-        public IActionResult Result()
+        public ActionResult<OutOfCreditProblemDetails> Result()
         {
             var problem = new OutOfCreditProblemDetails
             {
