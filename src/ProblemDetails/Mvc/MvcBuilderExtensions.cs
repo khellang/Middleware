@@ -20,7 +20,8 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
         public static IMvcBuilder AddProblemDetailsConventions(this IMvcBuilder builder)
         {
             // Forward the MVC problem details factory registration to the factory used by the middleware.
-            builder.Services.TryAddSingleton<MvcProblemDetailsFactory>(p => p.GetRequiredService<ProblemDetailsFactory>());
+            builder.Services.Replace(
+                ServiceDescriptor.Singleton<MvcProblemDetailsFactory>(p => p.GetRequiredService<ProblemDetailsFactory>()));
 
             builder.Services.TryAddEnumerable(
                 ServiceDescriptor.Transient<IConfigureOptions<ApiBehaviorOptions>, ProblemDetailsApiBehaviorOptionsSetup>());
