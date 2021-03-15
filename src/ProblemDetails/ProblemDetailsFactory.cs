@@ -61,7 +61,9 @@ namespace Hellang.Middleware.ProblemDetails
                 }
             }
 
-            return AddDefaults(context, result);
+            AddDefaults(Options, context, result);
+
+            return result;
         }
 
         private MvcProblemDetails MapToProblemDetails(HttpContext context, Exception error)
@@ -93,7 +95,9 @@ namespace Hellang.Middleware.ProblemDetails
             result.Detail = detail ?? result.Detail;
             result.Instance = instance ?? result.Instance;
 
-            return AddDefaults(context, result);
+            AddDefaults(Options, context, result);
+
+            return result;
         }
 
         public override ValidationProblemDetails CreateValidationProblemDetails(
@@ -117,17 +121,17 @@ namespace Hellang.Middleware.ProblemDetails
             result.Detail = detail ?? result.Detail;
             result.Instance = instance ?? result.Instance;
 
-            return AddDefaults(context, result);
-        }
-
-        private TProblem AddDefaults<TProblem>(HttpContext context, TProblem result)
-            where TProblem : MvcProblemDetails
-        {
-            Options.AddTraceId(context, result);
-
-            Options.OnBeforeWriteDetails?.Invoke(context, result);
+            AddDefaults(Options, context, result);
 
             return result;
+        }
+
+        internal static void AddDefaults<TProblem>(ProblemDetailsOptions options, HttpContext context, TProblem result)
+            where TProblem : MvcProblemDetails
+        {
+            options.AddTraceId(context, result);
+
+            options.OnBeforeWriteDetails?.Invoke(context, result);
         }
     }
 }

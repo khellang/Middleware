@@ -32,6 +32,13 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
                 return;
             }
 
+            if (result.Value is MvcProblemDetails problemDetails)
+            {
+                // Add defaults, like trace ID, if user has supplied a ProblemDetails instance.
+                ProblemDetailsFactory.AddDefaults(Options, context.HttpContext, problemDetails);
+                return;
+            }
+
             // Make sure the result should be treated as a problem.
             if (!IsProblemStatusCode(result.StatusCode))
             {
@@ -44,7 +51,7 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
                 return;
             }
 
-            var problemDetails = Factory.CreateProblemDetails(context.HttpContext, result.StatusCode, detail: detail);
+            problemDetails = Factory.CreateProblemDetails(context.HttpContext, result.StatusCode, detail: detail);
 
             context.Result = new ObjectResult(problemDetails)
             {
