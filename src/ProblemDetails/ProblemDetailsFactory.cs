@@ -1,14 +1,17 @@
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.StackTrace.Sources;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
+using MvcProblemDetailsFactory = Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory;
 
 namespace Hellang.Middleware.ProblemDetails
 {
-    public class ProblemDetailsFactory
+    public class ProblemDetailsFactory : MvcProblemDetailsFactory
     {
         public ProblemDetailsFactory(
             IOptions<ProblemDetailsOptions> options,
@@ -58,11 +61,7 @@ namespace Hellang.Middleware.ProblemDetails
                 }
             }
 
-            Options.AddTraceId(context, result);
-
-            Options.OnBeforeWriteDetails?.Invoke(context, result);
-
-            return result;
+            return AddDefaults(context, result);
         }
 
         private MvcProblemDetails MapToProblemDetails(HttpContext context, Exception error)
@@ -75,6 +74,60 @@ namespace Hellang.Middleware.ProblemDetails
 
             // Fall back to the generic status code problem details.
             return Options.MapStatusCode(context);
+        }
+
+        public override MvcProblemDetails CreateProblemDetails(
+            HttpContext context,
+            int? statusCode = null,
+            string title = null,
+            string type = null,
+            string detail = null,
+            string instance = null)
+        {
+            var status = statusCode ?? StatusCodes.Status500InternalServerError;
+
+            var result = StatusCodeProblemDetails.Create(status);
+
+            result.Title = title ?? result.Title;
+            result.Type = type ?? result.Type ?? StatusCodeProblemDetails.GetDefaultType(status);
+            result.Detail = detail ?? result.Detail;
+            result.Instance = instance ?? result.Instance;
+
+            return AddDefaults(context, result);
+        }
+
+        public override ValidationProblemDetails CreateValidationProblemDetails(
+            HttpContext context,
+            ModelStateDictionary modelStateDictionary,
+            int? statusCode = null,
+            string title = null,
+            string type = null,
+            string detail = null,
+            string instance = null)
+        {
+            var status = statusCode ?? StatusCodes.Status422UnprocessableEntity;
+
+            var result = new ValidationProblemDetails(modelStateDictionary)
+            {
+                Status = status,
+            };
+
+            result.Title = title ?? result.Title;
+            result.Type = type ?? result.Type ?? StatusCodeProblemDetails.GetDefaultType(status);
+            result.Detail = detail ?? result.Detail;
+            result.Instance = instance ?? result.Instance;
+
+            return AddDefaults(context, result);
+        }
+
+        private TProblem AddDefaults<TProblem>(HttpContext context, TProblem result)
+            where TProblem : MvcProblemDetails
+        {
+            Options.AddTraceId(context, result);
+
+            Options.OnBeforeWriteDetails?.Invoke(context, result);
+
+            return result;
         }
     }
 }

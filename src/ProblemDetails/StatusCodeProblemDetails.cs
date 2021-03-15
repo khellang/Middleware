@@ -35,8 +35,13 @@ namespace Hellang.Middleware.ProblemDetails
         private static void SetDetails(MvcProblemDetails details, int statusCode)
         {
             details.Status = statusCode;
-            details.Type = $"https://httpstatuses.com/{statusCode}";
+            details.Type = GetDefaultType(statusCode);
             details.Title = ReasonPhrases.GetReasonPhrase(statusCode);
+        }
+
+        internal static string GetDefaultType(int statusCode)
+        {
+            return $"https://httpstatuses.com/{statusCode}";
         }
     }
 }
