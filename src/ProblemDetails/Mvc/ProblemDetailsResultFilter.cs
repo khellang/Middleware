@@ -35,12 +35,12 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
             }
 
             // Only handle the string case for now.
-            if (result.Value is not string title)
+            if (result.Value is not string detail)
             {
                 return;
             }
 
-            var problemDetails = Factory.CreateProblemDetails(context.HttpContext, result.StatusCode, title);
+            var problemDetails = Factory.CreateProblemDetails(context.HttpContext, result.StatusCode, detail: detail);
 
             context.Result = new ObjectResult(problemDetails)
             {
