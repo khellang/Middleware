@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using MvcProblemDetailsFactory = Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory;
 
 namespace Hellang.Middleware.ProblemDetails.Mvc
 {
@@ -18,6 +19,9 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
         /// <returns>The <see cref="IMvcBuilder"/>.</returns>
         public static IMvcBuilder AddProblemDetailsConventions(this IMvcBuilder builder)
         {
+            // Forward the MVC problem details factory registration to the factory used by the middleware.
+            builder.Services.TryAddSingleton<MvcProblemDetailsFactory>(p => p.GetRequiredService<ProblemDetailsFactory>());
+
             builder.Services.TryAddEnumerable(
                 ServiceDescriptor.Transient<IConfigureOptions<ApiBehaviorOptions>, ProblemDetailsApiBehaviorOptionsSetup>());
 

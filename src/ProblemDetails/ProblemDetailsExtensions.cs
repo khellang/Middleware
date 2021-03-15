@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using MvcProblemDetailsFactory = Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory;
 
 namespace Hellang.Middleware.ProblemDetails
 {
@@ -33,7 +32,6 @@ namespace Hellang.Middleware.ProblemDetails
             }
 
             services.TryAddSingleton<ProblemDetailsFactory>();
-            services.TryAddSingleton<MvcProblemDetailsFactory>(p => p.GetRequiredService<ProblemDetailsFactory>());
             services.TryAddSingleton<ProblemDetailsMarkerService, ProblemDetailsMarkerService>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<ProblemDetailsOptions>, ProblemDetailsOptionsSetup>());
 
