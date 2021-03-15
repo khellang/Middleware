@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>5.2.1</Version>
+    <Version>5.2.2</Version>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>Hellang.Middleware.ProblemDetails</AssemblyName>
     <RootNamespace>Hellang.Middleware.ProblemDetails</RootNamespace>
