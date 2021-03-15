@@ -135,10 +135,7 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 StatusCode = details.Status ?? context.Response.StatusCode,
                 ContentTypes = Options.ContentTypes,
-                DeclaredType = details.GetType(),
             };
-
-            result.ContentTypes = Options.ContentTypes;
 
             await Executor.ExecuteAsync(actionContext, result);
 
