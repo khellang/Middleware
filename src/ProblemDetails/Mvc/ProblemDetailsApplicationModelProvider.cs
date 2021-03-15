@@ -12,12 +12,13 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
     {
         public ProblemDetailsApplicationModelProvider()
         {
-            ActionModelConventions = new List<IActionModelConvention>();
+            var defaultErrorResponseType = new ProducesErrorResponseTypeAttribute(typeof(MvcProblemDetails));
 
-            var responseTypeAttribute = new ProducesErrorResponseTypeAttribute(typeof(MvcProblemDetails));
-            ActionModelConventions.Add(new ApiConventionApplicationModelConvention(responseTypeAttribute));
-
-            ActionModelConventions.Add(new ProblemDetailsResultFilterConvention());
+            ActionModelConventions = new List<IActionModelConvention>
+            {
+                new ApiConventionApplicationModelConvention(defaultErrorResponseType),
+                new ProblemDetailsResultFilterConvention()
+            };
         }
 
         public int Order => -1000 + 200;
