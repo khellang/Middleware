@@ -14,9 +14,9 @@ namespace Hellang.Middleware.ProblemDetails
 {
     public class ProblemDetailsMiddleware
     {
-        private static readonly ActionDescriptor EmptyActionDescriptor = new ActionDescriptor();
+        private static readonly ActionDescriptor EmptyActionDescriptor = new();
 
-        private static readonly RouteData EmptyRouteData = new RouteData();
+        private static readonly RouteData EmptyRouteData = new();
 
         public ProblemDetailsMiddleware(
             RequestDelegate next,
