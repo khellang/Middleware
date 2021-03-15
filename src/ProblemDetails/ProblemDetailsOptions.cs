@@ -135,7 +135,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// <typeparam name="TException">The exception type to map to the specified status code.</typeparam>
         public void MapToStatusCode<TException>(int statusCode) where TException : Exception
         {
-            Map<TException>((ctx, ex) => StatusCodeProblemDetails.Create(statusCode));
+            Map<TException>((_, _) => StatusCodeProblemDetails.Create(statusCode));
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
         public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
         {
-            Map<TException>((ctx, ex) => mapping(ex));
+            Map<TException>((_, ex) => mapping(ex));
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// <typeparam name="TException">The type of exception to re-throw.</typeparam>
         public void Rethrow<TException>() where TException : Exception
         {
-            Rethrow<TException>((ctx, ex) => true);
+            Rethrow<TException>((_, _) => true);
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace Hellang.Middleware.ProblemDetails
         public void RethrowAll()
         {
             RethrowPolicies.Clear(); // There's no point in keeping multiple policies
-            Rethrow((ctx, ex) => true); // when this one always returns true :)
+            Rethrow((_, _) => true); // when this one always returns true :)
         }
 
         /// <summary>
