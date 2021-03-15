@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace Hellang.Middleware.ProblemDetails
@@ -151,9 +150,7 @@ namespace Hellang.Middleware.ProblemDetails
             var headers = new HeaderDictionary();
 
             // Make sure problem responses are never cached.
-            headers.Append(HeaderNames.CacheControl, "no-cache, no-store, must-revalidate");
-            headers.Append(HeaderNames.Pragma, "no-cache");
-            headers.Append(HeaderNames.Expires, "0");
+            Options.AppendCacheHeaders(context, headers);
 
             foreach (var header in context.Response.Headers)
             {

@@ -106,6 +106,11 @@ namespace Hellang.Middleware.ProblemDetails
         public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }
 
         /// <summary>
+        /// Gets or sets an action to populate response cache headers to prevent caching problem details responses.
+        /// </summary>
+        public Action<HttpContext, HeaderDictionary> AppendCacheHeaders { get; set; }
+
+        /// <summary>
         /// Gets the set of headers that shouldn't be cleared when producing a problem details response.
         /// This includes CORS, HSTS and authentication challenge headers by default.
         /// </summary>

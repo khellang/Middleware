@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 
 namespace Hellang.Middleware.ProblemDetails
 {
@@ -39,6 +40,16 @@ namespace Hellang.Middleware.ProblemDetails
             if (string.IsNullOrEmpty(options.ExceptionDetailsPropertyName))
             {
                 options.ExceptionDetailsPropertyName = ProblemDetailsOptions.DefaultExceptionDetailsPropertyName;
+            }
+
+            if (options.AppendCacheHeaders is null)
+            {
+                options.AppendCacheHeaders = (ctx, headers) =>
+                {
+                    headers.Append(HeaderNames.CacheControl, "no-cache, no-store, must-revalidate");
+                    headers.Append(HeaderNames.Pragma, "no-cache");
+                    headers.Append(HeaderNames.Expires, "0");
+                };
             }
 
             if (options.ContentTypes.Count == 0)
