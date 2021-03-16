@@ -12,7 +12,7 @@ namespace Hellang.Authentication.JwtBearer.Google
         {
             InboundClaimTypeMap.Clear();
         }
-        
+
         /// <inheritdoc />
         /// <exception cref="SecurityTokenInvalidDomainException">token 'hd' claim did not match HostedDomain.</exception>
         public override ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
@@ -33,7 +33,7 @@ namespace Hellang.Authentication.JwtBearer.Google
 
                 if (googleParameters.ValidateHostedDomain)
                 {
-                    ValidateHostedDomain(domain, principal);
+                    ValidateHostedDomain(domain!, principal);
                 }
             }
 
@@ -49,7 +49,7 @@ namespace Hellang.Authentication.JwtBearer.Google
                 throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidDomainException(LogMessages.IDX10250) { InvalidDomain = null });
             }
 
-            if (!actualDomain.Equals(expectedDomain, StringComparison.OrdinalIgnoreCase))
+            if (!actualDomain!.Equals(expectedDomain, StringComparison.OrdinalIgnoreCase))
             {
                 var message = string.Format(LogMessages.IDX10251, actualDomain, expectedDomain);
 

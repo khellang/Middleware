@@ -7,6 +7,6 @@ namespace Microsoft.IdentityModel.Tokens
         {
         }
 
-        public string InvalidDomain { get; set; }
+        public string? InvalidDomain { get; set; }
     }
 }

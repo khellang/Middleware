@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class JwtBearerOptionsExtensions
-    {        
+    {
         /// <summary>
         /// Configures the JWT Bearer authentication handler to validate Google OpenID Connect tokens
         /// for a specified <paramref name="clientId"/>.
@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="hostedDomain">The hd (hosted domain) parameter streamlines the login process for G Suite hosted accounts.</param>
         /// <exception cref="ArgumentNullException">If the <paramref name="clientId"/> argument is <c>null</c>.</exception>
         /// <exception cref="ArgumentException">If the <paramref name="clientId"/> argument is empty.</exception>
-        public static JwtBearerOptions UseGoogle(this JwtBearerOptions options, string clientId, string hostedDomain)
+        public static JwtBearerOptions UseGoogle(this JwtBearerOptions options, string clientId, string? hostedDomain)
         {
             if (clientId == null)
             {
@@ -43,10 +43,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             options.Audience = clientId;
             options.Authority = GoogleJwtBearerDefaults.Authority;
-            
+
             options.SecurityTokenValidators.Clear();
             options.SecurityTokenValidators.Add(new GoogleJwtSecurityTokenHandler());
-            
+
             options.TokenValidationParameters = new GoogleTokenValidationParameters
             {
                 // Verify the integrity of the ID token according to

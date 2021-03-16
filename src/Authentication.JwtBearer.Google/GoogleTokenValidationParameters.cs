@@ -13,8 +13,8 @@ namespace Hellang.Authentication.JwtBearer.Google
             HostedDomain = other.HostedDomain;
             ValidateHostedDomain = other.ValidateHostedDomain;
         }
-        
-        public string HostedDomain { get; set; }
+
+        public string? HostedDomain { get; set; }
 
         public bool ValidateHostedDomain { get; set; }
 
