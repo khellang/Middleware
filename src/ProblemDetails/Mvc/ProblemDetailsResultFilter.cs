@@ -1,3 +1,5 @@
+using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
@@ -45,24 +47,33 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
                 return;
             }
 
-            // Only handle the string case for now.
-            if (result.Value is not string detail)
+            // If the result is a string, we treat it as the "detail" property.
+            if (result.Value is string detail)
             {
+                problemDetails = Factory.CreateProblemDetails(context.HttpContext, result.StatusCode, detail: detail);
+                context.Result = CreateResult(problemDetails);
                 return;
             }
 
-            problemDetails = Factory.CreateProblemDetails(context.HttpContext, result.StatusCode, detail: detail);
-
-            context.Result = new ObjectResult(problemDetails)
+            // If the result is an exception, we treat it as if it's been thrown.
+            if (result.Value is Exception error && Factory is ProblemDetailsFactory factory)
             {
-                StatusCode = problemDetails.Status,
-                ContentTypes = Options.ContentTypes,
-            };
+                // Set the response status code because it might be used for mapping inside the factory.
+                context.HttpContext.Response.StatusCode = result.StatusCode ?? StatusCodes.Status500InternalServerError;
+                problemDetails = factory.GetDetails(context.HttpContext, error);
+                context.Result = CreateResult(problemDetails);
+            }
         }
 
         void IResultFilter.OnResultExecuted(ResultExecutedContext context)
         {
             // Not needed.
         }
+
+        private ObjectResult CreateResult(MvcProblemDetails problemDetails) => new(problemDetails)
+        {
+            StatusCode = problemDetails.Status,
+            ContentTypes = Options.ContentTypes,
+        };
     }
 }
