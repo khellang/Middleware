@@ -76,7 +76,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             ClearResponse(context, context.Response.StatusCode);
 
-            var details = Options.MapStatusCode(context);
+            var details = Factory.CreateProblemDetails(context);
 
             return WriteProblemDetails(context, details);
         }

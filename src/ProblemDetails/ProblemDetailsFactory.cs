@@ -32,6 +32,15 @@ namespace Hellang.Middleware.ProblemDetails
 
         public MvcProblemDetails GetDetails(HttpContext context, Exception error)
         {
+            var result = CreateErrorProblemDetails(context, error);
+
+            AddDefaults(Options, context, result);
+
+            return result;
+        }
+
+        private MvcProblemDetails CreateErrorProblemDetails(HttpContext context, Exception error)
+        {
             if (error is ProblemDetailsException problem)
             {
                 // The user has already provided a valid problem details object.
@@ -51,7 +60,7 @@ namespace Hellang.Middleware.ProblemDetails
                 try
                 {
                     // Instead of returning a new object, we mutate the existing problem so users keep all details.
-                    result = result.WithExceptionDetails(Options.ExceptionDetailsPropertyName, error, DetailsProvider.GetDetails(error));
+                    return result.WithExceptionDetails(Options.ExceptionDetailsPropertyName, error, DetailsProvider.GetDetails(error));
                 }
                 catch (Exception e)
                 {
@@ -60,8 +69,6 @@ namespace Hellang.Middleware.ProblemDetails
                     Logger.ProblemDetailsMiddlewareException(e);
                 }
             }
-
-            AddDefaults(Options, context, result);
 
             return result;
         }
@@ -86,9 +93,14 @@ namespace Hellang.Middleware.ProblemDetails
             string detail = null,
             string instance = null)
         {
-            var status = statusCode ?? StatusCodes.Status500InternalServerError;
+            var status = statusCode ?? context.Response.StatusCode;
 
-            var result = StatusCodeProblemDetails.Create(status);
+            // It feels weird to mutate the response inside this method, but it's the
+            // only way to pass the status code to MapStatusCode and it will be set
+            // on the response when writing the problem details response later anyway.
+            context.Response.StatusCode = status;
+
+            var result = Options.MapStatusCode(context);
 
             result.Title = title ?? result.Title;
             result.Type = type ?? result.Type ?? StatusCodeProblemDetails.GetDefaultType(status);
