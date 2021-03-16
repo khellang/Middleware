@@ -39,7 +39,7 @@ namespace ProblemDetails.Tests
         [InlineData(HttpStatusCode.InternalServerError)]
         public async Task ErrorStatusCode_IsHandled(HttpStatusCode expected)
         {
-            using var client = CreateClient(handler: ResponseWithStatusCode(expected));
+            using var client = CreateClient(handler: ResponseWithStatusCode(expected), SetOnBeforeWriteDetails);
 
             var response = await client.GetAsync(string.Empty);
 
@@ -51,7 +51,7 @@ namespace ProblemDetails.Tests
         [Fact]
         public async Task Exception_IsHandled()
         {
-            using var client = CreateClient(handler: ResponseThrows());
+            using var client = CreateClient(handler: ResponseThrows(), SetOnBeforeWriteDetails);
 
             var response = await client.GetAsync(string.Empty);
 
@@ -112,7 +112,7 @@ namespace ProblemDetails.Tests
 
             var ex = new ProblemDetailsException(details);
 
-            using var client = CreateClient(handler: ResponseThrows(ex));
+            using var client = CreateClient(handler: ResponseThrows(ex), SetOnBeforeWriteDetails);
 
             var response = await client.GetAsync("/");
 
@@ -384,6 +384,7 @@ namespace ProblemDetails.Tests
             Assert.NotNull(content.Status);
 
             Assert.Equal(expectExceptionDetails, content.Extensions.ContainsKey("errors"));
+            Assert.Contains(nameof(ProblemDetailsOptions.OnBeforeWriteDetails), content.Extensions.Keys);
         }
 
         private static void AssertUnhandledExceptionLogged(InMemoryLogger<ProblemDetailsMiddleware> logger)
@@ -411,6 +412,14 @@ namespace ProblemDetails.Tests
             return exception;
         }
 
+        private static void SetOnBeforeWriteDetails(ProblemDetailsOptions options)
+        {
+            options.OnBeforeWriteDetails = (_, details) =>
+            {
+                details.Extensions[nameof(ProblemDetailsOptions.OnBeforeWriteDetails)] = true;
+            };
+        }
+
         private HttpClient CreateClient(RequestDelegate handler, Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
         {
             var builder = new WebHostBuilder()
@@ -418,9 +427,8 @@ namespace ProblemDetails.Tests
                 .ConfigureServices(x => x
                     .AddSingleton<ILogger<ProblemDetailsMiddleware>>(Logger)
                     .AddProblemDetails(configureOptions)
-                    .AddMvcCore()
-                    .AddFormatters()
-                    .AddCors())
+                    .AddCors()
+                    .AddControllers())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())
                     .UseProblemDetails()
