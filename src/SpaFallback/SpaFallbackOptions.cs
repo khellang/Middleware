@@ -9,6 +9,6 @@ namespace Hellang.Middleware.SpaFallback
 
         public bool ThrowIfFallbackFails { get; set; } = true;
 
-        public Func<HttpContext, PathString> GetFallbackPath { get; set; }
+        public Func<HttpContext, PathString>? GetFallbackPath { get; set; }
     }
 }

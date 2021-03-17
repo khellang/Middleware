@@ -34,7 +34,7 @@ namespace Hellang.Middleware.SpaFallback
             return services.AddSpaFallback(options => options.GetFallbackPath = ctx => fallbackPath);
         }
 
-        public static IServiceCollection AddSpaFallback(this IServiceCollection services, Action<SpaFallbackOptions> configure)
+        public static IServiceCollection AddSpaFallback(this IServiceCollection services, Action<SpaFallbackOptions>? configure)
         {
             if (services is null)
             {
