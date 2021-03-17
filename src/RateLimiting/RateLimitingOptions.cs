@@ -11,9 +11,9 @@ namespace Hellang.Middleware.RateLimiting
     {
         public const string DefaultCachePrefix = "rate-limit";
 
-        public ISystemClock Clock { get; set; }
+        public ISystemClock Clock { get; set; } = null!;
 
-        public IDistributedCache Cache { get; set; }
+        public IDistributedCache Cache { get; set; } = null!;
 
         public string CachePrefix { get; set; } = DefaultCachePrefix;
 
@@ -28,7 +28,7 @@ namespace Hellang.Middleware.RateLimiting
             Allowed.Add(new Check(name, predicate));
             return this;
         }
-        
+
         public RateLimitingOptions Block(string name, AsyncSelector<bool> predicate)
         {
             Blocked.Add(new Check(name, predicate));
