@@ -24,7 +24,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// </summary>
         /// <param name="services">The service collection to add the services to.</param>
         /// <param name="configure"></param>
-        public static IServiceCollection AddProblemDetails(this IServiceCollection services, Action<ProblemDetailsOptions> configure)
+        public static IServiceCollection AddProblemDetails(this IServiceCollection services, Action<ProblemDetailsOptions>? configure)
         {
             if (configure != null)
             {

@@ -29,7 +29,7 @@ namespace Hellang.Middleware.ProblemDetails
             }
         }
 
-        private static string GetHelpLink(Exception exception)
+        private static string? GetHelpLink(Exception exception)
         {
             var link = exception.HelpLink;
 
@@ -50,17 +50,17 @@ namespace Hellang.Middleware.ProblemDetails
         {
             public ErrorDetails(ExceptionDetails detail)
             {
-                Raw = detail.Error.ToString();
-                Message = detail.ErrorMessage ?? detail.Error.Message;
-                Type = TypeNameHelper.GetTypeDisplayName(detail.Error.GetType());
+                Raw = detail.Error?.ToString();
+                Message = detail.ErrorMessage ?? detail.Error?.Message;
+                Type = TypeNameHelper.GetTypeDisplayName(detail.Error);
                 StackFrames = GetStackFrames(detail.StackFrames).ToList();
             }
 
-            public string Message { get; }
+            public string? Message { get; }
 
-            public string Type { get; }
+            public string? Type { get; }
 
-            public string Raw { get; }
+            public string? Raw { get; }
 
             public IReadOnlyCollection<StackFrame> StackFrames { get; }
 
@@ -92,7 +92,7 @@ namespace Hellang.Middleware.ProblemDetails
                 return lineNumber;
             }
 
-            private static IReadOnlyCollection<string> GetCode(IEnumerable<string> code)
+            private static IReadOnlyCollection<string>? GetCode(IEnumerable<string> code)
             {
                 var list = code.ToList();
                 return list.Count > 0 ? list : null;
@@ -100,21 +100,21 @@ namespace Hellang.Middleware.ProblemDetails
 
             public class StackFrame
             {
-                public string FilePath { get; set; }
+                public string? FilePath { get; set; }
 
-                public string FileName { get; set; }
+                public string? FileName { get; set; }
 
-                public string Function { get; set; }
+                public string? Function { get; set; }
 
                 public int? Line { get; set; }
 
                 public int? PreContextLine { get; set; }
 
-                public IReadOnlyCollection<string> PreContextCode { get; set; }
+                public IReadOnlyCollection<string>? PreContextCode { get; set; }
 
-                public IReadOnlyCollection<string> ContextCode { get; set; }
+                public IReadOnlyCollection<string>? ContextCode { get; set; }
 
-                public IReadOnlyCollection<string> PostContextCode { get; set; }
+                public IReadOnlyCollection<string>? PostContextCode { get; set; }
             }
         }
     }

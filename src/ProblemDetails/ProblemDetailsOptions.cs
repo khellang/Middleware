@@ -46,21 +46,21 @@ namespace Hellang.Middleware.ProblemDetails
         /// <summary>
         /// The <see cref="IFileProvider"/> for getting file information when reading stack trace information.
         /// </summary>
-        public IFileProvider FileProvider { get; set; }
+        public IFileProvider FileProvider { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the function for getting a <c>traceId</c> to include in the problem response.
         /// The default gets the ID from <see cref="Activity.Current"/> with a
         /// fallback to <see cref="HttpContext.TraceIdentifier"/>.
         /// </summary>
-        public Func<HttpContext, string> GetTraceId { get; set; }
+        public Func<HttpContext, string> GetTraceId { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the predicate used for determining whether exception details (stack trace etc.)
         /// should be included in the problem details response.
         /// The default returns <c>true</c> when <see cref="IHostEnvironment.EnvironmentName"/> is "Development".
         /// </summary>
-        public Func<HttpContext, Exception, bool> IncludeExceptionDetails { get; set; }
+        public Func<HttpContext, Exception, bool> IncludeExceptionDetails { get; set; } = null!;
 
         /// <summary>
         /// The property name to use for exception details.
@@ -83,32 +83,32 @@ namespace Hellang.Middleware.ProblemDetails
         ///   </item>
         /// </list>
         /// </summary>
-        public Func<HttpContext, bool> IsProblem { get; set; }
+        public Func<HttpContext, bool> IsProblem { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the function for mapping response status codes to problem details instances.
         /// The default will just create a <see cref="StatusCodeProblemDetails"/> using the response
         /// status code of the current <see cref="HttpContext"/>.
         /// </summary>
-        public Func<HttpContext, MvcProblemDetails> MapStatusCode { get; set; }
+        public Func<HttpContext, MvcProblemDetails> MapStatusCode { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets a callback used to transform a problem details instance right before
         /// it is written to the response.
         /// </summary>
-        public Action<HttpContext, MvcProblemDetails> OnBeforeWriteDetails { get; set; }
+        public Action<HttpContext, MvcProblemDetails> OnBeforeWriteDetails { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets a predicate used for determining whether an exception should be logged as unhandled.
         /// The default returns <c>true</c> if the response status code doesn't have a value, or the
         /// value is <see cref="StatusCodes.Status500InternalServerError"/> or higher.
         /// </summary>
-        public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; }
+        public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets an action to populate response cache headers to prevent caching problem details responses.
         /// </summary>
-        public Action<HttpContext, HeaderDictionary> AppendCacheHeaders { get; set; }
+        public Action<HttpContext, HeaderDictionary> AppendCacheHeaders { get; set; } = null!;
 
         /// <summary>
         /// Gets the set of headers that shouldn't be cleared when producing a problem details response.
@@ -159,7 +159,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// </remarks>
         /// <param name="mapping">The mapping function for creating a a problem details instance.</param>
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
-        public void Map<TException>(Func<TException, MvcProblemDetails> mapping) where TException : Exception
+        public void Map<TException>(Func<TException, MvcProblemDetails?> mapping) where TException : Exception
         {
             Map<TException>((_, ex) => mapping(ex));
         }
@@ -175,7 +175,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// </remarks>
         /// <param name="mapping">The mapping function for creating a a problem details instance.</param>
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
-        public void Map<TException>(Func<HttpContext, TException, MvcProblemDetails> mapping) where TException : Exception
+        public void Map<TException>(Func<HttpContext, TException, MvcProblemDetails?> mapping) where TException : Exception
         {
             Mappers.Add(new ExceptionMapper(typeof(TException), (ctx, ex) => mapping(ctx, (TException)ex)));
         }
@@ -250,7 +250,7 @@ namespace Hellang.Middleware.ProblemDetails
             }
         }
 
-        internal bool TryMapProblemDetails(HttpContext context, Exception exception, out MvcProblemDetails problem)
+        internal bool TryMapProblemDetails(HttpContext context, Exception? exception, out MvcProblemDetails? problem)
         {
             if (exception is null)
             {
@@ -272,7 +272,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         private sealed class ExceptionMapper
         {
-            public ExceptionMapper(Type type, Func<HttpContext, Exception, MvcProblemDetails> mapping)
+            public ExceptionMapper(Type type, Func<HttpContext, Exception, MvcProblemDetails?> mapping)
             {
                 Type = type;
                 Mapping = mapping;
@@ -280,14 +280,14 @@ namespace Hellang.Middleware.ProblemDetails
 
             private Type Type { get; }
 
-            private Func<HttpContext, Exception, MvcProblemDetails> Mapping { get; }
+            private Func<HttpContext, Exception, MvcProblemDetails?> Mapping { get; }
 
             public bool CanMap(Type type)
             {
                 return Type.IsAssignableFrom(type);
             }
 
-            public bool TryMap(HttpContext context, Exception exception, out MvcProblemDetails problem)
+            public bool TryMap(HttpContext context, Exception exception, out MvcProblemDetails? problem)
             {
                 if (CanMap(exception.GetType()))
                 {

@@ -44,7 +44,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         public async Task Invoke(HttpContext context)
         {
-            ExceptionDispatchInfo edi = null;
+            ExceptionDispatchInfo? edi = null;
 
             try
             {

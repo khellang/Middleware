@@ -30,16 +30,21 @@ namespace Hellang.Middleware.ProblemDetails
 
         private ExceptionDetailsProvider DetailsProvider { get; }
 
-        public MvcProblemDetails GetDetails(HttpContext context, Exception error)
+        public MvcProblemDetails? GetDetails(HttpContext context, Exception error)
         {
             var result = CreateErrorProblemDetails(context, error);
+
+            if (result is null)
+            {
+                return null;
+            }
 
             AddDefaults(Options, context, result);
 
             return result;
         }
 
-        private MvcProblemDetails CreateErrorProblemDetails(HttpContext context, Exception error)
+        private MvcProblemDetails? CreateErrorProblemDetails(HttpContext context, Exception error)
         {
             if (error is ProblemDetailsException problem)
             {
@@ -73,7 +78,7 @@ namespace Hellang.Middleware.ProblemDetails
             return result;
         }
 
-        private MvcProblemDetails MapToProblemDetails(HttpContext context, Exception error)
+        private MvcProblemDetails? MapToProblemDetails(HttpContext context, Exception error)
         {
             if (Options.TryMapProblemDetails(context, error, out var result))
             {
@@ -88,10 +93,10 @@ namespace Hellang.Middleware.ProblemDetails
         public override MvcProblemDetails CreateProblemDetails(
             HttpContext context,
             int? statusCode = null,
-            string title = null,
-            string type = null,
-            string detail = null,
-            string instance = null)
+            string? title = null,
+            string? type = null,
+            string? detail = null,
+            string? instance = null)
         {
             var status = statusCode ?? context.Response.StatusCode;
 
@@ -116,10 +121,10 @@ namespace Hellang.Middleware.ProblemDetails
             HttpContext context,
             ModelStateDictionary modelStateDictionary,
             int? statusCode = null,
-            string title = null,
-            string type = null,
-            string detail = null,
-            string instance = null)
+            string? title = null,
+            string? type = null,
+            string? detail = null,
+            string? instance = null)
         {
             var status = statusCode ?? StatusCodes.Status422UnprocessableEntity;
 

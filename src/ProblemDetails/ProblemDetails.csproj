@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>5.2.3</Version>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <AssemblyName>Hellang.Middleware.ProblemDetails</AssemblyName>
     <RootNamespace>Hellang.Middleware.ProblemDetails</RootNamespace>
     <Description>Error handling middleware, using RFC7807</Description>
@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Compile Include="../../lib/AspNetCore/src/Shared/StackTrace/**/*.cs" />
+    <Compile Include="../../lib/AspNetCore/src/Shared/TypeNameHelper/**/*.cs" />
     <None Include="../../etc/problem-logo.png" Pack="true" PackagePath="/" />
   </ItemGroup>
 
@@ -20,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
-    <PackageReference Include="Microsoft.Extensions.TypeNameHelper.Sources" Version="5.0.0-*" PrivateAssets="All" />
+    <PackageReference Include="System.Reflection.Metadata" Version="5.0.0" />
   </ItemGroup>
 </Project>
