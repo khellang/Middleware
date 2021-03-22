@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Hellang.Middleware.ProblemDetails.Mvc;
@@ -120,6 +121,12 @@ namespace Hellang.Middleware.ProblemDetails.Sample
         public ActionResult Error()
         {
             throw new NotImplementedException("This is an exception thrown from an MVC controller.");
+        }
+
+        [HttpGet("modelstate")]
+        public ActionResult InvalidModelState([Required, FromQuery] string asdf)
+        {
+            return Ok();
         }
 
         [HttpGet("error/details")]
