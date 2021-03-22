@@ -96,7 +96,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// Gets or sets a callback used to transform a problem details instance right before
         /// it is written to the response.
         /// </summary>
-        public Action<HttpContext, MvcProblemDetails> OnBeforeWriteDetails { get; set; } = null!;
+        public Action<HttpContext, MvcProblemDetails>? OnBeforeWriteDetails { get; set; }
 
         /// <summary>
         /// Gets or sets a predicate used for determining whether an exception should be logged as unhandled.
@@ -233,7 +233,17 @@ namespace Hellang.Middleware.ProblemDetails
             return false;
         }
 
-        internal void AddTraceId(HttpContext context, MvcProblemDetails details)
+        internal void CallBeforeWriteHook(HttpContext context, MvcProblemDetails details)
+        {
+            AddTraceId(context, details);
+            OnBeforeWriteDetails?.Invoke(context, details);
+#if NETCOREAPP3_1
+            // Workaround for https://github.com/dotnet/aspnetcore/pull/17565.
+            context.Response.StatusCode = details.Status ?? context.Response.StatusCode;
+#endif
+        }
+
+        private void AddTraceId(HttpContext context, MvcProblemDetails details)
         {
             const string key = "traceId";
 

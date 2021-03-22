@@ -37,7 +37,7 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
             if (result.Value is MvcProblemDetails problemDetails)
             {
                 // Add defaults, like trace ID, if user has supplied a ProblemDetails instance.
-                ProblemDetailsFactory.AddDefaults(Options, context.HttpContext, problemDetails);
+                Options.CallBeforeWriteHook(context.HttpContext, problemDetails);
                 return;
             }
 
@@ -51,7 +51,7 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
             if (result.Value is string detail)
             {
                 problemDetails = Factory.CreateProblemDetails(context.HttpContext, result.StatusCode, detail: detail);
-                context.Result = CreateResult(problemDetails);
+                context.Result = CreateResult(context, problemDetails);
                 return;
             }
 
@@ -69,7 +69,7 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
                     return;
                 }
 
-                context.Result = CreateResult(details);
+                context.Result = CreateResult(context, details);
             }
         }
 
@@ -78,10 +78,15 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
             // Not needed.
         }
 
-        private ObjectResult CreateResult(MvcProblemDetails problemDetails) => new(problemDetails)
+        private ObjectResult CreateResult(ResultExecutingContext context, MvcProblemDetails problemDetails)
         {
-            StatusCode = problemDetails.Status,
-            ContentTypes = Options.ContentTypes,
-        };
+            Options.CallBeforeWriteHook(context.HttpContext, problemDetails);
+
+            return new ObjectResult(problemDetails)
+            {
+                StatusCode = problemDetails.Status,
+                ContentTypes = Options.ContentTypes,
+            };
+        }
     }
 }

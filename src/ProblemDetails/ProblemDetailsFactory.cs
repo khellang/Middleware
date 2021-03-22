@@ -32,20 +32,6 @@ namespace Hellang.Middleware.ProblemDetails
 
         public MvcProblemDetails? GetDetails(HttpContext context, Exception error)
         {
-            var result = CreateErrorProblemDetails(context, error);
-
-            if (result is null)
-            {
-                return null;
-            }
-
-            AddDefaults(Options, context, result);
-
-            return result;
-        }
-
-        private MvcProblemDetails? CreateErrorProblemDetails(HttpContext context, Exception error)
-        {
             if (error is ProblemDetailsException problem)
             {
                 // The user has already provided a valid problem details object.
@@ -112,8 +98,6 @@ namespace Hellang.Middleware.ProblemDetails
             result.Detail = detail ?? result.Detail;
             result.Instance = instance ?? result.Instance;
 
-            AddDefaults(Options, context, result);
-
             return result;
         }
 
@@ -138,17 +122,7 @@ namespace Hellang.Middleware.ProblemDetails
             result.Detail = detail ?? result.Detail;
             result.Instance = instance ?? result.Instance;
 
-            AddDefaults(Options, context, result);
-
             return result;
-        }
-
-        internal static void AddDefaults<TProblem>(ProblemDetailsOptions options, HttpContext context, TProblem result)
-            where TProblem : MvcProblemDetails
-        {
-            options.AddTraceId(context, result);
-
-            options.OnBeforeWriteDetails?.Invoke(context, result);
         }
     }
 }
