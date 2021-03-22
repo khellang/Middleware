@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Hellang.Middleware.ProblemDetails;
+using Hellang.Middleware.ProblemDetails.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -371,6 +372,8 @@ namespace ProblemDetails.Tests
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
+
+
         private static async Task AssertIsProblemDetailsResponse(HttpResponseMessage response, bool expectExceptionDetails)
         {
             Assert.Equal(ProblemJsonMediaType, response.Content.Headers.ContentType.MediaType);
@@ -428,11 +431,13 @@ namespace ProblemDetails.Tests
                     .AddSingleton<ILogger<ProblemDetailsMiddleware>>(Logger)
                     .AddProblemDetails(configureOptions)
                     .AddCors()
-                    .AddControllers())
+                    .AddControllers()
+                        .AddProblemDetailsConventions())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())
                     .UseProblemDetails()
-                    .Run(handler));
+                    .UseRouting()
+                    .UseEndpoints(y => y.MapGet("/", handler)));
 
             var server = new TestServer(builder);
 
