@@ -396,7 +396,7 @@ namespace ProblemDetails.Tests
         {
             using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
 
-            var response = await client.GetAsync($"mvc/error");
+            var response = await client.GetAsync("mvc/error");
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
 
@@ -404,11 +404,23 @@ namespace ProblemDetails.Tests
         }
 
         [Fact]
+        public async Task Mvc_InvalidModelState_IsHandled()
+        {
+            using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
+
+            var response = await client.GetAsync("mvc/statusCode");
+
+            Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
+        }
+
+        [Fact]
         public async Task Mvc_StringDetail_IsHandled()
         {
             using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
 
-            var response = await client.GetAsync($"mvc/string-detail");
+            var response = await client.GetAsync("mvc/string-detail");
 
             Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
 
@@ -420,7 +432,7 @@ namespace ProblemDetails.Tests
         {
             using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
 
-            var response = await client.GetAsync($"mvc/problem-model");
+            var response = await client.GetAsync("mvc/problem-model");
 
             Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
 
@@ -432,7 +444,7 @@ namespace ProblemDetails.Tests
         {
             using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
 
-            var response = await client.GetAsync($"mvc/error-model");
+            var response = await client.GetAsync("mvc/error-model");
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -554,7 +566,7 @@ namespace ProblemDetails.Tests
     [ApiController]
     public class Controller : ControllerBase
     {
-        [HttpGet("statusCode/{statusCode:int}")]
+        [HttpGet("statusCode/{statusCode?}")]
         public ActionResult Status([Required] int? statusCode)
         {
             return StatusCode(statusCode.Value);
