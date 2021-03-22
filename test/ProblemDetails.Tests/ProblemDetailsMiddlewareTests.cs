@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,6 +10,7 @@ using Hellang.Middleware.ProblemDetails.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -372,7 +374,70 @@ namespace ProblemDetails.Tests
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
+        [Theory]
+        [InlineData(HttpStatusCode.BadRequest)]
+        [InlineData(HttpStatusCode.Unauthorized)]
+        [InlineData(HttpStatusCode.NotImplemented)]
+        [InlineData(HttpStatusCode.ServiceUnavailable)]
+        [InlineData(HttpStatusCode.InternalServerError)]
+        public async Task Mvc_ErrorStatusCode_IsHandled(HttpStatusCode expected)
+        {
+            using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
 
+            var response = await client.GetAsync($"mvc/statusCode/{(int)expected}");
+
+            Assert.Equal(expected, response.StatusCode);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
+        }
+
+        [Fact]
+        public async Task Mvc_Exception_IsHandled()
+        {
+            using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
+
+            var response = await client.GetAsync($"mvc/error");
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: true);
+        }
+
+        [Fact]
+        public async Task Mvc_StringDetail_IsHandled()
+        {
+            using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
+
+            var response = await client.GetAsync($"mvc/string-detail");
+
+            Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
+        }
+
+        [Fact]
+        public async Task Mvc_ProblemModel_IsHandled()
+        {
+            using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
+
+            var response = await client.GetAsync($"mvc/problem-model");
+
+            Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
+        }
+
+        [Fact]
+        public async Task Mvc_ErrorModel_IsHandled()
+        {
+            using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
+
+            var response = await client.GetAsync($"mvc/error-model");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: true);
+        }
 
         private static async Task AssertIsProblemDetailsResponse(HttpResponseMessage response, bool expectExceptionDetails)
         {
@@ -386,7 +451,11 @@ namespace ProblemDetails.Tests
             Assert.NotEmpty(content.Title);
             Assert.NotNull(content.Status);
 
-            Assert.Equal(expectExceptionDetails, content.Extensions.ContainsKey("errors"));
+            if (expectExceptionDetails)
+            {
+                Assert.True(content.Extensions.ContainsKey("errors"), "Expected response to contain exception details.");
+            }
+
             Assert.Contains(nameof(ProblemDetailsOptions.OnBeforeWriteDetails), content.Extensions.Keys);
         }
 
@@ -423,7 +492,7 @@ namespace ProblemDetails.Tests
             };
         }
 
-        private HttpClient CreateClient(RequestDelegate handler, Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
+        private HttpClient CreateClient(RequestDelegate handler = null, Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
         {
             var builder = new WebHostBuilder()
                 .UseEnvironment(environment ?? Environments.Development)
@@ -432,12 +501,20 @@ namespace ProblemDetails.Tests
                     .AddProblemDetails(configureOptions)
                     .AddCors()
                     .AddControllers()
+                        .AddApplicationPart(typeof(Controller).Assembly)
                         .AddProblemDetailsConventions())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())
                     .UseProblemDetails()
                     .UseRouting()
-                    .UseEndpoints(y => y.MapGet("/", handler)));
+                    .UseEndpoints(y =>
+                    {
+                        y.MapControllers();
+                        if (handler != null)
+                        {
+                            y.MapGet("/", handler);
+                        }
+                    }));
 
             var server = new TestServer(builder);
 
@@ -471,6 +548,48 @@ namespace ProblemDetails.Tests
         private class EvilProblemDetails : MvcProblemDetails
         {
             public string EvilProperty => throw new InvalidOperationException("This should throw during serialization.");
+        }
+    }
+
+    [Route("mvc")]
+    [ApiController]
+    public class Controller : ControllerBase
+    {
+        [HttpGet("statusCode/{statusCode:int}")]
+        public ActionResult Status([Required] int? statusCode)
+        {
+            return StatusCode(statusCode.Value);
+        }
+
+        [HttpGet("error")]
+        public ActionResult Error()
+        {
+            throw new Exception("BOOM!");
+        }
+
+        [HttpGet("string-detail")]
+        public ActionResult StringDetail()
+        {
+            return UnprocessableEntity("Some details.");
+        }
+
+        [HttpGet("problem-model")]
+        public ActionResult ProblemModel()
+        {
+            var details = new MvcProblemDetails()
+            {
+                Type = ReasonPhrases.GetReasonPhrase(StatusCodes.Status429TooManyRequests),
+                Status = StatusCodes.Status429TooManyRequests,
+                Title = "Take a breath, relax.",
+            };
+
+            return new ObjectResult(details);
+        }
+
+        [HttpGet("error-model")]
+        public ActionResult ErrorModel()
+        {
+            return BadRequest(new Exception("Hello"));
         }
     }
 }
