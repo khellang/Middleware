@@ -501,7 +501,6 @@ namespace ProblemDetails.Tests
                     .AddProblemDetails(configureOptions)
                     .AddCors()
                     .AddControllers()
-                        .AddApplicationPart(typeof(Controller).Assembly)
                         .AddProblemDetailsConventions())
                 .Configure(x => x
                     .UseCors(y => y.AllowAnyOrigin())
