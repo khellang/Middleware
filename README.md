@@ -8,7 +8,7 @@ Various ASP.NET Core middleware. Mostly for use in APIs.
 
 Documentation is coming... In the meantime, see:
 * [the sample](samples/ProblemDetails.Sample/Program.cs)
-* [asp.net core 2.2 sample app](https://github.com/christianacca/ProblemDetailsDemo)
+* [asp.net core 3.1 sample app](https://github.com/christianacca/ProblemDetailsDemo)
 
 #### Logo
 
