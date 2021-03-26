@@ -5,13 +5,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using static Hellang.Middleware.ProblemDetails.ProblemDetailsOptionsSetup;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
-using MvcProblemDetailsFactory = Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory;
 
 namespace Hellang.Middleware.ProblemDetails.Mvc
 {
     internal class ProblemDetailsResultFilter : IAlwaysRunResultFilter, IOrderedFilter
     {
-        public ProblemDetailsResultFilter(MvcProblemDetailsFactory factory, IOptions<ProblemDetailsOptions> options)
+        public ProblemDetailsResultFilter(ProblemDetailsFactory factory, IOptions<ProblemDetailsOptions> options)
         {
             Factory = factory;
             Options = options.Value;
@@ -22,7 +21,7 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
         /// </summary>
         public int Order => -2000;
 
-        private MvcProblemDetailsFactory Factory { get; }
+        private ProblemDetailsFactory Factory { get; }
 
         private ProblemDetailsOptions Options { get; }
 
@@ -41,6 +40,15 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
                 return;
             }
 
+            // This is (most likely) a result of calling (some subclass of)
+            // ObjectResult(ModelState) which indicates a validation error.
+            if (result.Value is SerializableError error)
+            {
+                problemDetails = Factory.CreateValidationProblemDetails(context.HttpContext, error, result.StatusCode);
+                context.Result = CreateResult(context, problemDetails);
+                return;
+            }
+
             // Make sure the result should be treated as a problem.
             if (!IsProblemStatusCode(result.StatusCode))
             {
@@ -56,12 +64,12 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
             }
 
             // If the result is an exception, we treat it as if it's been thrown.
-            if (result.Value is Exception error && Factory is ProblemDetailsFactory factory)
+            if (result.Value is Exception exception)
             {
                 // Set the response status code because it might be used for mapping inside the factory.
                 context.HttpContext.Response.StatusCode = result.StatusCode ?? StatusCodes.Status500InternalServerError;
 
-                var details = factory.GetDetails(context.HttpContext, error);
+                var details = Factory.GetDetails(context.HttpContext, exception);
 
                 // Devs can choose to ignore errors by returning null.
                 if (details is null)
@@ -78,7 +86,7 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
             // Not needed.
         }
 
-        private ObjectResult CreateResult(ResultExecutingContext context, MvcProblemDetails problemDetails)
+        private ObjectResult CreateResult(ActionContext context, MvcProblemDetails problemDetails)
         {
             Options.CallBeforeWriteHook(context.HttpContext, problemDetails);
 

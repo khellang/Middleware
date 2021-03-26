@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -93,10 +95,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             var result = Options.MapStatusCode(context);
 
-            result.Title = title ?? result.Title;
-            result.Type = type ?? result.Type ?? StatusCodeProblemDetails.GetDefaultType(status);
-            result.Detail = detail ?? result.Detail;
-            result.Instance = instance ?? result.Instance;
+            SetProblemDetailsDefault(result, status, title, type, detail, instance);
 
             return result;
         }
@@ -110,19 +109,42 @@ namespace Hellang.Middleware.ProblemDetails
             string? detail = null,
             string? instance = null)
         {
-            var status = statusCode ?? Options.ValidationProblemStatusCode;
+            var result = new ValidationProblemDetails(modelStateDictionary);
 
-            var result = new ValidationProblemDetails(modelStateDictionary)
-            {
-                Status = status,
-            };
-
-            result.Title = title ?? result.Title;
-            result.Type = type ?? result.Type ?? StatusCodeProblemDetails.GetDefaultType(status);
-            result.Detail = detail ?? result.Detail;
-            result.Instance = instance ?? result.Instance;
+            SetProblemDetailsDefault(result, statusCode ?? Options.ValidationProblemStatusCode, title, type, detail, instance);
 
             return result;
+        }
+
+        public ValidationProblemDetails CreateValidationProblemDetails(HttpContext context, SerializableError error, int? statusCode)
+        {
+            var errors = GetValidationErrors(error);
+
+            var result = new ValidationProblemDetails(errors);
+
+            SetProblemDetailsDefault(result, statusCode ?? Options.ValidationProblemStatusCode);
+
+            return result;
+        }
+
+        private static void SetProblemDetailsDefault(
+            MvcProblemDetails result,
+            int statusCode,
+            string? title = null,
+            string? type = null,
+            string? detail = null,
+            string? instance = null)
+        {
+            result.Status = statusCode;
+            result.Title = title ?? result.Title;
+            result.Type = type ?? result.Type ?? StatusCodeProblemDetails.GetDefaultType(statusCode);
+            result.Detail = detail ?? result.Detail;
+            result.Instance = instance ?? result.Instance;
+        }
+
+        private static IDictionary<string, string[]> GetValidationErrors(SerializableError error)
+        {
+            return error.Where(x => x.Value is string[]).ToDictionary(x => x.Key, x => (string[])x.Value);
         }
     }
 }
