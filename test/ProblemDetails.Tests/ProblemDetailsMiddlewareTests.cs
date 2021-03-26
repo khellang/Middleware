@@ -403,14 +403,16 @@ namespace ProblemDetails.Tests
             await AssertIsProblemDetailsResponse(response, expectExceptionDetails: true);
         }
 
-        [Fact]
-        public async Task Mvc_InvalidModelState_IsHandled()
+        [Theory]
+        [InlineData(HttpStatusCode.BadRequest)]
+        [InlineData(HttpStatusCode.UnprocessableEntity)]
+        public async Task Mvc_InvalidModelState_IsHandled(HttpStatusCode statusCode)
         {
-            using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
+            using var client = CreateClient(configureOptions: SetValidationStatusCode(statusCode));
 
             var response = await client.GetAsync("mvc/statusCode");
 
-            Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+            Assert.Equal(statusCode, response.StatusCode);
 
             await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
         }
@@ -494,6 +496,15 @@ namespace ProblemDetails.Tests
             }
 
             return exception;
+        }
+
+        private static Action<ProblemDetailsOptions> SetValidationStatusCode(HttpStatusCode statusCode)
+        {
+            return options =>
+            {
+                options.ValidationProblemStatusCode = (int)statusCode;
+                SetOnBeforeWriteDetails(options);
+            };
         }
 
         private static void SetOnBeforeWriteDetails(ProblemDetailsOptions options)

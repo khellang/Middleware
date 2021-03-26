@@ -22,6 +22,7 @@ namespace Hellang.Middleware.ProblemDetails
             RethrowPolicies = new List<Func<HttpContext, Exception, bool>>();
             ContentTypes = new MediaTypeCollection();
             ExceptionDetailsPropertyName = DefaultExceptionDetailsPropertyName;
+            ValidationProblemStatusCode = StatusCodes.Status422UnprocessableEntity;
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 HeaderNames.AccessControlAllowCredentials,
@@ -121,6 +122,11 @@ namespace Hellang.Middleware.ProblemDetails
         /// The default values are <c>application/problem+json</c> and <c>application/problem+xml</c>.
         /// </summary>
         public MediaTypeCollection ContentTypes { get; }
+
+        /// <summary>
+        /// Gets or sets the status code used for validation errors when using the MVC conventions.
+        /// </summary>
+        public int ValidationProblemStatusCode { get; set; }
 
         private List<ExceptionMapper> Mappers { get; }
 

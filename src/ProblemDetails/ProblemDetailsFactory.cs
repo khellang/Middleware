@@ -110,7 +110,7 @@ namespace Hellang.Middleware.ProblemDetails
             string? detail = null,
             string? instance = null)
         {
-            var status = statusCode ?? StatusCodes.Status422UnprocessableEntity;
+            var status = statusCode ?? Options.ValidationProblemStatusCode;
 
             var result = new ValidationProblemDetails(modelStateDictionary)
             {
