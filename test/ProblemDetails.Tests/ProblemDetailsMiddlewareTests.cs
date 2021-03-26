@@ -442,6 +442,18 @@ namespace ProblemDetails.Tests
         }
 
         [Fact]
+        public async Task Mvc_ModelStateDictionary_IsHandled()
+        {
+            using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
+
+            var response = await client.GetAsync("mvc/validation");
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
+        }
+
+        [Fact]
         public async Task Mvc_ErrorModel_IsHandled()
         {
             using var client = CreateClient(configureOptions: SetOnBeforeWriteDetails);
@@ -581,6 +593,13 @@ namespace ProblemDetails.Tests
         public ActionResult Status([Required] int? statusCode)
         {
             return StatusCode(statusCode.Value);
+        }
+
+        [HttpGet("validation")]
+        public ActionResult Validation()
+        {
+            ModelState.AddModelError("error", "This is an error.");
+            return BadRequest(ModelState);
         }
 
         [HttpGet("error")]
