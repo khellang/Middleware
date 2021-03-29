@@ -9,7 +9,7 @@ namespace Hellang.Middleware.ProblemDetails
     public static class ProblemDetailsExtensions
     {
         /// <summary>
-        /// Adds the required services services for <see cref="UseProblemDetails"/> to work correctly,
+        /// Adds the required services for <see cref="UseProblemDetails"/> to work correctly,
         /// using the default options.
         /// </summary>
         /// <param name="services">The service collection to add the services to.</param>
@@ -19,7 +19,7 @@ namespace Hellang.Middleware.ProblemDetails
         }
 
         /// <summary>
-        /// Adds the required services services for <see cref="UseProblemDetails"/> to work correctly,
+        /// Adds the required services for <see cref="UseProblemDetails"/> to work correctly,
         /// using the specified <paramref name="configure"/> callback for configuration.
         /// </summary>
         /// <param name="services">The service collection to add the services to.</param>
