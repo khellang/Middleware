@@ -6,9 +6,14 @@ Various ASP.NET Core middleware. Mostly for use in APIs.
 
 > Install-Package Hellang.Middleware.ProblemDetails
 
-Documentation is coming... In the meantime, see:
+Configure in `Startup` class. See examples:
+
 * [the sample](samples/ProblemDetails.Sample/Program.cs)
 * [asp.net core 3.1 sample app](https://github.com/christianacca/ProblemDetailsDemo)
+
+Other packages that integrate with ProblemDetails middleware:
+
+* [CcAcca.ApplicationInsights.ProblemDetails](https://www.nuget.org/packages/CcAcca.ApplicationInsights.ProblemDetails): Enriches Azure Application Insights request logging with ProblemDetails data
 
 #### Logo
 
