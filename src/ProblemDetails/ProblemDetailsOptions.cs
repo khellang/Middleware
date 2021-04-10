@@ -163,7 +163,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="MvcProblemDetails"/>.
         /// This will cause the exception to be rethrown.
         /// </remarks>
-        /// <param name="mapping">The mapping function for creating a a problem details instance.</param>
+        /// <param name="mapping">The mapping function for creating a problem details instance.</param>
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
         public void Map<TException>(Func<TException, MvcProblemDetails?> mapping) where TException : Exception
         {
@@ -179,7 +179,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="ProblemDetails"/>.
         /// This will cause the exception to be rethrown.
         /// </remarks>
-        /// <param name="mapping">The mapping function for creating a a problem details instance.</param>
+        /// <param name="mapping">The mapping function for creating a problem details instance.</param>
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
         public void Map<TException>(
             Func<HttpContext, TException, MvcProblemDetails?> mapping)
@@ -197,8 +197,8 @@ namespace Hellang.Middleware.ProblemDetails
         /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="ProblemDetails"/>.
         /// This will cause the exception to be rethrown.
         /// </remarks>
-        /// <param name="predicate">This Map will skip this exception of the predicate returns false.</param>
-        /// <param name="mapping">The mapping function for creating a a problem details instance.</param>
+        /// <param name="predicate">This Map will skip this exception if the predicate returns false.</param>
+        /// <param name="mapping">The mapping function for creating a problem details instance.</param>
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
         public void Map<TException>(
             Func<HttpContext, TException, bool> predicate,
