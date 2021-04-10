@@ -146,7 +146,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         /// <summary>
         /// Configures the middleware to ignore any exception of the specified exception type <typeparamref name="TException"/>.
-        /// This will cause cause the exception to be rethrown to be handled upstream.
+        /// This will cause the exception to be rethrown to be handled upstream.
         /// </summary>
         /// <typeparam name="TException">The exception type to ignore.</typeparam>
         public void Ignore<TException>() where TException : Exception
@@ -161,7 +161,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// <remarks>
         /// Mappers are called in the order they're registered.
         /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="MvcProblemDetails"/>.
-        /// This will cause cause the exception to be rethrown.
+        /// This will cause the exception to be rethrown.
         /// </remarks>
         /// <param name="mapping">The mapping function for creating a a problem details instance.</param>
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
@@ -177,13 +177,38 @@ namespace Hellang.Middleware.ProblemDetails
         /// <remarks>
         /// Mappers are called in the order they're registered.
         /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="ProblemDetails"/>.
-        /// This will cause cause the exception to be rethrown.
+        /// This will cause the exception to be rethrown.
         /// </remarks>
         /// <param name="mapping">The mapping function for creating a a problem details instance.</param>
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
-        public void Map<TException>(Func<HttpContext, TException, MvcProblemDetails?> mapping) where TException : Exception
+        public void Map<TException>(
+            Func<HttpContext, TException, MvcProblemDetails?> mapping)
+            where TException : Exception
         {
-            Mappers.Add(new ExceptionMapper(typeof(TException), (ctx, ex) => mapping(ctx, (TException)ex)));
+            Map<TException>((_, _) => true, (ctx, ex) => mapping(ctx, ex));
+        }
+
+        /// <summary>
+        /// Maps the specified exception type <typeparamref name="TException"/> to a <see cref="ProblemDetails"/> instance
+        /// using the specified <paramref name="mapping"/> function.
+        /// </summary>
+        /// <remarks>
+        /// Mappers are called in the order they're registered.
+        /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="ProblemDetails"/>.
+        /// This will cause the exception to be rethrown.
+        /// </remarks>
+        /// <param name="predicate">This Map will skip this exception of the predicate returns false.</param>
+        /// <param name="mapping">The mapping function for creating a a problem details instance.</param>
+        /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
+        public void Map<TException>(
+            Func<HttpContext, TException, bool> predicate,
+            Func<HttpContext, TException, MvcProblemDetails?> mapping)
+            where TException : Exception
+        {
+            Mappers.Add(new ExceptionMapper(
+                typeof(TException),
+                (ctx, ex) => mapping(ctx, (TException)ex),
+                (ctx, ex) => predicate(ctx, (TException)ex)));
         }
 
         /// <summary>
@@ -288,15 +313,18 @@ namespace Hellang.Middleware.ProblemDetails
 
         private sealed class ExceptionMapper
         {
-            public ExceptionMapper(Type type, Func<HttpContext, Exception, MvcProblemDetails?> mapping)
+            public ExceptionMapper(Type type, Func<HttpContext, Exception, MvcProblemDetails?> mapping, Func<HttpContext, Exception, bool> predicate)
             {
                 Type = type;
                 Mapping = mapping;
+                Predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
             }
 
             private Type Type { get; }
 
             private Func<HttpContext, Exception, MvcProblemDetails?> Mapping { get; }
+
+            private Func<HttpContext, Exception, bool> Predicate { get; }
 
             public bool CanMap(Type type)
             {
@@ -305,7 +333,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             public bool TryMap(HttpContext context, Exception exception, out MvcProblemDetails? problem)
             {
-                if (CanMap(exception.GetType()))
+                if (CanMap(exception.GetType()) && Predicate(context, exception))
                 {
                     try
                     {

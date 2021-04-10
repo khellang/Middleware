@@ -64,6 +64,44 @@ namespace ProblemDetails.Tests
         }
 
         [Theory]
+        [InlineData("include")]
+        [InlineData("exlude")]
+        public async Task Exception_MapPredicate(string predicateData)
+        {
+            var testExceptionData = "include";
+
+            using var client = CreateClient(
+                handler: ResponseThrows(new ArgumentException(string.Empty, testExceptionData)),
+                configureOptions: options =>
+                {
+                    options.Map<ArgumentException>(
+                        (ctx, ex) => ex.ParamName == predicateData,
+                        (ctx, ex) => new MvcProblemDetails()
+                        {
+                            Status = (int)HttpStatusCode.BadRequest,
+                        });
+
+                    options.Map<Exception>((ctx, ex) => new MvcProblemDetails()
+                    {
+                        Status = (int)HttpStatusCode.InternalServerError,
+                    });
+                });
+
+            var response = await client.GetAsync(string.Empty);
+
+            if (testExceptionData == predicateData)
+            {
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            }
+            else
+            {
+                Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            }
+
+            Assert.Equal("application/problem+json", response.Content.Headers.ContentType.MediaType);
+        }
+
+        [Theory]
         [InlineData("application/csv", "application/problem+json")]
         [InlineData("application/json", "application/problem+json")]
         public async Task ContentTypes_Default_Options(string requestAcceptContentType, string responseContentType)
