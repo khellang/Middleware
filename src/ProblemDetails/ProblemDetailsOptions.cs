@@ -315,8 +315,8 @@ namespace Hellang.Middleware.ProblemDetails
         {
             public ExceptionMapper(Type type, Func<HttpContext, Exception, MvcProblemDetails?> mapping, Func<HttpContext, Exception, bool> predicate)
             {
-                Type = type;
-                Mapping = mapping;
+                Type = type ?? throw new ArgumentNullException(nameof(type));
+                Mapping = mapping ?? throw new ArgumentNullException(nameof(mapping));
                 Predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
             }
 
@@ -326,14 +326,14 @@ namespace Hellang.Middleware.ProblemDetails
 
             private Func<HttpContext, Exception, bool> Predicate { get; }
 
-            public bool CanMap(Type type)
+            public bool ShouldMap(HttpContext context, Exception exception)
             {
-                return Type.IsAssignableFrom(type);
+                return Type.IsAssignableFrom(exception.GetType()) && Predicate(context, exception);
             }
 
             public bool TryMap(HttpContext context, Exception exception, out MvcProblemDetails? problem)
             {
-                if (CanMap(exception.GetType()) && Predicate(context, exception))
+                if (ShouldMap(context, exception))
                 {
                     try
                     {
