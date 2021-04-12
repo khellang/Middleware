@@ -326,7 +326,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             public bool ShouldMap(HttpContext context, Exception exception)
             {
-                return Type.IsAssignableFrom(exception.GetType()) && Predicate(context, exception);
+                return Type.IsInstanceOfType(exception) && Predicate(context, exception);
             }
 
             public bool TryMap(HttpContext context, Exception exception, out MvcProblemDetails? problem)
