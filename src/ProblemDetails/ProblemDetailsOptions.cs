@@ -181,11 +181,9 @@ namespace Hellang.Middleware.ProblemDetails
         /// </remarks>
         /// <param name="mapping">The mapping function for creating a problem details instance.</param>
         /// <typeparam name="TException">The exception type to map using the specified mapping function.</typeparam>
-        public void Map<TException>(
-            Func<HttpContext, TException, MvcProblemDetails?> mapping)
-            where TException : Exception
+        public void Map<TException>(Func<HttpContext, TException, MvcProblemDetails?> mapping) where TException : Exception
         {
-            Map<TException>((_, _) => true, (ctx, ex) => mapping(ctx, ex));
+            Map((_, _) => true, mapping);
         }
 
         /// <summary>
