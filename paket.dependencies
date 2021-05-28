@@ -4,17 +4,17 @@ source https://api.nuget.org/v3/index.json
 // PRODUCTION STUFF
 nuget System.Reflection.Metadata 5.0.0
 
-nuget Microsoft.AspNetCore.Mvc.NewtonsoftJson 5.0.2
+nuget Microsoft.AspNetCore.Mvc.NewtonsoftJson 5.0.6
 
-nuget Newtonsoft.Json 12.0.3
-nuget FluentValidation.AspNetCore 9.5.0
+nuget Newtonsoft.Json 13.0.1
+nuget FluentValidation.AspNetCore 10.1.0
 
 // VBR STUFF
-nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 5.0.2
+nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 5.0.3
 
 // TEST STUFF
-nuget Microsoft.AspNetCore.TestHost 5.0.2
-nuget Microsoft.NET.Test.Sdk 16.8.3
+nuget Microsoft.AspNetCore.TestHost 5.0.6
+nuget Microsoft.NET.Test.Sdk 16.10.0
 nuget xunit 2.4.1
 nuget xunit.runner.visualstudio 2.4.3
 
