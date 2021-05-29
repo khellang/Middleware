@@ -1,5 +1,5 @@
 #r "paket:
-version 6.0.0-rc001-beta8
+version 6.0.0-rc001
 framework: netstandard20
 source https://api.nuget.org/v3/index.json
 nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 5.0.3 //"
