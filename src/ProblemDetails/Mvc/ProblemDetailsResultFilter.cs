@@ -17,9 +17,9 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
         }
 
         /// <summary>
-        /// The same order as the built-in ClientErrorResultFilter.
+        /// Order is set to 1 so that execution is after <see cref="ProducesAttribute"/>, which clears and sets ObjectResult.ContentTypes
         /// </summary>
-        public int Order => -2000;
+        public int Order => 1;
 
         private ProblemDetailsFactory Factory { get; }
 
@@ -90,11 +90,13 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
         {
             Options.CallBeforeWriteHook(context.HttpContext, problemDetails);
 
-            return new ObjectResult(problemDetails)
+            var result = new ObjectResult(problemDetails)
             {
                 StatusCode = problemDetails.Status,
-                ContentTypes = Options.ContentTypes,
+                ContentTypes = Options.GetContentTypes()
             };
+
+            return result;
         }
     }
 }
