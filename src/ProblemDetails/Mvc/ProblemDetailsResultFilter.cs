@@ -93,7 +93,7 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
             var result = new ObjectResult(problemDetails)
             {
                 StatusCode = problemDetails.Status,
-                ContentTypes = Options.GetContentTypes()
+                ContentTypes = Options.ContentTypes.Clone()
             };
 
             return result;
