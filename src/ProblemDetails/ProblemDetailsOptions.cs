@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +19,7 @@ namespace Hellang.Middleware.ProblemDetails
             SourceCodeLineCount = 6;
             Mappers = new List<ExceptionMapper>();
             RethrowPolicies = new List<Func<HttpContext, Exception, bool>>();
-            ContentTypes = new List<MediaTypeHeaderValue>();
+            ContentTypes = new MediaTypeCollection();
             ExceptionDetailsPropertyName = DefaultExceptionDetailsPropertyName;
             ValidationProblemStatusCode = StatusCodes.Status422UnprocessableEntity;
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -121,7 +120,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// Gets the supported <c>Content-Type</c> values for use in content negotiation.
         /// The default values are <c>application/problem+json</c> and <c>application/problem+xml</c>.
         /// </summary>
-        public IList<MediaTypeHeaderValue> ContentTypes { get; }
+        public MediaTypeCollection ContentTypes { get; }
 
         /// <summary>
         /// Gets or sets the status code used for validation errors when using the MVC conventions.
@@ -131,24 +130,6 @@ namespace Hellang.Middleware.ProblemDetails
         private List<ExceptionMapper> Mappers { get; }
 
         private List<Func<HttpContext, Exception, bool>> RethrowPolicies { get; }
-
-        /// <summary>
-        /// Creates a new <see cref="MediaTypeCollection"/> containing all the <see cref="MediaTypeHeaderValue"/> in <see cref="ContentTypes"/>
-        /// </summary>
-        /// <returns>A <see cref="MediaTypeCollection"/> with default values of <c>application/problem+json</c> and <c>application/problem+xml</c></returns>
-        /// <remarks>Partial fix for https://github.com/khellang/Middleware/issues/137
-        /// Creating a new collection each time avoids the possibility of a global ContentTypes collection being poisoned by <see cref="ProducesAttribute"/></remarks>
-        public MediaTypeCollection GetContentTypes()
-        {
-            var collection = new MediaTypeCollection();
-
-            foreach (MediaTypeHeaderValue contentType in ContentTypes)
-            {
-                collection.Add(contentType);
-            }
-
-            return collection;
-        }
 
         /// <summary>
         /// Maps the specified exception type <typeparamref name="TException"/> to the specified

@@ -125,7 +125,7 @@ namespace ProblemDetails.Tests
             void Configure(ProblemDetailsOptions options)
             {
                 options.ContentTypes.Clear();
-                options.ContentTypes.Add(MediaTypeHeaderValue.Parse(optionsContentType));
+                options.ContentTypes.Add(optionsContentType);
                 options.Map<Exception>(_ => new MvcProblemDetails());
             }
 
