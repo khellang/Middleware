@@ -240,7 +240,7 @@ namespace ProblemDetails.Tests
 
             var content = await response.Content.ReadFromJsonAsync<MvcProblemDetails>();
 
-            Assert.Equal(expectExceptionDetails, content.Extensions.ContainsKey("exceptionDetails"));
+            Assert.Equal(expectExceptionDetails, content.Extensions.ContainsKey(ProblemDetailsOptions.DefaultExceptionDetailsPropertyName));
         }
 
         [Fact]
@@ -517,7 +517,7 @@ namespace ProblemDetails.Tests
 
             if (expectExceptionDetails)
             {
-                Assert.True(content.Extensions.ContainsKey("exceptionDetails"), "Expected response to contain exception details.");
+                Assert.True(content.Extensions.ContainsKey(ProblemDetailsOptions.DefaultExceptionDetailsPropertyName), "Expected response to contain exception details.");
             }
 
             Assert.Contains(nameof(ProblemDetailsOptions.OnBeforeWriteDetails), content.Extensions.Keys);
