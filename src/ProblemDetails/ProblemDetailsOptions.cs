@@ -13,7 +13,7 @@ namespace Hellang.Middleware.ProblemDetails
 {
     public class ProblemDetailsOptions
     {
-        public const string DefaultExceptionDetailsPropertyName = "errors";
+        public const string DefaultExceptionDetailsPropertyName = "exceptionDetails";
 
         public ProblemDetailsOptions()
         {
