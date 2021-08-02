@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 namespace Hellang.Middleware.ProblemDetails
 {
     /// <summary>
-    /// Extension methods for <see cref="MediaTypeCollection"/>
+    /// Extension methods for <see cref="MediaTypeCollection"/>.
     /// </summary>
-    public static class MediaTypeCollectionExtensions
+    internal static class MediaTypeCollectionExtensions
     {
         /// <summary>
-        /// Creates a new <see cref="MediaTypeCollection"/> with the same items as an existing <see cref="MediaTypeCollection"/>
+        /// Creates a new <see cref="MediaTypeCollection"/> with the same items as an existing <see cref="MediaTypeCollection"/>.
         /// </summary>
-        /// <param name="mediaTypeCollection">The source <see cref="MediaTypeCollection"/> to copy items from</param>
-        /// <returns>A new <see cref="MediaTypeCollection"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <param name="mediaTypeCollection">The source <see cref="MediaTypeCollection"/> to copy items from.</param>
+        /// <returns>A new <see cref="MediaTypeCollection"/>.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="mediaTypeCollection"/> is <c>null</c>.</exception>
         public static MediaTypeCollection Clone(this MediaTypeCollection mediaTypeCollection)
         {
             if (mediaTypeCollection == null)
