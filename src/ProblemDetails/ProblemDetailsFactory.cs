@@ -95,7 +95,7 @@ namespace Hellang.Middleware.ProblemDetails
 
             var result = Options.MapStatusCode(context);
 
-            SetProblemDetailsDefault(result, status, title, type, detail, instance);
+            SetProblemDefaults(result, status, title, type, detail, instance);
 
             return result;
         }
@@ -111,23 +111,37 @@ namespace Hellang.Middleware.ProblemDetails
         {
             var result = new ValidationProblemDetails(modelStateDictionary);
 
-            SetProblemDetailsDefault(result, statusCode ?? Options.ValidationProblemStatusCode, title, type, detail, instance);
+            SetProblemDefaults(result, statusCode ?? Options.ValidationProblemStatusCode, title, type, detail, instance);
 
             return result;
         }
 
-        public ValidationProblemDetails CreateValidationProblemDetails(HttpContext context, SerializableError error, int? statusCode)
+        public ValidationProblemDetails CreateValidationProblemDetails(HttpContext context, SerializableError error)
+            => CreateValidationProblemDetails(context, error, Options.ValidationProblemStatusCode);
+
+        public virtual ValidationProblemDetails CreateValidationProblemDetails(HttpContext context, SerializableError error, int? statusCode)
         {
             var errors = GetValidationErrors(error);
 
+            return CreateValidationProblemDetails(context, errors, statusCode);
+
+            static IDictionary<string, string[]> GetValidationErrors(SerializableError error)
+                => error.Where(x => x.Value is string[]).ToDictionary(x => x.Key, x => (string[])x.Value);
+        }
+
+        public virtual ValidationProblemDetails CreateValidationProblemDetails(HttpContext context, IDictionary<string, string[]> errors)
+            => CreateValidationProblemDetails(context, errors, Options.ValidationProblemStatusCode);
+
+        public virtual ValidationProblemDetails CreateValidationProblemDetails(HttpContext context, IDictionary<string, string[]> errors, int? statusCode)
+        {
             var result = new ValidationProblemDetails(errors);
 
-            SetProblemDetailsDefault(result, statusCode ?? Options.ValidationProblemStatusCode);
+            SetProblemDefaults(result, statusCode ?? Options.ValidationProblemStatusCode);
 
             return result;
         }
 
-        private static void SetProblemDetailsDefault(
+        private static void SetProblemDefaults(
             MvcProblemDetails result,
             int statusCode,
             string? title = null,
@@ -140,11 +154,6 @@ namespace Hellang.Middleware.ProblemDetails
             result.Type = type ?? result.Type ?? StatusCodeProblemDetails.GetDefaultType(statusCode);
             result.Detail = detail ?? result.Detail;
             result.Instance = instance ?? result.Instance;
-        }
-
-        private static IDictionary<string, string[]> GetValidationErrors(SerializableError error)
-        {
-            return error.Where(x => x.Value is string[]).ToDictionary(x => x.Key, x => (string[])x.Value);
         }
     }
 }
