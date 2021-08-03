@@ -154,7 +154,7 @@ namespace Hellang.Middleware.ProblemDetails
         }
 
         /// <summary>
-        /// Maps the specified exception type <typeparamref name="TException"/> to a <see cref="ProblemDetails"/> instance
+        /// Maps the specified exception type <typeparamref name="TException"/> to a <see cref="MvcProblemDetails"/> instance
         /// using the specified <paramref name="mapping"/> function.
         /// </summary>
         /// <remarks>
@@ -170,12 +170,12 @@ namespace Hellang.Middleware.ProblemDetails
         }
 
         /// <summary>
-        /// Maps the specified exception type <typeparamref name="TException"/> to a <see cref="ProblemDetails"/> instance
+        /// Maps the specified exception type <typeparamref name="TException"/> to a <see cref="MvcProblemDetails"/> instance
         /// using the specified <paramref name="mapping"/> function.
         /// </summary>
         /// <remarks>
         /// Mappers are called in the order they're registered.
-        /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="ProblemDetails"/>.
+        /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="MvcProblemDetails"/>.
         /// This will cause the exception to be rethrown.
         /// </remarks>
         /// <param name="mapping">The mapping function for creating a problem details instance.</param>
@@ -186,12 +186,12 @@ namespace Hellang.Middleware.ProblemDetails
         }
 
         /// <summary>
-        /// Maps the specified exception type <typeparamref name="TException"/> to a <see cref="ProblemDetails"/> instance
+        /// Maps the specified exception type <typeparamref name="TException"/> to a <see cref="MvcProblemDetails"/> instance
         /// using the specified <paramref name="mapping"/> function.
         /// </summary>
         /// <remarks>
         /// Mappers are called in the order they're registered.
-        /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="ProblemDetails"/>.
+        /// Returning <c>null</c> from the mapper will signify that you can't or don't want to map the exception to <see cref="MvcProblemDetails"/>.
         /// This will cause the exception to be rethrown.
         /// </remarks>
         /// <param name="predicate">This Map will skip this exception if the predicate returns false.</param>
