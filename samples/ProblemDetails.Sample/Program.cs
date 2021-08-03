@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
@@ -66,6 +66,9 @@ namespace Hellang.Middleware.ProblemDetails.Sample
             // Only include exception details in a development environment. There's really no nee
             // to set this as it's the default behavior. It's just included here for completeness :)
             options.IncludeExceptionDetails = (ctx, ex) => Environment.IsDevelopment();
+
+            // Custom mapping function for FluentValidation's ValidationException.
+            options.MapFluentValidationException();
 
             // You can configure the middleware to re-throw certain types of exceptions, all exceptions or based on a predicate.
             // This is useful if you have upstream middleware that needs to do additional handling of exceptions.
