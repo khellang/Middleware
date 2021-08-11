@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -91,9 +92,18 @@ namespace Hellang.Middleware.ProblemDetails
 
             try
             {
+                var error = edi.SourceException;
+
+                var feature = new ExceptionHandlerFeature
+                {
+                    Path = context.Request.Path,
+                    Error = error,
+                };
+
                 ClearResponse(context, StatusCodes.Status500InternalServerError);
 
-                var error = edi.SourceException;
+                context.Features.Set<IExceptionHandlerPathFeature>(feature);
+                context.Features.Set<IExceptionHandlerFeature>(feature);
 
                 var details = Factory.GetDetails(context, error);
 
