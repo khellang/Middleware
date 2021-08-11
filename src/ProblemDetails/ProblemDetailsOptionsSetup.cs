@@ -46,9 +46,10 @@ namespace Hellang.Middleware.ProblemDetails
             {
                 options.AppendCacheHeaders = (_, headers) =>
                 {
-                    headers.Append(HeaderNames.CacheControl, "no-cache, no-store, must-revalidate");
-                    headers.Append(HeaderNames.Pragma, "no-cache");
-                    headers.Append(HeaderNames.Expires, "0");
+                    headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate";
+                    headers[HeaderNames.Pragma] = "no-cache";
+                    headers[HeaderNames.ETag] = default;
+                    headers[HeaderNames.Expires] = "0";
                 };
             }
 
