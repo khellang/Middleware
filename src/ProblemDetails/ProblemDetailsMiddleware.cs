@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
@@ -15,6 +16,8 @@ namespace Hellang.Middleware.ProblemDetails
 {
     public class ProblemDetailsMiddleware
     {
+        private const string DiagnosticListenerKey = "Microsoft.AspNetCore.Diagnostics.HandledException";
+
         private static readonly ActionDescriptor EmptyActionDescriptor = new();
 
         private static readonly RouteData EmptyRouteData = new();
@@ -24,13 +27,15 @@ namespace Hellang.Middleware.ProblemDetails
             IOptions<ProblemDetailsOptions> options,
             ProblemDetailsFactory factory,
             IActionResultExecutor<ObjectResult> executor,
-            ILogger<ProblemDetailsMiddleware> logger)
+            ILogger<ProblemDetailsMiddleware> logger,
+            DiagnosticListener diagnosticListener)
         {
             Next = next;
             Factory = factory;
             Options = options.Value;
             Executor = executor;
             Logger = logger;
+            DiagnosticListener = diagnosticListener;
         }
 
         private RequestDelegate Next { get; }
@@ -42,6 +47,8 @@ namespace Hellang.Middleware.ProblemDetails
         private IActionResultExecutor<ObjectResult> Executor { get; }
 
         private ILogger<ProblemDetailsMiddleware> Logger { get; }
+
+        private DiagnosticListener DiagnosticListener { get; }
 
         public async Task Invoke(HttpContext context)
         {
@@ -115,6 +122,11 @@ namespace Hellang.Middleware.ProblemDetails
                     }
 
                     await WriteProblemDetails(context, details);
+
+                    if (DiagnosticListener.IsEnabled() && DiagnosticListener.IsEnabled(DiagnosticListenerKey))
+                    {
+                        DiagnosticListener.Write(DiagnosticListenerKey, new { httpContext = context, exception = error });
+                    }
 
                     if (!Options.ShouldRethrowException(context, error))
                     {
