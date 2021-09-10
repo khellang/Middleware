@@ -54,6 +54,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         // Here to make DataContractSerializer happy
         public ValidationProblemDetails() : base(StatusCodes.Status400BadRequest)
         {
+            Title = DefaultTitle;
             Detail = "Validatie mislukt!"; // TODO: Localize
             ProblemInstanceUri = GetProblemNumber();
             ProblemTypeUri = GetTypeUriFor<ValidationException>();
