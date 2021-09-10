@@ -1,3 +1,10 @@
+## [6.0.6](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.5...v6.0.6) (2021-09-10)
+
+
+### Bug Fixes
+
+* GARW-721 fix 400 response title ([8a13eb9](https://github.com/informatievlaanderen/problemdetails-middleware/commit/8a13eb902b5fabdef47f66508bd4cb1cc591069f))
+
 ## [6.0.5](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.4...v6.0.5) (2021-05-28)
 
 
