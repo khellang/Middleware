@@ -34,18 +34,21 @@ namespace Hellang.Middleware.ProblemDetails
 
         public MvcProblemDetails? GetDetails(HttpContext context, Exception error)
         {
+            MvcProblemDetails? result;
             if (error is ProblemDetailsException problem)
             {
                 // The user has already provided a valid problem details object.
-                return problem.Details;
+                result = problem.Details;
             }
-
-            var result = MapToProblemDetails(context, error);
-
-            if (result is null)
+            else
             {
-                // Developer has explicitly ignored the problem.
-                return null;
+                result = MapToProblemDetails(context, error);
+
+                if (result is null)
+                {
+                    // Developer has explicitly ignored the problem.
+                    return null;
+                }
             }
 
             if (Options.IncludeExceptionDetails(context, error))
