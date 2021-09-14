@@ -37,7 +37,7 @@ namespace Hellang.Middleware.ProblemDetails
             MvcProblemDetails? result;
             if (error is ProblemDetailsException problem)
             {
-                // The user has already provided a valid problem details object.
+                // The user has already provided a problem details object.
                 result = problem.Details;
             }
             else
