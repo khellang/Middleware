@@ -43,6 +43,7 @@ namespace Hellang.Middleware.ProblemDetails
                     return problem.Details;
                 }
 
+                // Unwrap the inner exception to get the correct exception details below.
                 error = problem.InnerException;
                 result = problem.Details;
             }
