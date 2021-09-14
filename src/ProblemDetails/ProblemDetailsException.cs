@@ -15,13 +15,29 @@ namespace Hellang.Middleware.ProblemDetails
         {
         }
 
+        public ProblemDetailsException(int statusCode, Exception innerException)
+            : this(StatusCodeProblemDetails.Create(statusCode), innerException)
+        {
+        }
+
         public ProblemDetailsException(int statusCode, string title)
-            : this(StatusCodeProblemDetails.Create(statusCode, title))
+            : this(StatusCodeProblemDetails.Create(statusCode, title), null)
+        {
+        }
+
+        public ProblemDetailsException(int statusCode, string title, Exception innerException)
+            : this(StatusCodeProblemDetails.Create(statusCode, title), innerException)
         {
         }
 
         public ProblemDetailsException(MvcProblemDetails details)
-            : base($"{details.Type} : {details.Title}")
+            : this(details, null)
+        {
+            Details = details;
+        }
+
+        public ProblemDetailsException(MvcProblemDetails details, Exception? innerException)
+            : base($"{details.Type} : {details.Title}", innerException)
         {
             Details = details;
         }

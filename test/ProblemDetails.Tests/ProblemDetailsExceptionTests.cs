@@ -1,4 +1,5 @@
-﻿using Hellang.Middleware.ProblemDetails;
+using System;
+using Hellang.Middleware.ProblemDetails;
 using Xunit;
 using ReasonPhrases = Microsoft.AspNetCore.WebUtilities.ReasonPhrases;
 
@@ -52,6 +53,28 @@ Instance: https://example.com/problem/123
 
             Assert.IsType<Microsoft.AspNetCore.Mvc.ProblemDetails>(exception.Details);
 
+            Assert.Equal(400, exception.Details.Status);
+            Assert.Equal("foobar", exception.Details.Title);
+        }
+
+        [Fact]
+        public void Constructor_FromHttpStatusCodeAndInnerException()
+        {
+            var exception = new ProblemDetailsException(400, new DivideByZeroException());
+
+            Assert.IsType<Microsoft.AspNetCore.Mvc.ProblemDetails>(exception.Details);
+            Assert.IsType<DivideByZeroException>(exception.InnerException);
+            Assert.Equal(400, exception.Details.Status);
+            Assert.Equal(ReasonPhrases.GetReasonPhrase(400), exception.Details.Title);
+        }
+
+        [Fact]
+        public void Constructor_FromHttpStatusCodeTitleAndInnerException()
+        {
+            var exception = new ProblemDetailsException(400, "foobar", new DivideByZeroException());
+
+            Assert.IsType<Microsoft.AspNetCore.Mvc.ProblemDetails>(exception.Details);
+            Assert.IsType<DivideByZeroException>(exception.InnerException);
             Assert.Equal(400, exception.Details.Status);
             Assert.Equal("foobar", exception.Details.Title);
         }

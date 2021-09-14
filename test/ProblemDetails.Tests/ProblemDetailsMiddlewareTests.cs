@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Hellang.Middleware.ProblemDetails;
 using Hellang.Middleware.ProblemDetails.Mvc;
@@ -160,6 +161,37 @@ namespace ProblemDetails.Tests
             Assert.Equal(expected, (int)response.StatusCode);
 
             await AssertIsProblemDetailsResponse(response, expectExceptionDetails: false);
+        }
+
+        [Fact]
+        public async Task ProblemDetailsException_WithInnerException_InnerExceptionToBeIncludedInProblemDetailsExceptionDetails()
+        {
+            const int expected = StatusCodes.Status429TooManyRequests;
+
+            var details = new MvcProblemDetails
+            {
+                Title = ReasonPhrases.GetReasonPhrase(expected),
+                Type = $"https://httpstatuses.com/{expected}",
+                Status = expected,
+            };
+
+            const string innerExceptionMessage = "inner exception message";
+
+            var innerException = new ArgumentException(innerExceptionMessage);
+
+            var ex = new ProblemDetailsException(details, innerException);
+
+            using var client = CreateClient(handler: ResponseThrows(ex), SetOnBeforeWriteDetails);
+
+            var response = await client.GetAsync(string.Empty);
+
+            var responseProblemDetails = await response.Content.ReadFromJsonAsync<MvcProblemDetails>();
+
+            var responseExceptionDetails = (JsonElement)responseProblemDetails.Extensions[ProblemDetailsOptions.DefaultExceptionDetailsPropertyName];
+
+            var responseExceptionMessage = responseExceptionDetails.EnumerateArray().ToList()[0].GetProperty("message").GetString();
+
+            Assert.Equal(innerExceptionMessage, responseExceptionMessage);
         }
 
         [Fact]
