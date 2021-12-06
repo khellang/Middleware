@@ -12,8 +12,8 @@ namespace Hellang.Middleware.ProblemDetails
 {
     public class ProblemDetailsOptions
     {
-        public const string DefaultTraceIdPropertyName = "traceId";
         public const string DefaultExceptionDetailsPropertyName = "exceptionDetails";
+        public const string DefaultTraceIdPropertyName = "traceId";
 
         public ProblemDetailsOptions()
         {
