@@ -66,7 +66,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         /// <summary>
         /// The property name to use for traceId
-        /// This defaults to <see cref="DefaultTraceIdPropertyName"/> (<c>errors</c>).
+        /// This defaults to <see cref="DefaultTraceIdPropertyName"/> (<c>traceId</c>).
         /// </summary>
         public string TraceIdPropertyName { get; set; }
 
