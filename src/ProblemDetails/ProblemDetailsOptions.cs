@@ -12,6 +12,7 @@ namespace Hellang.Middleware.ProblemDetails
 {
     public class ProblemDetailsOptions
     {
+        public const string DefaultTraceIdPropertyName = "traceId";
         public const string DefaultExceptionDetailsPropertyName = "exceptionDetails";
 
         public ProblemDetailsOptions()
@@ -20,6 +21,7 @@ namespace Hellang.Middleware.ProblemDetails
             Mappers = new List<ExceptionMapper>();
             RethrowPolicies = new List<Func<HttpContext, Exception, bool>>();
             ContentTypes = new MediaTypeCollection();
+            TraceIdPropertyName = DefaultTraceIdPropertyName;
             ExceptionDetailsPropertyName = DefaultExceptionDetailsPropertyName;
             ValidationProblemStatusCode = StatusCodes.Status422UnprocessableEntity;
             AllowedHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -61,6 +63,12 @@ namespace Hellang.Middleware.ProblemDetails
         /// The default returns <c>true</c> when <see cref="IHostEnvironment.EnvironmentName"/> is "Development".
         /// </summary>
         public Func<HttpContext, Exception, bool> IncludeExceptionDetails { get; set; } = null!;
+
+        /// <summary>
+        /// The property name to use for traceId
+        /// This defaults to <see cref="DefaultTraceIdPropertyName"/> (<c>errors</c>).
+        /// </summary>
+        public string TraceIdPropertyName { get; set; }
 
         /// <summary>
         /// The property name to use for exception details.
@@ -273,7 +281,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         private void AddTraceId(HttpContext context, MvcProblemDetails details)
         {
-            const string key = "traceId";
+            var key = TraceIdPropertyName;
 
             if (details.Extensions.ContainsKey(key))
             {

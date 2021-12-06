@@ -37,6 +37,11 @@ namespace Hellang.Middleware.ProblemDetails
                 options.GetTraceId = ctx => Activity.Current?.Id ?? ctx.TraceIdentifier;
             }
 
+            if (string.IsNullOrEmpty(options.TraceIdPropertyName))
+            {
+                options.TraceIdPropertyName = ProblemDetailsOptions.DefaultTraceIdPropertyName;
+            }
+
             if (string.IsNullOrEmpty(options.ExceptionDetailsPropertyName))
             {
                 options.ExceptionDetailsPropertyName = ProblemDetailsOptions.DefaultExceptionDetailsPropertyName;
