@@ -96,7 +96,13 @@ namespace Hellang.Middleware.ProblemDetails
             return false;
         }
 
-        internal static bool IsProblemStatusCode(int? statusCode)
+        /// <summary>
+        /// Default implementation for determining if a http response status code should be consider a problem or not
+        /// </summary>
+        /// <remarks>
+        /// A status code between 400 and 600 is considered a problem
+        /// </remarks>
+        public static bool IsProblemStatusCode(int? statusCode)
         {
             return statusCode switch
             {
