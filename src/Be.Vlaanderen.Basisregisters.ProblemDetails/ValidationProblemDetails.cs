@@ -72,7 +72,11 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
     public class ValidationError
     {
-        public string Code { get; set; } = "";
+        [DataMember(Name = "Code", EmitDefaultValue = false)]
+        public string? Code { get; set; }
+
+        [DataMember(Name = "Reason")]
+        [JsonProperty("reason", Required = Required.DisallowNull)]
         public string Reason { get; set; } = "";
 
         public ValidationError()
