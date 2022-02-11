@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v7.0.0...v7.0.1) (2022-02-11)
+
+
+### Bug Fixes
+
+* code can be null ([a25b257](https://github.com/informatievlaanderen/problemdetails-middleware/commit/a25b25770090e162341f04c2a36d780dcbb09142))
+
 # [7.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.6...v7.0.0) (2022-02-11)
 
 
