@@ -1,3 +1,16 @@
+# [7.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.6...v7.0.0) (2022-02-11)
+
+
+### Features
+
+* support error code in validation failures ([9a72586](https://github.com/informatievlaanderen/problemdetails-middleware/commit/9a72586706fa88495600d30ce8797c95ddba60b5))
+
+
+### BREAKING CHANGES
+
+* dictionary value type has changed from string[] to Errors
+(Collection<ValidationError>)
+
 ## [6.0.6](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v6.0.5...v6.0.6) (2021-09-10)
 
 
