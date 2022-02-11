@@ -35,6 +35,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
         [Theory]
         [InlineData(HttpStatusCode.BadRequest)]
         [InlineData(HttpStatusCode.Unauthorized)]
+        [InlineData(HttpStatusCode.NotFound)]
         [InlineData(HttpStatusCode.NotImplemented)]
         [InlineData(HttpStatusCode.ServiceUnavailable)]
         [InlineData(HttpStatusCode.InternalServerError)]
@@ -342,10 +343,20 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
             {
                 Title = "Too Many Requests",
                 HttpStatus = (int) problemStatus,
-                ValidationErrors = new Dictionary<string, string[]>
+                ValidationErrors = new Dictionary<string, ValidationProblemDetails.Errors>
                 {
-                    {"item1", new[] {"error1", "error2"}},
-                    {"item2", new[] {"error1", "error2", "error3", "error4"}}
+                    ["item1"] = new ValidationProblemDetails.Errors(new List<ValidationError>
+                    {
+                        new ValidationError("error1"),
+                        new ValidationError("error2")
+                    }),
+                    ["item2"] = new ValidationProblemDetails.Errors(new List<ValidationError>
+                    {
+                        new ValidationError("error1"),
+                        new ValidationError("error2"),
+                        new ValidationError("error3"),
+                        new ValidationError("error4")
+                    })
                 }
             };
 
@@ -375,10 +386,20 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
             {
                 Title = "Too Many Requests",
                 HttpStatus = (int)problemStatus,
-                ValidationErrors = new Dictionary<string, string[]>
+                ValidationErrors = new Dictionary<string, ValidationProblemDetails.Errors>
                 {
-                    {"item1", new[] {"error1", "error2"}},
-                    {"item2", new[] {"error1", "error2", "error3", "error4"}}
+                    ["item1"] = new ValidationProblemDetails.Errors(new List<ValidationError>
+                    {
+                        new ValidationError("error1"),
+                        new ValidationError("error2")
+                    }),
+                    ["item2"] = new ValidationProblemDetails.Errors(new List<ValidationError>
+                    {
+                        new ValidationError("error1"),
+                        new ValidationError("error2"),
+                        new ValidationError("error3"),
+                        new ValidationError("error4")
+                    })
                 }
             };
 
