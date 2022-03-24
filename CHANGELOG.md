@@ -1,3 +1,15 @@
+# [8.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v7.0.1...v8.0.0) (2022-03-24)
+
+
+### Features
+
+* move to dotnet 6.0.3 ([552aeec](https://github.com/informatievlaanderen/problemdetails-middleware/commit/552aeec114aad0f69e1a3c48740f8cb9b11ba4f7))
+
+
+### BREAKING CHANGES
+
+* move to dotnet 6.0.3
+
 ## [7.0.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v7.0.0...v7.0.1) (2022-02-11)
 
 
