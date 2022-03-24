@@ -1,8 +1,8 @@
 #r "paket:
-version 6.0.0-rc001
-framework: netstandard20
+version 7.0.2
+framework: net6.0
 source https://api.nuget.org/v3/index.json
-nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 5.0.3 //"
+nuget Be.Vlaanderen.Basisregisters.Build.Pipeline 6.0.3 //"
 
 #load "packages/Be.Vlaanderen.Basisregisters.Build.Pipeline/Content/build-generic.fsx"
 
