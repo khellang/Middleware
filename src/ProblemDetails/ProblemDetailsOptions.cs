@@ -55,7 +55,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// The default gets the ID from <see cref="Activity.Current"/> with a
         /// fallback to <see cref="HttpContext.TraceIdentifier"/>.
         /// </summary>
-        public Func<HttpContext, string> GetTraceId { get; set; } = null!;
+        public Func<HttpContext, string?> GetTraceId { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the predicate used for determining whether exception details (stack trace etc.)
