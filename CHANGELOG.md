@@ -1,3 +1,10 @@
+## [8.0.1](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v8.0.0...v8.0.1) (2022-04-12)
+
+
+### Bug Fixes
+
+* ld+json requests assumes json request to fix problemjson ([158a151](https://github.com/informatievlaanderen/problemdetails-middleware/commit/158a15154b3f3414a660a98c3321462cf2ba80b5))
+
 # [8.0.0](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v7.0.1...v8.0.0) (2022-03-24)
 
 
