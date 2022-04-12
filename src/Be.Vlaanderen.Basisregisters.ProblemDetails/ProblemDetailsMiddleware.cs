@@ -9,7 +9,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     using Microsoft.Extensions.Options;
     using Microsoft.Net.Http.Headers;
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
 
     public class ProblemDetailsMiddleware
     {
@@ -125,6 +127,11 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             var routeData = context.GetRouteData() ?? EmptyRouteData;
 
             var actionContext = new ActionContext(context, routeData, EmptyActionDescriptor);
+
+            if (context.Request.Headers[HeaderNames.Accept].Contains("application/ld+json"))
+            {
+                context.Request.Headers[HeaderNames.Accept] = "application/json";
+            }
 
             var result = new ObjectResult(details)
             {
