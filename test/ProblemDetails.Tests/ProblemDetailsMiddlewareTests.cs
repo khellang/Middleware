@@ -148,7 +148,7 @@ namespace ProblemDetails.Tests
             var details = new MvcProblemDetails
             {
                 Title = ReasonPhrases.GetReasonPhrase(expected),
-                Type = $"https://httpstatuses.com/{expected}",
+                Type = $"https://httpstatuses.io/{expected}",
                 Status = expected,
             };
 
@@ -171,7 +171,7 @@ namespace ProblemDetails.Tests
             var details = new MvcProblemDetails
             {
                 Title = ReasonPhrases.GetReasonPhrase(expected),
-                Type = $"https://httpstatuses.com/{expected}",
+                Type = $"https://httpstatuses.io/{expected}",
                 Status = expected,
             };
 

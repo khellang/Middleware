@@ -41,7 +41,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         internal static string GetDefaultType(int statusCode)
         {
-            return $"https://httpstatuses.com/{statusCode}";
+            return $"https://httpstatuses.io/{statusCode}";
         }
     }
 }

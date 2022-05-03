@@ -14,7 +14,7 @@ namespace ProblemDetails.Tests
 
             var exception = new ProblemDetailsException(problemDetails);
 
-            Assert.Equal("https://httpstatuses.com/303 : See other", exception.Message);
+            Assert.Equal("https://httpstatuses.io/303 : See other", exception.Message);
         }
 
         [Fact]
@@ -25,7 +25,7 @@ namespace ProblemDetails.Tests
             var exception = new ProblemDetailsException(problemDetails);
             var actual = exception.ToString();
 
-            var expected = @"Type    : https://httpstatuses.com/303
+            var expected = @"Type    : https://httpstatuses.io/303
 Title   : See other
 Status  : 303
 Detail  : Look somewhere else.
@@ -83,7 +83,7 @@ Instance: https://example.com/problem/123
         {
             return new Microsoft.AspNetCore.Mvc.ProblemDetails
             {
-                Type = "https://httpstatuses.com/303",
+                Type = "https://httpstatuses.io/303",
                 Title = "See other",
                 Status = 303,
                 Detail = "Look somewhere else.",
