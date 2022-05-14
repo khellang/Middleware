@@ -63,7 +63,7 @@ namespace Hellang.Middleware.ProblemDetails.Sample
 
         private void ConfigureProblemDetails(ProblemDetailsOptions options)
         {
-            // Only include exception details in a development environment. There's really no nee
+            // Only include exception details in a development environment. There's really no need
             // to set this as it's the default behavior. It's just included here for completeness :)
             options.IncludeExceptionDetails = (ctx, ex) => Environment.IsDevelopment();
 
@@ -161,7 +161,7 @@ namespace Hellang.Middleware.ProblemDetails.Sample
                 Detail = "Your current balance is 30, but that costs 50.",
                 Instance = "/account/12345/msgs/abc",
                 Balance = 30.0m,
-                Accounts = { "/account/12345","/account/67890" }
+                Accounts = { "/account/12345", "/account/67890" }
             };
 
             return BadRequest(problem);
