@@ -12,6 +12,11 @@ namespace Hellang.Middleware.ProblemDetails
     {
         public void Configure(ProblemDetailsOptions options)
         {
+            if (options.HandleException is null)
+            {
+                options.HandleException = (ctx, e) => true;
+            }
+
             if (options.IncludeExceptionDetails is null)
             {
                 options.IncludeExceptionDetails = IncludeExceptionDetails;

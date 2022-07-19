@@ -347,6 +347,30 @@ namespace ProblemDetails.Tests
         }
 
         [Fact]
+        public async Task ProblemDetailsDontHandleException_RethrowsException()
+        {
+            using var client = CreateClient(configureOptions:options =>
+            {
+                // Check if the accepted response type is text (like text/html or text/plain, for example).
+                options.HandleException = (context, exception) => !context.Request.GetTypedHeaders().Accept.Any(h => h.IsSubsetOf(new MediaTypeHeaderValue("text/*")));
+            });
+
+            // Do not handle the exception
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.ParseAdd("text/html");
+
+            await Assert.ThrowsAsync<Exception>(() => client.GetAsync("mvc/error"));
+
+            // Handle the exception, and don't throw it
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+
+            var response = await client.GetAsync("mvc/error");
+
+            Assert.Equal(ProblemJsonMediaType, response.Content.Headers.ContentType.MediaType);
+        }
+
+        [Fact]
         public async Task Exceptions_After_Response_Started_IsNotHandled()
         {
             static async Task WriteResponse(HttpContext context)

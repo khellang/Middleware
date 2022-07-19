@@ -65,6 +65,12 @@ namespace Hellang.Middleware.ProblemDetails
         public Func<HttpContext, Exception, bool> IncludeExceptionDetails { get; set; } = null!;
 
         /// <summary>
+        /// Gets or sets the predicate used for determining the exception is handled or forwarded to the next middleware.
+        /// The default returns <c>true</c>.
+        /// </summary>
+        public Func<HttpContext, Exception, bool> HandleException { get; set; } = null!;
+
+        /// <summary>
         /// The property name to use for traceId
         /// This defaults to <see cref="DefaultTraceIdPropertyName"/> (<c>traceId</c>).
         /// </summary>

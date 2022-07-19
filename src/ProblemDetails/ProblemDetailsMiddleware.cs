@@ -65,6 +65,11 @@ namespace Hellang.Middleware.ProblemDetails
             }
             catch (Exception ex)
             {
+                if (!Options.HandleException(context, ex))
+                {
+                    throw;
+                }
+
                 edi = ExceptionDispatchInfo.Capture(ex);
             }
 
