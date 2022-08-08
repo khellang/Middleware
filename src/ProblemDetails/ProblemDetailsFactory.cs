@@ -32,7 +32,10 @@ namespace Hellang.Middleware.ProblemDetails
 
         private ExceptionDetailsProvider DetailsProvider { get; }
 
-        public MvcProblemDetails? GetDetails(HttpContext context, Exception error)
+        [Obsolete("Use " + nameof(CreateExceptionProblemDetails) + " instead.")]
+        public MvcProblemDetails? GetDetails(HttpContext context, Exception error) => CreateExceptionProblemDetails(context, error);
+
+        public virtual MvcProblemDetails? CreateExceptionProblemDetails(HttpContext context, Exception error)
         {
             MvcProblemDetails? result;
             if (error is ProblemDetailsException problem)
@@ -74,18 +77,18 @@ namespace Hellang.Middleware.ProblemDetails
             }
 
             return result;
-        }
 
-        private MvcProblemDetails? MapToProblemDetails(HttpContext context, Exception error)
-        {
-            if (Options.TryMapProblemDetails(context, error, out var result))
+            MvcProblemDetails? MapToProblemDetails(HttpContext context, Exception error)
             {
-                // The user has set up a mapping for the specific exception type.
-                return result;
-            }
+                if (Options.TryMapProblemDetails(context, error, out var result))
+                {
+                    // The user has set up a mapping for the specific exception type.
+                    return result;
+                }
 
-            // Fall back to the generic status code problem details.
-            return Options.MapStatusCode(context);
+                // Fall back to the generic status code problem details.
+                return Options.MapStatusCode(context);
+            }
         }
 
         public override MvcProblemDetails CreateProblemDetails(

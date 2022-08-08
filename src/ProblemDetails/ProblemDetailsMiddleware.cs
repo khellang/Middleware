@@ -112,7 +112,7 @@ namespace Hellang.Middleware.ProblemDetails
                 context.Features.Set<IExceptionHandlerPathFeature>(feature);
                 context.Features.Set<IExceptionHandlerFeature>(feature);
 
-                var details = Factory.GetDetails(context, error);
+                var details = Factory.CreateExceptionProblemDetails(context, error);
 
                 if (details != null) // Don't handle the exception if we can't or don't want to convert it to ProblemDetails
                 {

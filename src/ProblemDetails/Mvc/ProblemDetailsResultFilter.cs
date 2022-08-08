@@ -69,7 +69,7 @@ namespace Hellang.Middleware.ProblemDetails.Mvc
                 // Set the response status code because it might be used for mapping inside the factory.
                 context.HttpContext.Response.StatusCode = result.StatusCode ?? StatusCodes.Status500InternalServerError;
 
-                var details = Factory.GetDetails(context.HttpContext, exception);
+                var details = Factory.CreateExceptionProblemDetails(context.HttpContext, exception);
 
                 // Devs can choose to ignore errors by returning null.
                 if (details is null)
