@@ -1,9 +1,13 @@
-﻿using System;
+using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using LibProblemDetailsFactory = Hellang.Middleware.ProblemDetails.ProblemDetailsFactory;
 
+// TODO: Move to Microsoft.Extensions.DependencyInjection
 namespace Hellang.Middleware.ProblemDetails
 {
     public static class ProblemDetailsExtensions
@@ -31,9 +35,13 @@ namespace Hellang.Middleware.ProblemDetails
                 services.Configure(configure);
             }
 
-            services.TryAddSingleton<ProblemDetailsFactory>();
+            services.TryAddSingleton<LibProblemDetailsFactory>();
             services.TryAddSingleton<ProblemDetailsMarkerService, ProblemDetailsMarkerService>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<ProblemDetailsOptions>, ProblemDetailsOptionsSetup>());
+
+#if NET6_0_OR_GREATER
+            services.TryAddSingleton<IActionResultExecutor<ObjectResult>, MinimalApiResultExecutor>();
+#endif
 
             return services;
         }
@@ -42,7 +50,7 @@ namespace Hellang.Middleware.ProblemDetails
         /// Adds the <see cref="ProblemDetailsMiddleware"/> to the application pipeline.
         /// </summary>
         /// <param name="app">The application builder to add the middleware to.</param>
-        /// <exception cref="InvalidOperationException">If <see cref="AddProblemDetails(Microsoft.Extensions.DependencyInjection.IServiceCollection)"/> hasn't been called.</exception>
+        /// <exception cref="InvalidOperationException">If <see cref="AddProblemDetails(IServiceCollection)"/> hasn't been called.</exception>
         public static IApplicationBuilder UseProblemDetails(this IApplicationBuilder app)
         {
             var markerService = app.ApplicationServices.GetService<ProblemDetailsMarkerService>();

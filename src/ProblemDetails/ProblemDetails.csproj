@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>6.4.4</Version>
-    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    <Version>6.5.0</Version>
+    <TargetFrameworks>netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
     <AssemblyName>Hellang.Middleware.ProblemDetails</AssemblyName>
     <RootNamespace>Hellang.Middleware.ProblemDetails</RootNamespace>
     <Description>Error handling middleware, using RFC7807</Description>
