@@ -6,10 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ProblemDetails requires the registration of IActionResultExecutor<ObjectResult>
-// this is done by invoking either AddMvcCore() or AddControllers()
-builder.Services.AddControllers();
-
 // Configure problem details
 builder.Services.AddProblemDetails(options =>
 {
