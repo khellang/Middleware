@@ -26,9 +26,9 @@ namespace Hellang.Middleware.ProblemDetails
             DetailsProvider = new ExceptionDetailsProvider(fileProvider, logger, Options.SourceCodeLineCount);
         }
 
-        private ProblemDetailsOptions Options { get; }
+        protected ProblemDetailsOptions Options { get; }
 
-        private ILogger<ProblemDetailsFactory> Logger { get; }
+        protected ILogger<ProblemDetailsFactory> Logger { get; }
 
         private ExceptionDetailsProvider DetailsProvider { get; }
 
