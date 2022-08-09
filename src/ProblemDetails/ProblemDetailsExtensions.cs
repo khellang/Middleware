@@ -37,11 +37,8 @@ namespace Hellang.Middleware.ProblemDetails
 
             services.TryAddSingleton<LibProblemDetailsFactory>();
             services.TryAddSingleton<ProblemDetailsMarkerService, ProblemDetailsMarkerService>();
+            services.TryAddSingleton<IActionResultExecutor<ObjectResult>, ObjectResultExecutor>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<ProblemDetailsOptions>, ProblemDetailsOptionsSetup>());
-
-#if NET6_0_OR_GREATER
-            services.TryAddSingleton<IActionResultExecutor<ObjectResult>, MinimalApiResultExecutor>();
-#endif
 
             return services;
         }
