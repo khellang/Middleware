@@ -158,7 +158,18 @@ namespace Hellang.Middleware.ProblemDetails
         /// <typeparam name="TException">The exception type to ignore.</typeparam>
         public void Ignore<TException>() where TException : Exception
         {
-            Map<TException>(_ => null);
+            Map<TException>((_, _) => null);
+        }
+
+        /// <summary>
+        /// Configures the middleware to ignore exceptions of the specified exception type <typeparamref name="TException"/> that match the specified <paramref name="predicate"/>.
+        /// This will cause the exception to be rethrown to be handled upstream.
+        /// </summary>
+        /// <param name="predicate">The predicate to check whether the exception should be ignored or not.</param>
+        /// <typeparam name="TException">The exception type to ignore.</typeparam>
+        public void Ignore<TException>(Func<HttpContext, TException, bool> predicate) where TException : Exception
+        {
+            Map(predicate, (_, _) => null);
         }
 
         /// <summary>
