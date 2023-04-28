@@ -22,14 +22,14 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         /// </summary>
         [XmlIgnore]
         [IgnoreDataMember]
-        [JsonProperty("validationErrors", Required = Required.DisallowNull)]
+        [JsonProperty("validationErrors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         [Description("Validatie fouten.")]
-        public Dictionary<string, Errors> ValidationErrors { get; set; }
+        public Dictionary<string, Errors>? ValidationErrors { get; set; }
 
         [JsonIgnore]
         [XmlElement("ValidationErrors")]
         [DataMember(Name = "ValidationErrors", Order = 600, EmitDefaultValue = false)]
-        public ValidationErrorDetails ValidationErrorsProxy
+        public ValidationErrorDetails? ValidationErrorsProxy
         {
             get => new ValidationErrorDetails(ValidationErrors);
             set => ValidationErrors = value;
@@ -46,7 +46,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         }
 
         /// <summary>
-        /// Naam van waar de fout zich bevindt.
+        /// Uitgebreide omschrijving van de validatiefout.
         /// </summary>
         [CollectionDataContract(ItemName = "Error", Namespace = "")]
         public class Errors : Collection<ValidationError>
