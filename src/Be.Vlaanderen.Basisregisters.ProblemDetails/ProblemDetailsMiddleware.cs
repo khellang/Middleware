@@ -1,5 +1,8 @@
 namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -8,10 +11,6 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Microsoft.Net.Http.Headers;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Newtonsoft.Json;
 
     public class ProblemDetailsMiddleware
     {

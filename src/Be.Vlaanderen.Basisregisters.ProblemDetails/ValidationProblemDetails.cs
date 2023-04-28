@@ -17,7 +17,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     [DataContract(Name = "ProblemDetails", Namespace = "")]
     public class ValidationProblemDetails : StatusCodeProblemDetails
     {
-        /// <summary>Validatie fouten.</summary>
+        /// <summary>
+        /// Validatie fouten.
+        /// </summary>
         [XmlIgnore]
         [IgnoreDataMember]
         [JsonProperty("validationErrors", Required = Required.DisallowNull)]
@@ -43,6 +45,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
                 : base(dictionary) { }
         }
 
+        /// <summary>
+        /// Naam van waar de fout zich bevindt.
+        /// </summary>
         [CollectionDataContract(ItemName = "Error", Namespace = "")]
         public class Errors : Collection<ValidationError>
         {
@@ -70,11 +75,21 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         }
     }
 
+    /// <summary>
+    /// Uitgebreide omschrijving van de validatiefout.
+    /// </summary>
+    [DataContract(Name = "ValidationError", Namespace = "")]
     public class ValidationError
     {
+        /// <summary>
+        /// Unieke code die de validatiefout beschrijft.
+        /// </summary>
         [DataMember(Name = "Code", EmitDefaultValue = false)]
         public string? Code { get; set; }
 
+        /// <summary>
+        /// Omschrijving die de validatiefout beschrijft.
+        /// </summary>
         [DataMember(Name = "Reason")]
         [JsonProperty("reason", Required = Required.DisallowNull)]
         public string Reason { get; set; } = "";
