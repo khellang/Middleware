@@ -1,3 +1,10 @@
+## [8.0.4](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v8.0.3...v8.0.4) (2023-05-02)
+
+
+### Bug Fixes
+
+* docs validationerrors ([2ecde98](https://github.com/informatievlaanderen/problemdetails-middleware/commit/2ecde987fd711b79e2c466467c06af8ad743b698))
+
 ## [8.0.3](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v8.0.2...v8.0.3) (2023-04-28)
 
 
