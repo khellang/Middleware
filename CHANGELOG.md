@@ -1,3 +1,10 @@
+## [8.0.5](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v8.0.4...v8.0.5) (2023-05-02)
+
+
+### Bug Fixes
+
+* style to trigger build ([748939c](https://github.com/informatievlaanderen/problemdetails-middleware/commit/748939ccd2e4a9b4a8e8230f55e57ff06d5f8ce0))
+
 ## [8.0.4](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v8.0.3...v8.0.4) (2023-05-02)
 
 
