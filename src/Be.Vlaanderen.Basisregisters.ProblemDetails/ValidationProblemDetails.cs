@@ -18,12 +18,12 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     public class ValidationProblemDetails : StatusCodeProblemDetails
     {
         /// <summary>
-        /// Validatie fouten.
+        /// Uitgebreide omschrijving van de validatiefout(en).
         /// </summary>
         [XmlIgnore]
         [IgnoreDataMember]
         [JsonProperty("validationErrors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-        [Description("Validatie fouten.")]
+        [Description("Uitgebreide omschrijving van de validatiefout(en).")]
         public Dictionary<string, Errors>? ValidationErrors { get; set; }
 
         [JsonIgnore]
