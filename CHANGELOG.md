@@ -1,3 +1,10 @@
+## [8.0.6](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v8.0.5...v8.0.6) (2023-05-03)
+
+
+### Bug Fixes
+
+* docs GAWR-4816 ([d607b9c](https://github.com/informatievlaanderen/problemdetails-middleware/commit/d607b9cbf50efc09090efbfa0d559ee0e51e1a24))
+
 ## [8.0.5](https://github.com/informatievlaanderen/problemdetails-middleware/compare/v8.0.4...v8.0.5) (2023-05-02)
 
 
