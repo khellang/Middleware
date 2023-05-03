@@ -46,7 +46,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         }
 
         /// <summary>
-        /// Uitgebreide omschrijving van de validatiefout.
+        /// Veldnaam van waar de validatiefout zich bevindt.
         /// </summary>
         [CollectionDataContract(ItemName = "Error", Namespace = "")]
         public class Errors : Collection<ValidationError>
@@ -76,7 +76,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
     }
 
     /// <summary>
-    /// Uitgebreide omschrijving van de validatiefout.
+    /// Veldnaam van waar de validatiefout zich bevindt.
     /// </summary>
     [DataContract(Name = "ValidationError", Namespace = "")]
     public class ValidationError
