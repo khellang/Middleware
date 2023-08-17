@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.FileProviders;
@@ -63,6 +64,13 @@ namespace Hellang.Middleware.ProblemDetails
         /// The default returns <c>true</c> when <see cref="IHostEnvironment.EnvironmentName"/> is "Development".
         /// </summary>
         public Func<HttpContext, Exception, bool> IncludeExceptionDetails { get; set; } = null!;
+
+        /// <summary>
+        /// Configure which properties to include in the problem details response.
+        /// By default all fields are excluded.
+        /// This can be used as an alternative to <see cref="IncludeExceptionDetails"/> when specific fields are needed.
+        /// </summary>
+        public Func<HttpContext, Exception, IncludeProblemDetailProps>? IncludePropsFilter { get; set; } = null!;
 
         /// <summary>
         /// The property name to use for traceId
