@@ -10,7 +10,7 @@ Configure in `Startup` class. See examples:
 
 * [controller api sample](samples/ProblemDetails.Sample/Program.cs)
 * [minimal api sample](samples/ProblemDetails.MinimalApiSample/Program.cs)
-* [asp.net core 3.1 sample app](https://github.com/christianacca/ProblemDetailsDemo)
+* [asp.net core 6 sample app](https://github.com/christianacca/ProblemDetailsDemo)
 
 Other packages that integrate with ProblemDetails middleware:
 
@@ -67,7 +67,7 @@ public class Startup
 ```
 
 ## Authentication.JwtBearer.Google [![NuGet](https://img.shields.io/nuget/v/Hellang.Authentication.JwtBearer.Google.svg)](https://www.nuget.org/packages/Hellang.Authentication.JwtBearer.Google)
-                                  
+
 > Install-Package Hellang.Authentication.JwtBearer.Google
 
 Makes it straight-forward to hook up authentication with Google identity tokens, using Microsoft's existing `Microsoft.AspNetCore.Authentication.JwtBearer` for parsing and validating the tokens.
