@@ -61,12 +61,16 @@ namespace Hellang.Middleware.ProblemDetails
                 }
             }
 
-            if (Options.IncludeExceptionDetails(context, error))
+            var includePropsFilter = Options.IncludePropsFilter?.Invoke(context, error);
+
+            if (Options.IncludeExceptionDetails(context, error) || includePropsFilter is not null)
             {
                 try
                 {
+                    includePropsFilter ??= new IncludeProblemDetailProps{ExceptionDetails = true, Detail = true};
                     // Instead of returning a new object, we mutate the existing problem so users keep all details.
-                    return result.WithExceptionDetails(Options.ExceptionDetailsPropertyName, error, DetailsProvider.GetDetails(error));
+                    return result.WithExceptionDetails(Options.ExceptionDetailsPropertyName, error,
+                        DetailsProvider.GetDetails(error), includePropsFilter);
                 }
                 catch (Exception e)
                 {

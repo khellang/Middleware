@@ -66,6 +66,11 @@ namespace Hellang.Middleware.ProblemDetails.Sample
             // Only include exception details in a development environment. There's really no need
             // to set this as it's the default behavior. It's just included here for completeness :)
             options.IncludeExceptionDetails = (ctx, ex) => Environment.IsDevelopment();
+            options.IncludePropsFilter = (context, exception) => new IncludeProblemDetailProps()
+            {
+                Detail = true,
+                ExceptionDetails = true
+            };
 
             // Custom mapping function for FluentValidation's ValidationException.
             options.MapFluentValidationException();
