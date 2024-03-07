@@ -1,4 +1,4 @@
-# Be.Vlaanderen.Basisregisters.ProblemDetails [![Build Status](https://github.com/Informatievlaanderen/problemdetails-middleware/workflows/CI/badge.svg)](https://github.com/Informatievlaanderen/problemdetails-middleware/actions)
+# Be.Vlaanderen.Basisregisters.ProblemDetails [![Build Status](https://github.com/Informatievlaanderen/problemdetails-middleware/workflows/Build/badge.svg)](https://github.com/Informatievlaanderen/problemdetails-middleware/actions)
 
 [![NuGet](https://img.shields.io/nuget/v/Be.Vlaanderen.Basisregisters.ProblemDetails.svg)](https://www.nuget.org/packages/Be.Vlaanderen.Basisregisters.ProblemDetails)
 

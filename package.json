@@ -10,22 +10,22 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@commitlint/cli": "16.2.3",
-    "@commitlint/config-conventional": "16.2.1",
-    "@commitlint/prompt": "16.2.3",
-    "@semantic-release/changelog": "6.0.1",
-    "@semantic-release/commit-analyzer": "9.0.2",
+    "@commitlint/cli": "19.0.3",
+    "@commitlint/config-conventional": "19.0.3",
+    "@commitlint/prompt": "19.0.3",
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/commit-analyzer": "11.1.0",
     "@semantic-release/exec": "6.0.3",
     "@semantic-release/git": "10.0.1",
-    "@semantic-release/github": "8.0.4",
-    "@semantic-release/npm": "9.0.1",
-    "@semantic-release/release-notes-generator": "10.0.3",
-    "commitizen": "4.2.4",
+    "@semantic-release/github": "9.2.6",
+    "@semantic-release/npm": "11.0.3",
+    "@semantic-release/release-notes-generator": "12.1.0",
+    "commitizen": "4.3.0",
     "cz-conventional-changelog": "3.3.0",
     "form-data": "4.0.0",
-    "husky": "7.0.4",
+    "husky": "9.0.11",
     "merge": "2.1.1",
-    "semantic-release": "19.0.2",
+    "semantic-release": "23.0.2",
     "lodash": "4.17.21"
   },
   "scripts": {
@@ -93,23 +93,29 @@
         ]
       }
     },
-    "generateNotes": {
-      "path": "@semantic-release/release-notes-generator",
-      "preset": "angular",
-      "parserOpts": {
-        "noteKeywords": [
-          "BREAKING CHANGE",
-          "BREAKING CHANGES",
-          "BREAKING"
-        ]
+    "generateNotes": [
+      {
+        "path": "@semantic-release/exec",
+        "cmd": "echo ${nextRelease.version} > semver"
       },
-      "writerOpts": {
-        "commitsSort": [
-          "scope",
-          "subject"
-        ]
+      {
+        "path": "@semantic-release/release-notes-generator",
+        "preset": "angular",
+        "parserOpts": {
+          "noteKeywords": [
+            "BREAKING CHANGE",
+            "BREAKING CHANGES",
+            "BREAKING"
+          ]
+        },
+        "writerOpts": {
+          "commitsSort": [
+            "scope",
+            "subject"
+          ]
+        }
       }
-    },
+    ],
     "prepare": [
       {
         "path": "@semantic-release/changelog",
@@ -118,14 +124,6 @@
       {
         "path": "@semantic-release/npm",
         "npmPublish": false
-      },
-      {
-        "path": "@semantic-release/exec",
-        "cmd": "echo ${nextRelease.version} > semver"
-      },
-      {
-        "path": "@semantic-release/exec",
-        "cmd": "CI_BUILD_NUMBER=${nextRelease.version} ./build.sh PackageAll"
       },
       {
         "path": "@semantic-release/git",

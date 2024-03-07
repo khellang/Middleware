@@ -19,6 +19,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
     using Newtonsoft.Json;
     using Xunit;
     using Xunit.Abstractions;
+    using ProblemDetailsOptions = ProblemDetailsOptions;
 
     public class ProblemDetailsMiddlewareTests
     {

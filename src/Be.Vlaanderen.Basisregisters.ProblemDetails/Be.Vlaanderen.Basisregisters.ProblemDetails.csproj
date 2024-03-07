@@ -17,5 +17,9 @@
     <DefineConstants>NETCOREAPP;NET5_0</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Include="paket.template" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

@@ -15,10 +15,10 @@ licenseUrl https://opensource.org/licenses/MIT
 description Error handling middleware, using RFC7807
 
 dependencies
-  framework: net6.0
+  framework: net8.0
     System.Reflection.Metadata >= LOCKEDVERSION
 
 files
-  bin\Release\net6.0\Be.Vlaanderen.Basisregisters.ProblemDetails.dll => lib\net6.0
-  bin\Release\net6.0\Be.Vlaanderen.Basisregisters.ProblemDetails.pdb => lib\net6.0
-  bin\Release\net6.0\Be.Vlaanderen.Basisregisters.ProblemDetails.xml => lib\net6.0
+  Be.Vlaanderen.Basisregisters.ProblemDetails.dll => lib\net8.0
+  Be.Vlaanderen.Basisregisters.ProblemDetails.pdb => lib\net8.0
+  Be.Vlaanderen.Basisregisters.ProblemDetails.xml => lib\net8.0
