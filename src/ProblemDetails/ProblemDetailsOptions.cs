@@ -72,7 +72,7 @@ namespace Hellang.Middleware.ProblemDetails
 
         /// <summary>
         /// The property name to use for exception details.
-        /// This defaults to <see cref="DefaultExceptionDetailsPropertyName"/> (<c>errors</c>).
+        /// This defaults to <see cref="DefaultExceptionDetailsPropertyName"/> (<c>exceptionDetails</c>).
         /// </summary>
         public string ExceptionDetailsPropertyName { get; set; }
 
