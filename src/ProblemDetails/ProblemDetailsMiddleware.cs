@@ -118,7 +118,14 @@ namespace Hellang.Middleware.ProblemDetails
                 {
                     if (Options.ShouldLogUnhandledException(context, error, details))
                     {
-                        Logger.UnhandledException(error);
+                        if (Options.OnLogUnhandledException != null)
+                        {
+                            Options.OnLogUnhandledException(context, error, details);
+                        }
+                        else
+                        {
+                            Logger.UnhandledException(error);
+                        }
                     }
 
                     await WriteProblemDetails(context, details);

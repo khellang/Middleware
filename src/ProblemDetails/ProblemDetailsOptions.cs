@@ -114,6 +114,11 @@ namespace Hellang.Middleware.ProblemDetails
         public Func<HttpContext, Exception, MvcProblemDetails, bool> ShouldLogUnhandledException { get; set; } = null!;
 
         /// <summary>
+        /// Gets or sets a callback used to overwrite the default unhandled exception logging method.
+        /// </summary>
+        public Action<HttpContext, Exception, MvcProblemDetails>? OnLogUnhandledException { get; set; }
+
+        /// <summary>
         /// Gets or sets an action to populate response cache headers to prevent caching problem details responses.
         /// </summary>
         public Action<HttpContext, HeaderDictionary> AppendCacheHeaders { get; set; } = null!;
