@@ -21,6 +21,7 @@ using Microsoft.Net.Http.Headers;
 using ProblemDetails.Tests.Helpers;
 using Xunit;
 using MvcProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
+using ProblemDetailsOptions = Hellang.Middleware.ProblemDetails.ProblemDetailsOptions;
 
 namespace ProblemDetails.Tests
 {

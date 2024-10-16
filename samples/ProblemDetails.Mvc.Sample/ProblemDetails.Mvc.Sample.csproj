@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>Hellang.Middleware.ProblemDetails.MinimalApiSample</AssemblyName>
-    <RootNamespace>Hellang.Middleware.ProblemDetails.MinimalApiSample</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\ProblemDetails\ProblemDetails.csproj" />
   </ItemGroup>
+
 </Project>

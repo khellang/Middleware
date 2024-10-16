@@ -1,6 +1,6 @@
-﻿using System.Net;
-using Hellang.Middleware.RateLimiting;
+using System.Net;
 using Xunit;
+using IPNetwork = Hellang.Middleware.RateLimiting.IPNetwork;
 
 namespace RateLimiting.Tests
 {
