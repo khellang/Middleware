@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>1.0.0-alpha.2</Version>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <Version>2.0.0-alpha.1</Version>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <AssemblyName>Hellang.Middleware.RateLimiting</AssemblyName>
     <RootNamespace>Hellang.Middleware.RateLimiting</RootNamespace>
     <Description>Rate-limiting middleware using ASP.NET Core's IDistributedCache.</Description>
@@ -15,7 +15,7 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>
