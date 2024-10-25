@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -37,6 +37,9 @@ namespace Hellang.Middleware.SpaFallback
                 var fallbackPath = GetFallbackPath(context);
 
                 context.Request.Path = fallbackPath;
+
+                // Reset HTTP response headers, status code and the response body to make room for the redirected endpoint content.
+                context.Response.Clear();
 
                 await Next(context);
 
