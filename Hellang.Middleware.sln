@@ -38,6 +38,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails.MinimalApiSa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProblemDetails.Mvc.Sample", "samples\ProblemDetails.Mvc.Sample\ProblemDetails.Mvc.Sample.csproj", "{A4B33BF5-626A-4DEF-9EB0-71A49CB1B261}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaFallback.Sample", "samples\SpaFallback.Sample\SpaFallback.Sample.csproj", "{3B90D096-9319-4ECF-B7B9-8BCBD0DFC239}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,10 @@ Global
 		{A4B33BF5-626A-4DEF-9EB0-71A49CB1B261}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4B33BF5-626A-4DEF-9EB0-71A49CB1B261}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4B33BF5-626A-4DEF-9EB0-71A49CB1B261}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B90D096-9319-4ECF-B7B9-8BCBD0DFC239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B90D096-9319-4ECF-B7B9-8BCBD0DFC239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B90D096-9319-4ECF-B7B9-8BCBD0DFC239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B90D096-9319-4ECF-B7B9-8BCBD0DFC239}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +100,7 @@ Global
 		{1B9094D8-74F4-43BC-A119-E40573DE40FC} = {17F15D82-AC56-4579-BF5F-E53539AC0DB4}
 		{6D090B43-0306-45A5-B4AB-CC2BA0AE22DC} = {A978F7AD-DFCC-41C4-9AEE-9E60D58A50FD}
 		{A4B33BF5-626A-4DEF-9EB0-71A49CB1B261} = {A978F7AD-DFCC-41C4-9AEE-9E60D58A50FD}
+		{3B90D096-9319-4ECF-B7B9-8BCBD0DFC239} = {A978F7AD-DFCC-41C4-9AEE-9E60D58A50FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EB34854-E4E8-4AFD-91EB-C33FAD8F1725}
