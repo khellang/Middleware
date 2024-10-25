@@ -9,7 +9,7 @@
     <PackageTags>middleware;error;exception;RFC7807</PackageTags>
     <PackageIcon>problem-logo.png</PackageIcon>
     <AssemblyOriginatorKeyFile>../../signing.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <AssemblyVersion>7.0.0.0</AssemblyVersion>
     <SignAssembly>true</SignAssembly>
     <PublicSign>true</PublicSign>
   </PropertyGroup>
