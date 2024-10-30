@@ -8,7 +8,7 @@ Various ASP.NET Core middleware. Mostly for use in APIs.
 
 Configure in `Startup` class. See examples:
 
-* [controller api sample](samples/ProblemDetails.Sample/Program.cs)
+* [controller api sample](samples/ProblemDetails.Mvc.Sample/Program.cs)
 * [minimal api sample](samples/ProblemDetails.MinimalApiSample/Program.cs)
 * [asp.net core 6 sample app](https://github.com/christianacca/ProblemDetailsDemo)
 
