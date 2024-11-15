@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>3.0.0</Version>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <Version>3.1.0</Version>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <AssemblyName>Hellang.Middleware.SpaFallback</AssemblyName>
     <RootNamespace>Hellang.Middleware.SpaFallback</RootNamespace>
     <Description>SPA fallback middleware for client-side routing</Description>
