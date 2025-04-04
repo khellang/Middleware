@@ -1,7 +1,0 @@
-Microsoft.NET.Test.Sdk
-Microsoft.AspNetCore.TestHost
-
-Microsoft.AspNetCore.Mvc.NewtonsoftJson
-
-xunit
-xunit.runner.visualstudio

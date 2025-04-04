@@ -2,7 +2,6 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -14,6 +13,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
     using Microsoft.AspNetCore.Http.Features;
     using Microsoft.AspNetCore.TestHost;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.Net.Http.Headers;
     using Newtonsoft.Json;
@@ -219,7 +219,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
             {
                 var response = await client.GetAsync(string.Empty);
 
-                var cacheControl = response.Headers.CacheControl;
+                var cacheControl = response.Headers.CacheControl!;
 
                 Assert.True(cacheControl.NoCache, nameof(cacheControl.NoCache));
                 Assert.True(cacheControl.NoStore, nameof(cacheControl.NoStore));
@@ -250,7 +250,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
         {
             Task WriteResponse(HttpContext context)
             {
-                context.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
+                context.Features.Get<IHttpBodyControlFeature>()!.AllowSynchronousIO = true;
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.Body.WriteByte(byte.MinValue);
                 return Task.CompletedTask;
@@ -271,7 +271,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
         {
             Task WriteResponse(HttpContext context)
             {
-                context.Features.Get<IHttpBodyControlFeature>().AllowSynchronousIO = true;
+                context.Features.Get<IHttpBodyControlFeature>()!.AllowSynchronousIO = true;
                 context.Response.Body.WriteByte(byte.MinValue);
                 throw new Exception("Request Failed");
             }
@@ -322,7 +322,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
 
             void ConfigureOptions(ProblemDetailsOptions options)
                 => options.OnBeforeWriteDetails =
-                    (ctx, details) => details.ProblemTypeUri = "https://example.com";
+                    (_, details) => details.ProblemTypeUri = "https://example.com";
 
             using (var server = CreateServer(handler: ResponseThrows(), configureOptions: ConfigureOptions))
             using (var client = server.CreateClient())
@@ -423,31 +423,31 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
 
         private static async Task AssertIsProblemDetailsResponse(HttpResponseMessage response)
         {
-            Assert.Equal("application/problem+json", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
             Assert.NotEmpty(await response.Content.ReadAsStringAsync());
         }
 
         private static async Task AssertIsProblemDetailsXmlResponse(HttpResponseMessage response)
         {
-            Assert.Equal("application/problem+xml", response.Content.Headers.ContentType.MediaType);
+            Assert.Equal("application/problem+xml", response.Content.Headers.ContentType?.MediaType);
             Assert.NotEmpty(await response.Content.ReadAsStringAsync());
         }
 
         private static void AssertUnhandledExceptionLogged(InMemoryLogger<ProblemDetailsMiddleware> logger)
         {
-            Assert.Single(logger.Messages.Where(m => m.Type == LogLevel.Error));
+            Assert.Single(logger.Messages, m => m.Type == LogLevel.Error);
         }
 
         private static void AssertUnhandledExceptionNotLogged(InMemoryLogger<ProblemDetailsMiddleware> logger)
         {
-            Assert.Empty(logger.Messages.Where(m => m.Type == LogLevel.Error));
+            Assert.DoesNotContain(logger.Messages, m => m.Type == LogLevel.Error);
         }
 
         private TestServer CreateServer(RequestDelegate handler,
-            Action<ProblemDetailsOptions> configureOptions = null, string environment = null)
+            Action<ProblemDetailsOptions>? configureOptions = null, string? environment = null)
         {
             var builder = new WebHostBuilder()
-                .UseEnvironment(environment ?? Microsoft.Extensions.Hosting.Environments.Development)
+                .UseEnvironment(environment ?? Environments.Development)
                 .ConfigureServices(x => x
                     .AddSingleton<ILogger<ProblemDetailsMiddleware>>(Logger)
                     .AddCors()
@@ -473,9 +473,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests
             };
         }
 
-        private static RequestDelegate ResponseThrows(Exception exception = null)
+        private static RequestDelegate ResponseThrows(Exception? exception = null)
         {
-            return context => throw exception ?? new Exception("Request failed.");
+            return _ => throw exception ?? new Exception("Request failed.");
         }
 
         private static void ConfigureJson(JsonSerializerSettings json)

@@ -44,7 +44,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             {
                 await Next(context);
 
-                if (Options.IsProblem(context))
+                if (Options.IsProblem != null && Options.IsProblem(context))
                 {
                     if (context.Response.HasStarted)
                     {
@@ -73,7 +73,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
                     var details = GetDetails(context, error);
 
-                    if (Options.ShouldLogUnhandledException(context, error, details))
+                    if (Options.ShouldLogUnhandledException != null && Options.ShouldLogUnhandledException(context, error, details))
                         Logger.UnhandledException(error);
 
                     await WriteProblemDetails(context, details);
@@ -94,14 +94,14 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             var statusCode = context.Response.StatusCode;
 
             if (error == null)
-                return Options.MapStatusCode(context, statusCode);
+                return Options.MapStatusCode!(context, statusCode);
 
             var result = GetProblemDetails(context, error);
 
             // We don't want to leak exception details,
             // even if the user mapped the exception into ExceptionProblemDetails.
             return result is ExceptionProblemDetails ex
-                ? Options.MapStatusCode(context, ex.HttpStatus ?? statusCode)
+                ? Options.MapStatusCode!(context, ex.HttpStatus ?? statusCode)
                 : result;
         }
 

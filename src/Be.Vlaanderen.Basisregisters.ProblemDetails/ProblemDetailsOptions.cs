@@ -7,13 +7,13 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
 
     public class ProblemDetailsOptions
     {
-        public Func<HttpContext, bool> IsProblem { get; set; }
+        public Func<HttpContext, bool>? IsProblem { get; set; }
 
-        public Func<HttpContext, int, ProblemDetails> MapStatusCode { get; set; }
+        public Func<HttpContext, int, ProblemDetails>? MapStatusCode { get; set; }
 
-        public Action<HttpContext, ProblemDetails> OnBeforeWriteDetails { get; set; }
+        public Action<HttpContext, ProblemDetails>? OnBeforeWriteDetails { get; set; }
 
-        public Func<HttpContext, Exception, ProblemDetails, bool> ShouldLogUnhandledException { get; set; }
+        public Func<HttpContext, Exception, ProblemDetails, bool>? ShouldLogUnhandledException { get; set; }
 
         public HashSet<string> AllowedHeaderNames { get; }
 
@@ -38,7 +38,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         }
 
         public void Map<TException>(Func<TException, ProblemDetails> mapping) where TException : Exception
-            => Map<TException>((ctx, ex) => mapping(ex));
+            => Map<TException>((_, ex) => mapping(ex));
 
         public void Map<TException>(Func<HttpContext, TException, ProblemDetails> mapping) where TException : Exception
             => Mappers.Add(new ExceptionMapper(typeof(TException), (ctx, ex) => mapping(ctx, (TException)ex)));

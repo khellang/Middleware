@@ -11,7 +11,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         public static IServiceCollection AddProblemDetails(this IServiceCollection services)
             => services.AddProblemDetails(configure: null);
 
-        public static IServiceCollection AddProblemDetails(this IServiceCollection services, Action<ProblemDetailsOptions> configure)
+        public static IServiceCollection AddProblemDetails(this IServiceCollection services, Action<ProblemDetailsOptions>? configure)
         {
             if (configure != null)
                 services.Configure(configure);

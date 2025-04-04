@@ -23,16 +23,6 @@ jobs:
         java-version: 17
         distribution: 'temurin'
 
-    - name: Cache Paket
-      uses: actions/cache@v4
-      env:
-        cache-name: cache-paket
-      with:
-        path: packages
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('paket.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-
     - name: Parse repository name
       run: echo REPOSITORY_NAME=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//") >> $GITHUB_ENV
       shell: bash
@@ -40,7 +30,9 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ vars.VBR_DOTNET_VERSION_8 }}
+        dotnet-version: ${{ vars.VBR_DOTNET_VERSION_9 }}
+        cache: true
+        cache-dependency-path: "**/packages.lock.json"
 
     - name: .NET version
       shell: bash
@@ -49,9 +41,9 @@ jobs:
     - name: Restore packages
       shell: bash
       run: |
+        ./pre-restore.sh
         dotnet tool restore
-        dotnet paket restore
-        dotnet restore
+        dotnet restore --locked-mode
 
     - name: Cache SonarCloud packages
       uses: actions/cache@v4
@@ -71,7 +63,7 @@ jobs:
     - name: Install DotCover
       shell: bash
       run: |
-        dotnet tool install --global JetBrains.dotCover.GlobalTool
+        dotnet tool install --global JetBrains.dotCover.CommandLineTools
         
     - name: Install SonarCloud scanner
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
@@ -96,7 +88,7 @@ jobs:
 
     - name: Test
       shell: bash
-      run: dotnet dotcover test --dcReportType=HTML --nologo --no-build Be.Vlaanderen.Basisregisters.ProblemDetails.sln
+      run: dotnet dotCover cover-dotnet --ReportType=HTML --Output=dotCover.Output.html -- test --nologo --no-build Be.Vlaanderen.Basisregisters.ProblemDetails.sln
 
     - name: Sonar end build & analyze
       env:

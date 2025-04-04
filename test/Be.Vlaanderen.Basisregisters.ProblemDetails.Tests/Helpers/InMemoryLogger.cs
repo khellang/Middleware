@@ -7,9 +7,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests.Helpers
 
     public class InMemoryLogger<T> : ILogger<T>
     {
-        private static readonly string CategoryName = typeof(T).FullName;
+        private static readonly string? CategoryName = typeof(T).FullName;
 
-        private readonly List<LogEntry> _messages = new List<LogEntry>();
+        private readonly List<LogEntry> _messages = [];
 
         public IEnumerable<LogEntry> Messages
         {
@@ -20,7 +20,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests.Helpers
             }
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             var message = new LogEntry
             {
@@ -37,6 +37,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem.Tests.Helpers
 
         public bool IsEnabled(LogLevel logLevel) => true;
 
-        public IDisposable BeginScope<TState>(TState state) => throw new NotImplementedException();
+        public IDisposable BeginScope<TState>(TState state) where TState : notnull
+            => throw new NotImplementedException();
     }
 }

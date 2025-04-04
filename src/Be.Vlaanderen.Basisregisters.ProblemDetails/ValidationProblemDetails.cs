@@ -31,7 +31,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         [DataMember(Name = "ValidationErrors", Order = 600, EmitDefaultValue = false)]
         public ValidationErrorDetails? ValidationErrorsProxy
         {
-            get => new ValidationErrorDetails(ValidationErrors);
+            get => new ValidationErrorDetails(ValidationErrors ?? new Dictionary<string, Errors>());
             set => ValidationErrors = value;
         }
 

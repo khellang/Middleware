@@ -11,7 +11,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
                 options.ShouldLogUnhandledException = (ctx, e, d) => IsServerError(d.HttpStatus);
 
             if (options.MapStatusCode == null)
-                options.MapStatusCode = (ctx, statusCode) => new StatusCodeProblemDetails(statusCode);
+                options.MapStatusCode = (_, statusCode) => new StatusCodeProblemDetails(statusCode);
 
             if (options.IsProblem == null)
                 options.IsProblem = IsProblem;

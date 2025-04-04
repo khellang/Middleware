@@ -13,7 +13,9 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
         public Exception Error { get; }
 
         // Here to make DataContractSerializer happy
+#pragma warning disable CS8618, CS9264
         public ExceptionProblemDetails() : base(StatusCodes.Status500InternalServerError) { }
+#pragma warning restore CS8618, CS9264
 
         public ExceptionProblemDetails(Exception error) : this(error, StatusCodes.Status500InternalServerError) { }
 

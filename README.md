@@ -17,8 +17,6 @@
 
 ### Libraries
 
-* [Paket](https://fsprojects.github.io/Paket/license.html) - _A dependency manager for .NET with support for NuGet packages and Git repositories._ - [MIT](https://choosealicense.com/licenses/mit/)
-* [FAKE](https://github.com/fsharp/FAKE/blob/release/next/License.txt) - _"FAKE - F# Make" is a cross platform build automation system._ - [MIT](https://choosealicense.com/licenses/mit/)
 * [Middleware - ProblemDetails](https://github.com/khellang/Middleware/blob/master/LICENSE) - _Various ASP.NET Core middleware._ - [MIT](https://choosealicense.com/licenses/mit/)
 
 ### Tooling

@@ -11,7 +11,7 @@ namespace Be.Vlaanderen.Basisregisters.BasicApiProblem
             LoggerMessage.Define(LogLevel.Error, new EventId(1, "UnhandledException"), "An unhandled exception has occurred while executing the request.");
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        private static readonly Action<ILogger, Exception> _responseStarted =
+        private static readonly Action<ILogger, Exception?> _responseStarted =
             LoggerMessage.Define(LogLevel.Warning, new EventId(2, "ResponseStarted"), "The response has already started, the problem details middleware will not be executed.");
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
